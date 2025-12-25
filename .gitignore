@@ -1,3 +1,6 @@
+# ============================================================================
+# R files
+# ============================================================================
 # History files
 .Rhistory
 .Rapp.history
@@ -5,6 +8,12 @@
 # Session Data files
 .RData
 .RDataTmp
+*.RData
+*.rdata
+
+# RDS files (binary R objects)
+*.rds
+*.RDS
 
 # User-specific files
 .Ruserdata
@@ -25,7 +34,7 @@
 vignettes/*.html
 vignettes/*.pdf
 
-# OAuth2 token, see https://github.com/hadley/httr/releases/tag/v0.3
+# OAuth2 token
 .httr-oauth
 
 # knitr and R markdown default cache directories
@@ -47,3 +56,50 @@ po/*~
 
 # RStudio Connect folder
 rsconnect/
+
+# ============================================================================
+# Stan files
+# ============================================================================
+# Compiled Stan executables (binari molto grandi)
+stan/**/*_moderation
+stan/**/combined_*
+stan/**/*.exe
+stan/**/*.o
+
+# Stan temporary files
+*.hpp
+
+# ============================================================================
+# Project-specific: Large data and results
+# ============================================================================
+# Results folder - workspace files
+results/*.RData
+results/*.rds
+results/*.rdata
+
+# Large processed data files (opzionale - valuta se versionarli)
+# data/processed/*.csv
+
+# ============================================================================
+# OS files
+# ============================================================================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+*~
+
+# ============================================================================
+# IDE
+# ============================================================================
+.vscode/
+.idea/
+*.swp
+*.swo
