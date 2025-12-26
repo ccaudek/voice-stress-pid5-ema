@@ -100,6 +100,24 @@ generated quantities {
   // useful for interpretation in R without extra post-processing.
   vector[D] stress_effect_at_plus1sd;
   vector[D] recovery_effect_at_plus1sd;
+  
+  // Posterior predictive replicates for PPC
+  vector[N_voice] y_rep;
+  
+  for (n in 1:N_voice) {
+    int s = subj_voice[n];
+    
+    real mod_stress = dot_product(g1, to_vector(theta[s]));
+    real mod_recov  = dot_product(g2, to_vector(theta[s]));
+    
+    real mu = alpha
+      + (b1 + mod_stress) * c1[n]
+      + (b2 + mod_recov)  * c2[n]
+      + u0[s] + u1[s] * c1[n] + u2[s] * c2[n];
+    
+    // Generate replicate from the posterior predictive distribution
+    y_rep[n] = normal_rng(mu, sigma_y);
+  }
 
   for (d in 1:D) {
     stress_effect_at_plus1sd[d]   = b1 + g1[d];

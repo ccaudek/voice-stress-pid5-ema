@@ -1,6 +1,27 @@
 # voice-stress-pid5-ema
 
-Progetto che integra misure basali di tratto (PID-5) con registrazioni ecologiche ad alta frequenza per quantificare il rischio differenziale di psicopatologia nella vita quotidiana.
+## Step 1
+
+Il risultato cruciale riguarda la moderazione dell'effetto dello stress su F0 mean (calcolata come media delle 3 vocali) da parte delle componenti PID-5 somministrate con EMA. Per ciascuna delle 5 componenti PID-5 somministrate con EMA per circa 20 volte a partecipante si calcola la media per partecipante. Di queste 5 componenti, solo "negative affectivity" modera l'effetto dello stress su F0 mean. In particolare, all'aumentare del punteggio di "negative affectivity" aumenta l'effetto dello stress su F0 mean.
+
+Il modello Stan usato è in:
+voice-stress-pid5-ema/stan/F0/f0mean_pid5_moderation.stan
+
+Per creare i dati per il modello Stan, si usa lo script R in:
+/scripts/02_statistical_analyses/stan/01_prepare_stan_data_f0mean_pid5.R
+
+Per eseguire il modello Stan e per l'interpretazione, si usa lo script R in:
+/scripts/02_statistical_analyses/stan/02_f0mean_pid5_moderation.R
+
+## Step 2
+
+NNE
+
+## Step 3
+
+Considerare il valore aggiuntivo delle componenti EMA rispetto alle misure somministrate una volta soltanto (PID-5 completo).
+
+
 
 ------
 
