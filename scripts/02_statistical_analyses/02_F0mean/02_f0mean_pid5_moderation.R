@@ -1,6 +1,13 @@
-library(cmdstanr)
-library(posterior)
-library(bayesplot)
+# ==============================================================================
+# 02_f0mean_pid5_moderation.R
+# Moderation analysis of PID-5 with stress effect on acustic features
+# ==============================================================================
+
+suppressPackageStartupMessages({
+  library(cmdstanr)
+  library(posterior)
+  library(bayesplot)
+})
 
 bundle <- readRDS("results/stan_bundle_f0mean_pid5.rds")
 stan_data <- bundle$stan_data
@@ -35,8 +42,17 @@ y_rep_draws <- fit$draws("y_rep", format = "matrix")
 ppc_plot <- ppc_dens_overlay(y = stan_data$y, yrep = y_rep_draws[1:100, ])
 print(ppc_plot)
 
+# Salva il plot PPC
+ggsave(
+  filename = here::here("results", "f0mean", "ppc_f0mean_moderation.png"),
+  plot = ppc_plot,
+  width = 8,
+  height = 6,
+  dpi = 300
+)
 
-print(fit$summary(c(
+# Estrai e salva il summary
+summary_results <- fit$summary(c(
   "alpha",
   "b1",
   "b2",
@@ -45,8 +61,21 @@ print(fit$summary(c(
   "sigma_y",
   "tau",
   "sigma_ema"
-))) |>
-  as.data.frame()
+))
+
+# Stampa a schermo
+data.frame(summary_results)
+
+# Salva come CSV
+write.csv(
+  as.data.frame(summary_results),
+  file = here::here(
+    "results",
+    "f0mean",
+    "model_summary_f0mean_moderation.csv"
+  ),
+  row.names = FALSE
+)
 
 draws <- fit$draws()
 
@@ -94,3 +123,5 @@ for (d in 1:stan_data$D) {
 # pid5_psychoticism
 # Stress moderation g1: PD = 0.559 | P(>0) = 0.441
 # Recovery moderation g2: PD = 0.796 | P(>0) = 0.204
+
+# eof ---

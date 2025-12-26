@@ -46,7 +46,7 @@ df_voice <- bind_rows(baseline, pre, post)
 names(df_voice) <- stringr::str_trim(names(df_voice))
 
 # Correzione ID (come nel tuo script)
-df_voice <- df_voice %>%
+df_voice <- df_voice |>
   mutate(
     ID = case_when(
       ID == "am_bo_1988_08_24_166" ~ "an_bo_1988_08_24_166",
@@ -59,7 +59,7 @@ df_voice <- df_voice %>%
   )
 
 # Seleziona SOLO F0 mean sulle 3 vocali
-df_voice <- df_voice %>%
+df_voice <- df_voice |>
   transmute(
     ID,
     timepoint = factor(timepoint, levels = c("baseline", "pre", "post")),
@@ -70,8 +70,8 @@ df_voice <- df_voice %>%
   mutate(
     # outcome robusto: media sulle vocali (riduce rumore vocale-specifico)
     y_f0 = rowMeans(across(c(f0_mean_a, f0_mean_i, f0_mean_u)), na.rm = TRUE)
-  ) %>%
-  select(ID, timepoint, y_f0)
+  ) |>
+  dplyr::select(ID, timepoint, y_f0)
 
 # Contrasti
 df_voice <- df_voice %>%
@@ -86,8 +86,13 @@ df_voice <- df_voice %>%
       timepoint == "pre" ~ -0.5,
       timepoint == "post" ~ 0.5
     )
-  ) %>%
-  filter(!is.na(ID), !is.na(y_f0), !is.na(c1_stress), !is.na(c2_recovery))
+  ) |>
+  dplyr::filter(
+    !is.na(ID),
+    !is.na(y_f0),
+    !is.na(c1_stress),
+    !is.na(c2_recovery)
+  )
 
 cat(
   "VOICE: N obs =",
@@ -100,7 +105,7 @@ cat(
 # ----------------------------
 # 2) LOAD EMA CLEANED
 # ----------------------------
-ema <- rio::import(ema_path) %>% as_tibble()
+ema <- rio::import(ema_path) |> as_tibble()
 
 pid5_ema_vars <- c(
   "pid5_negative_affectivity",
@@ -112,15 +117,15 @@ pid5_ema_vars <- c(
 
 stopifnot(all(c("user_id", pid5_ema_vars) %in% names(ema)))
 
-df_ema <- ema %>%
+df_ema <- ema |>
   transmute(
     ID = user_id,
     across(all_of(pid5_ema_vars), as.numeric)
   ) %>%
-  filter(!is.na(ID)) %>%
-  filter(ID %in% unique(df_voice$ID)) %>%
+  dplyr::filter(!is.na(ID)) %>%
+  dplyr::filter(ID %in% unique(df_voice$ID)) %>%
   # tieni righe con almeno 1 dominio osservato
-  filter(if_any(all_of(pid5_ema_vars), ~ !is.na(.x)))
+  dplyr::filter(if_any(all_of(pid5_ema_vars), ~ !is.na(.x)))
 
 cat(
   "EMA (raw): N rows =",
@@ -135,30 +140,30 @@ cat(
 # ----------------------------
 
 # Conteggio NA prima
-na_before <- df_ema %>%
-  summarise(across(all_of(pid5_ema_vars), ~ sum(is.na(.x)))) %>%
+na_before <- df_ema |>
+  summarise(across(all_of(pid5_ema_vars), ~ sum(is.na(.x)))) |>
   pivot_longer(everything(), names_to = "var", values_to = "n_na_before")
 
 # Imputa: NA -> mean(ID, dominio)
-df_ema_imp <- df_ema %>%
-  group_by(ID) %>%
+df_ema_imp <- df_ema |>
+  group_by(ID) |>
   mutate(across(
     all_of(pid5_ema_vars),
     ~ if_else(is.na(.x), mean(.x, na.rm = TRUE), .x)
-  )) %>%
+  )) |>
   ungroup()
 
 # Elimina eventuali casi patologici (dominio sempre NA per quel soggetto -> mean = NaN)
-df_ema_imp <- df_ema_imp %>%
-  filter(if_all(all_of(pid5_ema_vars), ~ is.finite(.x)))
+df_ema_imp <- df_ema_imp |>
+  dplyr::filter(if_all(all_of(pid5_ema_vars), ~ is.finite(.x)))
 
 # Conteggio NA dopo (dovrebbe essere 0)
-na_after <- df_ema_imp %>%
-  summarise(across(all_of(pid5_ema_vars), ~ sum(is.na(.x)))) %>%
+na_after <- df_ema_imp |>
+  summarise(across(all_of(pid5_ema_vars), ~ sum(is.na(.x)))) |>
   pivot_longer(everything(), names_to = "var", values_to = "n_na_after")
 
-na_report <- na_before %>%
-  left_join(na_after, by = "var") %>%
+na_report <- na_before |>
+  left_join(na_after, by = "var") |>
   mutate(n_imputed = n_na_before - n_na_after)
 
 cat("\n=== IMPUTATION REPORT (within-subject means) ===\n")
@@ -180,11 +185,11 @@ N_subj <- length(subj_ids)
 
 id_map <- tibble(ID = subj_ids, subj = seq_len(N_subj))
 
-df_voice_stan <- df_voice %>%
-  inner_join(id_map, by = "ID") %>%
+df_voice_stan <- df_voice |>
+  inner_join(id_map, by = "ID") |>
   arrange(subj, timepoint)
 
-df_ema_stan <- df_ema_imp %>%
+df_ema_stan <- df_ema_imp |>
   inner_join(id_map, by = "ID") %>%
   arrange(subj)
 
@@ -201,7 +206,9 @@ cat(
 # ----------------------------
 # 4) STANDARDIZZA PID5 EMA (consigliato)
 # ----------------------------
-X <- df_ema_stan %>% select(all_of(pid5_ema_vars)) %>% as.matrix()
+X <- df_ema_stan |>
+  select(all_of(pid5_ema_vars)) |>
+  as.matrix()
 
 # Safety: Stan non accetta NA
 stopifnot(!anyNA(X))
@@ -261,3 +268,5 @@ saveRDS(
 cat("\nSaved:\n")
 cat(" - stan/stan_data_f0mean_pid5.json\n")
 cat(" - results/stan_bundle_f0mean_pid5.rds\n")
+
+# eof ---

@@ -12,7 +12,7 @@ suppressPackageStartupMessages({
 #    (oppure caricalo dal bundle)
 # ------------------------------------------------------------
 if (!exists("df_voice")) {
-  bundle_path <- "results/stan_bundle_nne_pid5.rds"
+  bundle_path <- here::here("results", "NNE", "stan_bundle_nne_pid5.rds")
   stopifnot(file.exists(bundle_path))
   bundle <- readRDS(bundle_path)
   df_voice <- bundle$df_voice
@@ -20,12 +20,12 @@ if (!exists("df_voice")) {
 
 # Sanity: nomi attesi
 stopifnot(all(
-  c("ID", "timepoint", "y_nne", "c1_stress", "c2_recovery", "subj") %in%
+  c("ID", "timepoint", "y_nne", "c1_stress", "c2_recovery") %in%
     names(df_voice)
 ))
 
 # Ordina livelli timepoint
-df_voice <- df_voice %>%
+df_voice <- df_voice |>
   mutate(timepoint = factor(timepoint, levels = c("baseline", "pre", "post")))
 
 cat("\n=== CONTRAST CODING CHECK ===\n")
@@ -65,24 +65,24 @@ cat(
 # 2) Controllo empirico: medie per timepoint e differenze within-subject
 # ------------------------------------------------------------
 cat("=== DESCRITTIVE y_nne PER TIMEPOINT ===\n")
-by_tp <- df_voice %>%
-  group_by(timepoint) %>%
+by_tp <- df_voice |>
+  group_by(timepoint) |>
   summarise(
     n = n(),
     mean = mean(y_nne, na.rm = TRUE),
     sd = sd(y_nne, na.rm = TRUE),
     .groups = "drop"
-  ) %>%
+  ) |>
   arrange(timepoint)
 print(by_tp)
 
 # Wide per ID (within-subject)
-wide <- df_voice %>%
-  select(ID, timepoint, y_nne) %>%
+wide <- df_voice |>
+  dplyr::select(ID, timepoint, y_nne) |>
   pivot_wider(names_from = timepoint, values_from = y_nne)
 
 # differenze within-subject
-diffs <- wide %>%
+diffs <- wide |>
   transmute(
     ID,
     d_stress = pre - baseline, # pre - baseline
@@ -91,7 +91,7 @@ diffs <- wide %>%
   )
 
 cat("\n=== DIFFERENZE WITHIN-SUBJECT (NNE) ===\n")
-diff_summary <- diffs %>%
+diff_summary <- diffs |>
   summarise(
     n = n(),
     mean_d_stress = mean(d_stress, na.rm = TRUE),
@@ -106,7 +106,7 @@ diff_summary <- diffs %>%
     p_d_recovery_gt0 = mean(d_recovery > 0, na.rm = TRUE),
     p_d_recovery_lt0 = mean(d_recovery < 0, na.rm = TRUE)
   )
-print(diff_summary)
+data.frame(diff_summary)
 
 cat("\nInterpretazione segni (NNE è spesso negativa):\n")
 cat(" - d_stress > 0  => NNE aumenta (meno negativa, verso 0)\n")
@@ -157,56 +157,11 @@ lm_fit <- lm(y_nne ~ c1_stress + c2_recovery, data = df_voice)
 cat("\n=== OLS sanity check (solo segni/scala) ===\n")
 print(summary(lm_fit)$coefficients)
 
-cat("\nFINE.\n")
+# Aggiungi questo nel tuo script di interpretazione:
+cat("\n=== INTERPRETAZIONE CHIAVE ===\n")
+cat("NNE = Noise-to-Harmonics Energy (in dB, valori tipici negativi)\n")
+cat("NNE più negativo = MENO rumore glottico = voce più 'pulita'\n")
+cat("NNE meno negativo = PIÙ rumore glottico = voce più 'soffiata'\n")
+cat("Stress → NNE più negativo di -0.541 dB → voce più 'pulita' sotto stress\n")
 
-#' Discussion: Vocal Stress Reactivity as Arousal and Control
-#'
-#' The present findings suggest that exam-related stress modulates vocal
-#' production along two partially dissociable dimensions, reflecting increased
-#' physiological arousal and enhanced phonatory control. Specifically, stress
-#' was associated with a robust increase in fundamental frequency (F0 mean),
-#' accompanied by a concurrent reduction in glottal noise, indexed by more
-#' negative Noise-to-Harmonics Energy (NNE) values. Taken together, these
-#' patterns indicate that acute academic stress does not merely destabilize
-#' vocal production, but instead induces a more controlled and tension-driven
-#' phonatory state.
-#'
-#' The elevation of F0 under stress is consistent with extensive evidence
-#' linking psychological stress and autonomic arousal to increased laryngeal
-#' muscle activation and subglottal pressure. Importantly, the current study
-#' extends this literature by showing that this pitch increase is not uniform
-#' across individuals: Negative Affectivity reliably amplified stress-related
-#' F0 elevation, suggesting that individuals characterized by heightened
-#' emotional reactivity exhibit stronger vocal arousal responses. This finding
-#' aligns with theoretical models positing Negative Affectivity as a core
-#' dimension of stress sensitivity and autonomic responsivity.
-#'
-#' In contrast, changes in NNE followed a different pattern. Rather than
-#' increasing under stress—as might be expected if stress primarily induced
-#' vocal instability—NNE decreased, indicating reduced glottal noise and a more
-#' periodic signal. This effect was consistent across descriptive analyses and
-#' hierarchical Bayesian modeling, and showed little evidence of modulation by
-#' personality traits. From a physiological perspective, this pattern is
-#' compatible with stress-induced hyperadduction or increased laryngeal tension,
-#' leading to a “pressed” voice quality that is acoustically cleaner but less
-#' flexible. Thus, while F0 captures the arousal-driven component of the stress
-#' response, NNE appears to index a control-related component, reflecting
-#' compensatory or regulatory adjustments in phonatory behavior.
-#'
-#' Crucially, the dissociation between F0 and NNE moderation highlights that not
-#' all aspects of vocal stress reactivity are equally shaped by personality traits.
-#' Whereas Negative Affectivity selectively modulated arousal-related pitch
-#' responses, noise-related measures of vocal quality were largely trait-independent,
-#' suggesting a more uniform physiological mechanism. This pattern underscores
-#' the importance of conceptualizing vocal stress responses as multidimensional,
-#' rather than assuming a single pathway of vocal “degradation” under stress.
-#'
-#' Methodologically, these conclusions were enabled by modeling personality
-#' traits as latent variables with explicit measurement error correction,
-#' integrating intensive EMA assessments with hierarchical Bayesian models.
-#' This approach revealed trait-level moderation effects that were not apparent
-#' in conventional mixed-effects analyses, while also clarifying the limits of
-#' personality modulation for certain acoustic parameters. Together, the
-#' findings support a model in which acute stress elicits simultaneous increases
-#' in arousal and control, with personality differences shaping the former more
-#' strongly than the latter.
+cat("\nFINE.\n")

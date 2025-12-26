@@ -38,10 +38,14 @@ dir.create("results", showWarnings = FALSE)
 # ----------------------------
 # 1) LOAD VOICE (3 timepoint)
 # ----------------------------
-baseline <- read_excel(voice_path, sheet = "BASELINE") %>%
+baseline <- read_excel(voice_path, sheet = "BASELINE") |>
   mutate(timepoint = "baseline")
-pre <- read_excel(voice_path, sheet = "PRE") %>% mutate(timepoint = "pre")
-post <- read_excel(voice_path, sheet = "POST") %>% mutate(timepoint = "post")
+
+pre <- read_excel(voice_path, sheet = "PRE") |>
+  mutate(timepoint = "pre")
+
+post <- read_excel(voice_path, sheet = "POST") |>
+  mutate(timepoint = "post")
 
 df_voice <- bind_rows(baseline, pre, post)
 names(df_voice) <- stringr::str_trim(names(df_voice))
@@ -60,21 +64,21 @@ df_voice <- df_voice %>%
   )
 
 # Seleziona NNE sulle 3 vocali e crea outcome robusto
-df_voice <- df_voice %>%
+df_voice <- df_voice |>
   transmute(
     ID,
     timepoint = factor(timepoint, levels = c("baseline", "pre", "post")),
     nne_a = `NNE /a/`,
     nne_i = `NNE /i/`,
     nne_u = `NNE /u/`
-  ) %>%
+  ) |>
   mutate(
     y_nne = rowMeans(across(c(nne_a, nne_i, nne_u)), na.rm = TRUE)
-  ) %>%
-  select(ID, timepoint, y_nne)
+  ) |>
+  dplyr::select(ID, timepoint, y_nne)
 
 # Contrasti (come già usi)
-df_voice <- df_voice %>%
+df_voice <- df_voice |>
   mutate(
     c1_stress = case_when(
       timepoint == "baseline" ~ -0.5,
@@ -86,8 +90,13 @@ df_voice <- df_voice %>%
       timepoint == "pre" ~ -0.5,
       timepoint == "post" ~ 0.5
     )
-  ) %>%
-  filter(!is.na(ID), !is.na(y_nne), !is.na(c1_stress), !is.na(c2_recovery))
+  ) |>
+  dplyr::filter(
+    !is.na(ID),
+    !is.na(y_nne),
+    !is.na(c1_stress),
+    !is.na(c2_recovery)
+  )
 
 cat(
   "VOICE: N obs =",
@@ -100,7 +109,8 @@ cat(
 # ----------------------------
 # 2) LOAD EMA CLEANED
 # ----------------------------
-ema <- rio::import(ema_path) %>% as_tibble()
+ema <- rio::import(ema_path) |>
+  as_tibble()
 
 pid5_ema_vars <- c(
   "pid5_negative_affectivity",
@@ -112,14 +122,14 @@ pid5_ema_vars <- c(
 
 stopifnot(all(c("user_id", pid5_ema_vars) %in% names(ema)))
 
-df_ema <- ema %>%
+df_ema <- ema |>
   transmute(
     ID = user_id,
     across(all_of(pid5_ema_vars), ~ suppressWarnings(as.numeric(.x)))
-  ) %>%
-  filter(!is.na(ID)) %>%
-  filter(ID %in% unique(df_voice$ID)) %>%
-  filter(if_any(all_of(pid5_ema_vars), ~ !is.na(.x)))
+  ) |>
+  dplyr::filter(!is.na(ID)) |>
+  dplyr::filter(ID %in% unique(df_voice$ID)) |>
+  dplyr::filter(if_any(all_of(pid5_ema_vars), ~ !is.na(.x)))
 
 cat(
   "EMA (raw): N rows =",
@@ -136,12 +146,12 @@ subj_ids <- sort(unique(intersect(df_voice$ID, df_ema$ID)))
 N_subj <- length(subj_ids)
 id_map <- tibble(ID = subj_ids, subj = seq_len(N_subj))
 
-df_voice_stan <- df_voice %>%
-  inner_join(id_map, by = "ID") %>%
+df_voice_stan <- df_voice |>
+  inner_join(id_map, by = "ID") |>
   arrange(subj, timepoint)
 
-df_ema_stan <- df_ema %>%
-  inner_join(id_map, by = "ID") %>%
+df_ema_stan <- df_ema |>
+  inner_join(id_map, by = "ID") |>
   arrange(subj)
 
 cat(
@@ -159,8 +169,8 @@ cat(
 #    - Imputazione sulle righe EMA (molte) usando missRanger
 #    - Inclusi: subj come fattore + 5 variabili PID5
 # ----------------------------
-df_imp_in <- df_ema_stan %>%
-  select(subj, all_of(pid5_ema_vars)) %>%
+df_imp_in <- df_ema_stan |>
+  dplyr::select(subj, all_of(pid5_ema_vars)) |>
   mutate(subj = factor(subj))
 
 n_miss <- sum(is.na(df_imp_in[, pid5_ema_vars]))
@@ -183,7 +193,9 @@ stopifnot(sum(is.na(df_imp_out[, pid5_ema_vars])) == 0)
 # ----------------------------
 # 5) STANDARDIZE PID5 EMA (global z on imputed)
 # ----------------------------
-X <- df_imp_out %>% select(all_of(pid5_ema_vars)) %>% as.matrix()
+X <- df_imp_out |>
+  dplyr::select(all_of(pid5_ema_vars)) |>
+  as.matrix()
 
 X_scaled <- scale(X)
 pid5_center <- attr(X_scaled, "scaled:center")
@@ -220,7 +232,7 @@ stopifnot(!any(is.na(stan_data$X)))
 # ----------------------------
 write_json(
   stan_data,
-  path = "stan/stan_data_nne_pid5.json",
+  path = here::here("stan", "NNE", "stan_data_nne_pid5.json"),
   digits = 16,
   auto_unbox = TRUE
 )
@@ -234,9 +246,11 @@ saveRDS(
     pid5_scale = pid5_scale,
     pid5_vars = pid5_ema_vars
   ),
-  file = "results/stan_bundle_nne_pid5.rds"
+  file = here::here("results", "NNE", "stan_bundle_nne_pid5.rds")
 )
 
 cat("\nSaved:\n")
-cat(" - stan/stan_data_nne_pid5.json\n")
-cat(" - results/stan_bundle_nne_pid5.rds\n")
+cat(" - stan/NNE/stan_data_nne_pid5.json\n")
+cat(" - results/NNE/stan_bundle_nne_pid5.rds\n")
+
+# eof ---

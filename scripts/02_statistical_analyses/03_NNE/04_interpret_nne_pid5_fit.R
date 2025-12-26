@@ -1,5 +1,5 @@
 # ==============================================================================
-# 11_interpret_nne_pid5_fit.R
+# 04_interpret_nne_pid5_fit.R
 # Interpreta posterior: NNE × PID-5 latent (measurement error)
 # ==============================================================================
 
@@ -13,7 +13,7 @@ suppressPackageStartupMessages({
 # ----------------------------
 # 0) Load bundle (names, scaling info)
 # ----------------------------
-bundle <- readRDS("results/stan_bundle_nne_pid5.rds")
+bundle <- readRDS(here::here("results", "NNE", "stan_bundle_nne_pid5.rds"))
 pid5_vars <- bundle$pid5_vars
 D <- length(pid5_vars)
 
@@ -28,12 +28,12 @@ print(pid5_vars)
 # fit$save_object(file="results/fit_nne_pid5.rds")
 #
 # Qui provo prima a caricare un oggetto RDS, altrimenti chiedo CSV.
-fit_path_rds <- "stan/NNE/nne_mean_pid5_moderation.rds"
+fit_path_rds <- here::here("stan", "NNE", "nne_mean_pid5_moderation.rds")
 if (file.exists(fit_path_rds)) {
   fit <- readRDS(fit_path_rds)
 } else {
   stop(
-    "Salva l'oggetto fit in results/fit_nne_pid5.rds (fit$save_object oppure saveRDS(fit, ...))."
+    "Salva l'oggetto fit in results/NNE/fit_nne_pid5.rds (fit$save_object oppure saveRDS(fit, ...))."
   )
 }
 
@@ -119,7 +119,7 @@ mod_tbl <- map_dfr(seq_len(D), function(d) {
 })
 
 cat("\n=== MODERATION (g1 = stress moderation; g2 = recovery moderation) ===\n")
-print(mod_tbl %>% arrange(desc(g1_pd)), n = 50)
+data.frame(mod_tbl %>% arrange(desc(g1_pd)), n = 50)
 
 # ----------------------------
 # 6) Simple effects at -1/0/+1 SD for each trait separately
@@ -150,14 +150,14 @@ as.data.frame(simple_effects, n = 50)
 # ----------------------------
 # 7) A compact “takeaway” table (Bayesian evidence)
 # ----------------------------
-takeaway <- mod_tbl %>%
+takeaway <- mod_tbl |>
   transmute(
     trait,
     stress_PD = g1_pd,
     stress_P_expected = g1_p_expected,
     recovery_PD = g2_pd,
     recovery_P_expected = g2_p_expected
-  ) %>%
+  ) |>
   arrange(desc(stress_PD))
 
 cat("\n=== TAKEAWAY (PD + P in expected direction) ===\n")
@@ -169,3 +169,55 @@ cat("• g2: quanto il tratto (1 SD) amplifica/riduce l'effetto recovery b2.\n")
 cat(
   "• Per cambiare ipotesi su NNE, modifica expected_stress/expected_recover.\n"
 )
+
+#' Discussion: Vocal Stress Reactivity as Arousal and Control
+#'
+#' The present findings suggest that exam-related stress modulates vocal
+#' production along two partially dissociable dimensions, reflecting increased
+#' physiological arousal and enhanced phonatory control. Specifically, stress
+#' was associated with a robust increase in fundamental frequency (F0 mean),
+#' accompanied by a concurrent reduction in glottal noise, indexed by more
+#' negative Noise-to-Harmonics Energy (NNE) values. Taken together, these
+#' patterns indicate that acute academic stress does not merely destabilize
+#' vocal production, but instead induces a more controlled and tension-driven
+#' phonatory state.
+#'
+#' The elevation of F0 under stress is consistent with extensive evidence
+#' linking psychological stress and autonomic arousal to increased laryngeal
+#' muscle activation and subglottal pressure. Importantly, the current study
+#' extends this literature by showing that this pitch increase is not uniform
+#' across individuals: Negative Affectivity reliably amplified stress-related
+#' F0 elevation, suggesting that individuals characterized by heightened
+#' emotional reactivity exhibit stronger vocal arousal responses. This finding
+#' aligns with theoretical models positing Negative Affectivity as a core
+#' dimension of stress sensitivity and autonomic responsivity.
+#'
+#' In contrast, changes in NNE followed a different pattern. Rather than
+#' increasing under stress—as might be expected if stress primarily induced
+#' vocal instability—NNE decreased, indicating reduced glottal noise and a more
+#' periodic signal. This effect was consistent across descriptive analyses and
+#' hierarchical Bayesian modeling, and showed little evidence of modulation by
+#' personality traits. From a physiological perspective, this pattern is
+#' compatible with stress-induced hyperadduction or increased laryngeal tension,
+#' leading to a “pressed” voice quality that is acoustically cleaner but less
+#' flexible. Thus, while F0 captures the arousal-driven component of the stress
+#' response, NNE appears to index a control-related component, reflecting
+#' compensatory or regulatory adjustments in phonatory behavior.
+#'
+#' Crucially, the dissociation between F0 and NNE moderation highlights that not
+#' all aspects of vocal stress reactivity are equally shaped by personality traits.
+#' Whereas Negative Affectivity selectively modulated arousal-related pitch
+#' responses, noise-related measures of vocal quality were largely trait-independent,
+#' suggesting a more uniform physiological mechanism. This pattern underscores
+#' the importance of conceptualizing vocal stress responses as multidimensional,
+#' rather than assuming a single pathway of vocal “degradation” under stress.
+#'
+#' Methodologically, these conclusions were enabled by modeling personality
+#' traits as latent variables with explicit measurement error correction,
+#' integrating intensive EMA assessments with hierarchical Bayesian models.
+#' This approach revealed trait-level moderation effects that were not apparent
+#' in conventional mixed-effects analyses, while also clarifying the limits of
+#' personality modulation for certain acoustic parameters. Together, the
+#' findings support a model in which acute stress elicits simultaneous increases
+#' in arousal and control, with personality differences shaping the former more
+#' strongly than the latter.
