@@ -346,7 +346,7 @@ fit_ema <- mod_ema$sample(
   adapt_delta = adapt_delta,
   max_treedepth = max_treedepth,
   seed = 123,
-  refresh = 500
+  refresh = 200
 )
 fit_ema$save_object("results/followup/fit_f0_ema.rds")
 
