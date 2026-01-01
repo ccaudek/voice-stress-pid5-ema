@@ -17,6 +17,8 @@
 
 results/stress/models/*_posterior_samples.csv
 
+results/
+
 # User-specific files
 .Ruserdata
 
