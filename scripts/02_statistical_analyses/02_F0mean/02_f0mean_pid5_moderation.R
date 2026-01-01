@@ -4,6 +4,7 @@
 # ==============================================================================
 
 suppressPackageStartupMessages({
+  library(tidyverse)
   library(cmdstanr)
   library(posterior)
   library(bayesplot)
@@ -15,31 +16,40 @@ pid5_vars <- bundle$pid5_vars
 
 mod <- cmdstan_model("stan/F0/f0mean_pid5_moderation.stan")
 
-fit <- mod$sample(
-  data = stan_data,
-  chains = 4,
-  parallel_chains = 4,
-  iter_warmup = 2000,
-  iter_sampling = 6000,
-  adapt_delta = 0.99,
-  max_treedepth = 15,
-  seed = 123
-)
+# ---- Fit cache: se esiste leggi, altrimenti campiona e salva ----
+fit_rds <- "stan/F0/f0mean_pid5_moderation.RDS"
 
-# Save the fitted model
-# fit$save_object(file = "stan/F0/f0mean_pid5_moderation.RDS")
+if (file.exists(fit_rds)) {
+  message("Trovato fit già salvato: ", fit_rds, " -> lo leggo.")
+  fit <- readRDS(fit_rds)
+} else {
+  message("Fit non trovato: eseguo cmdstanr::sample() e salvo in ", fit_rds)
 
-fit <- readRDS(
-  "stan/F0/f0mean_pid5_moderation.RDS"
-)
+  fit <- mod$sample(
+    data = stan_data,
+    chains = 4,
+    parallel_chains = 4,
+    iter_warmup = 2000,
+    iter_sampling = 6000,
+    adapt_delta = 0.99,
+    max_treedepth = 15,
+    seed = 123
+  )
 
-# Extract the posterior predictive draws
-# Replace "y_rep" with the name of your generated quantity variable
+  # crea la cartella se non esiste
+  dir.create(dirname(fit_rds), recursive = TRUE, showWarnings = FALSE)
+
+  # salva il fitted model
+  fit$save_object(file = fit_rds)
+}
+
+# ---- Posterior predictive checks ----
 y_rep_draws <- fit$draws("y_rep", format = "matrix")
 
-# Create the density overlay plot
-# Replace `stan_data$y` with your actual observed outcome variable from the data list
-ppc_plot <- ppc_dens_overlay(y = stan_data$y, yrep = y_rep_draws[1:100, ])
+ppc_plot <- ppc_dens_overlay(
+  y = stan_data$y,
+  yrep = y_rep_draws[1:100, ]
+)
 print(ppc_plot)
 
 # Salva il plot PPC
@@ -51,7 +61,7 @@ ggsave(
   dpi = 300
 )
 
-# Estrai e salva il summary
+# ---- Summary ----
 summary_results <- fit$summary(c(
   "alpha",
   "b1",
@@ -77,51 +87,66 @@ write.csv(
   row.names = FALSE
 )
 
+# ---- PD per moderazioni ----
 draws <- fit$draws()
 
-# PD per g1 (moderazione stress) e g2 (moderazione recovery)
-# g1[d] è "stress × trait_d" per +1 SD di tratto (perché theta è z)
 pd <- function(x) max(mean(x > 0), mean(x < 0))
+
+pd_results <- data.frame(
+  trait = character(),
+  g1_pd = numeric(),
+  g1_p_gt0 = numeric(),
+  g2_pd = numeric(),
+  g2_p_gt0 = numeric(),
+  stringsAsFactors = FALSE
+)
 
 for (d in 1:stan_data$D) {
   g1d <- as.numeric(draws[,, paste0("g1[", d, "]")])
   g2d <- as.numeric(draws[,, paste0("g2[", d, "]")])
 
-  cat("\n", pid5_vars[d], "\n")
-  cat(
-    "  Stress moderation g1: PD =",
-    round(pd(g1d), 3),
-    "| P(>0) =",
-    round(mean(g1d > 0), 3),
-    "\n"
-  )
-  cat(
-    "  Recovery moderation g2: PD =",
-    round(pd(g2d), 3),
-    "| P(>0) =",
-    round(mean(g2d > 0), 3),
-    "\n"
+  pd_results <- rbind(
+    pd_results,
+    data.frame(
+      trait = pid5_vars[d],
+      g1_pd = pd(g1d),
+      g1_p_gt0 = mean(g1d > 0),
+      g2_pd = pd(g2d),
+      g2_p_gt0 = mean(g2d > 0)
+    )
   )
 }
 
-# pid5_negative_affectivity
-# Stress moderation g1: PD = 0.97 | P(>0) = 0.97
-# Recovery moderation g2: PD = 0.602 | P(>0) = 0.398
-#
-# pid5_detachment
-# Stress moderation g1: PD = 0.585 | P(>0) = 0.415
-# Recovery moderation g2: PD = 0.88 | P(>0) = 0.12
-#
-# pid5_antagonism
-# Stress moderation g1: PD = 0.525 | P(>0) = 0.475
-# Recovery moderation g2: PD = 0.974 | P(>0) = 0.974
-#
-# pid5_disinhibition
-# Stress moderation g1: PD = 0.546 | P(>0) = 0.454
-# Recovery moderation g2: PD = 0.536 | P(>0) = 0.464
-#
-# pid5_psychoticism
-# Stress moderation g1: PD = 0.559 | P(>0) = 0.441
-# Recovery moderation g2: PD = 0.796 | P(>0) = 0.204
+# Arrotonda per output leggibile
+pd_results[, -1] <- round(pd_results[, -1], 3)
+
+# Stampa a schermo (opzionale)
+print(pd_results)
+# trait g1_pd g1_p_gt0 g2_pd g2_p_gt0
+# 1 pid5_negative_affectivity 0.970    0.970 0.602    0.398
+# 2           pid5_detachment 0.585    0.415 0.880    0.120
+# 3           pid5_antagonism 0.525    0.475 0.974    0.974
+# 4        pid5_disinhibition 0.546    0.454 0.536    0.464
+# 5         pid5_psychoticism 0.559    0.441 0.796    0.204
+
+# ---- Salvataggio ----
+write.csv(
+  pd_results,
+  file = here::here(
+    "results",
+    "f0mean",
+    "pd_f0mean_moderation.csv"
+  ),
+  row.names = FALSE
+)
+
+saveRDS(
+  pd_results,
+  file = here::here(
+    "results",
+    "f0mean",
+    "pd_f0mean_moderation.rds"
+  )
+)
 
 # eof ---

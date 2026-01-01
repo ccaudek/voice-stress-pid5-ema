@@ -96,4 +96,38 @@ model {
 generated quantities{
   real delta_stress = b1 - 0.5*b2;
   real delta_recovery = b2 - 0.5*b1;
+  
+  // log_lik for LOO-CV
+  vector[N_voice] log_lik;
+  for (n in 1:N_voice) {
+    int s = subj_voice[n];
+    
+    real b1s = b1
+      + dot_product(g1_ema, theta[s]')
+      + dot_product(g1_base, Z[s]');
+    
+    real b2s = b2
+      + dot_product(g2_ema, theta[s]')
+      + dot_product(g2_base, Z[s]');
+    
+    real mu = alpha + u0[s] + (b1s + u1[s]) * c1[n] + (b2s + u2[s]) * c2[n];
+    log_lik[n] = normal_lpdf(y[n] | mu, sigma_y);
+  }
+  
+  // posterior predictive for checking
+  vector[N_voice] y_rep;
+  for (n in 1:N_voice) {
+    int s = subj_voice[n];
+    
+    real b1s = b1
+      + dot_product(g1_ema, theta[s]')
+      + dot_product(g1_base, Z[s]');
+    
+    real b2s = b2
+      + dot_product(g2_ema, theta[s]')
+      + dot_product(g2_base, Z[s]');
+    
+    real mu = alpha + u0[s] + (b1s + u1[s]) * c1[n] + (b2s + u2[s]) * c2[n];
+    y_rep[n] = normal_rng(mu, sigma_y);
+  }
 }
