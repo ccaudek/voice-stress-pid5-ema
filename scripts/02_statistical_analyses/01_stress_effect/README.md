@@ -1,333 +1,368 @@
-# Analysis Pipeline: Main Effects of Exam Stress on Vocal Production
+# Analysis Pipeline: Stress Effects on Voice (Main Effects Only)
 
-This directory contains a complete analysis pipeline for examining the main effects of exam-related stress on vocal acoustic parameters (F0 and NNE), excluding personality trait moderations.
+**Purpose:** Examine how exam stress alters vocal F0 and NNE using hierarchical Bayesian models.
 
-## Overview
+**Key Question:** Does acute stress change fundamental frequency and glottal noise?
 
-The pipeline consists of:
-1. **Stan models** for hierarchical Bayesian analysis
-2. **R scripts** for data preparation, model fitting, and visualization
-3. **Manuscript sections** (Results and Discussion) ready for integration
+---
 
-## Directory Structure
+## Quick Start
 
-```
-project/
-├── data/
-│   └── voice_stress_data.csv          # Your raw data (not included)
-├── models/
-│   ├── f0_main_effects.stan            # Stan model for F0
-│   ├── nne_main_effects.stan           # Stan model for NNE
-│   ├── fit_f0_main_effects.rds         # Fitted F0 model (generated)
-│   └── fit_nne_main_effects.rds        # Fitted NNE model (generated)
-├── scripts/
-│   ├── 01_main_effects_analysis.R      # Main analysis script
-│   ├── 02_manuscript_tables_figures.R  # Generate publication materials
-│   └── 05_populate_results.R           # Auto-populate Results section
-├── results/
-│   ├── f0_main_effects_summary.csv     # F0 parameter summaries
-│   ├── nne_main_effects_summary.csv    # NNE parameter summaries
-│   ├── f0_posterior_samples.csv        # Full F0 posterior
-│   └── nne_posterior_samples.csv       # Full NNE posterior
-├── figures/
-│   ├── f0_posterior_effects.png
-│   ├── nne_posterior_effects.png
-│   ├── f0_ppc.png
-│   ├── nne_ppc.png
-│   ├── f0_marginal_means.png
-│   ├── nne_marginal_means.png
-│   ├── figure1_posterior_distributions.png
-│   ├── figure2_trajectories.png
-│   └── figure3_effect_sizes.png
-├── tables/
-│   ├── table1_main_effects.html
-│   └── table1_main_effects.docx
-├── manuscript/
-│   ├── results_main_effects_complete.md    # Auto-generated Results section
-│   ├── discussion_main_effects.md          # Discussion section
-│   └── parameter_estimates_summary.csv     # Quick reference table
-└── README.md                               # This file
-```
-
-## Prerequisites
-
-### Required R Packages
-
+### Prerequisites
 ```r
-install.packages(c(
-  "tidyverse",
-  "rstan",
-  "bayesplot",
-  "loo",
-  "posterior",
-  "gt",
-  "patchwork",
-  "here",
-  "glue"
-))
+install.packages(c("tidyverse", "rstan", "bayesplot", "loo", "posterior", "gt", "here", "glue"))
 ```
 
-### Stan Installation
+### Run Analysis (Execute in Order)
+```bash
+# 1. Fit models (10-30 min runtime)
+Rscript 01_main_effects_analysis.R
 
-Ensure you have a working Stan installation. See: https://mc-stan.org/users/interfaces/rstan
+# 2. Generate tables/figures
+Rscript 02_manuscript_tables_figures.R
 
-## Data Requirements
+# 3. Auto-populate Results section
+Rscript 05_populate_results.R
 
-Your dataset should have the following structure:
-
+# 4. Quality control diagnostics
+Rscript 06_diagnostic_report.R
 ```
-subj_id    timepoint    f0_mean    nne
--------    ---------    -------    ----
-1          BASELINE     215.3      -26.8
-1          PRE          223.1      -28.4
-1          POST         220.5      -27.9
-2          BASELINE     198.2      -25.3
+
+---
+
+## Model Specification
+
+### Data Structure Required
+```
+subj_id  timepoint   f0_mean   nne
+1        BASELINE    215.3     -26.8
+1        PRE         223.1     -28.4
+1        POST        220.5     -27.9
 ...
 ```
 
-### Required Variables
+### Orthogonal Contrasts
+- **c1 (Stress):** PRE vs BASELINE → β₁ captures stress-induced change
+- **c2 (Recovery):** POST vs PRE → β₂ captures recovery/persistence
 
-- `subj_id`: Unique participant identifier (numeric or character)
-- `timepoint`: Factor with levels `BASELINE`, `PRE`, `POST`
-- `f0_mean`: Fundamental frequency in Hz (numeric)
-- `nne`: Normalized Noise Energy in dB (numeric)
-
-## Analysis Pipeline
-
-### Step 1: Prepare Your Data
-
-Place your data file in `data/voice_stress_data.csv` or update the file path in the scripts.
-
-### Step 2: Run Main Analysis
-
-```r
-source("scripts/01_main_effects_analysis.R")
-```
-
-This script will:
-- Load and prepare your data
-- Create contrast codes (c1: stress, c2: recovery)
-- Fit hierarchical Bayesian models for F0 and NNE
-- Generate diagnostic plots
-- Save fitted models and posterior samples
-
-**Expected runtime:** 10-30 minutes depending on your data size and computer
-
-### Step 3: Generate Manuscript Materials
-
-```r
-source("scripts/02_manuscript_tables_figures.R")
-```
-
-This creates:
-- Publication-ready tables (HTML and Word formats)
-- Figures for main text and supplements
-- Diagnostic visualizations
-
-### Step 4: Populate Results Section
-
-```r
-source("scripts/05_populate_results.R")
-```
-
-This automatically fills in all numerical values in the Results section template, generating a complete, ready-to-use manuscript section.
-
-## Model Specifications
-
-### Contrast Coding
-
-We use orthogonal contrast codes to decompose the stress response:
-
-**Stress Contrast (c1):** PRE vs BASELINE
-- BASELINE: -0.5
-- PRE: +0.5  
-- POST: 0
-
-**Recovery Contrast (c2):** POST vs PRE
-- BASELINE: 0
-- PRE: -0.5
-- POST: +0.5
+| Timepoint | c1    | c2    |
+|-----------|-------|-------|
+| BASELINE  | -0.5  | 0.0   |
+| PRE       | +0.5  | -0.5  |
+| POST      | 0.0   | +0.5  |
 
 ### Hierarchical Structure
+```
+Level 1: y_ij = α + β₁·c1 + β₂·c2 + u₀ᵢ + u₁ᵢ·c1 + u₂ᵢ·c2 + εᵢⱼ
+Level 2: [u₀, u₁, u₂] ~ MVN(0, Σ)
+```
 
-Both models include:
-- **Fixed effects:** Intercept (α), stress effect (β₁), recovery effect (β₂)
-- **Random effects:** Subject-specific intercepts and slopes for both contrasts
-- **Non-centered parameterization** for computational efficiency
+Random effects allow individual differences in:
+- Baseline vocal parameters (u₀)
+- Stress reactivity (u₁)
+- Recovery dynamics (u₂)
 
-### Priors
+---
 
-**F0 Model:**
-- α ~ Normal(220, 30) — typical adult pitch range
-- β₁, β₂ ~ Normal(0, 10) — weakly informative
-- τ ~ Exponential(0.5) — random effect SDs
-- σ ~ Exponential(0.1) — residual SD
+## Quality Control Checklist
 
-**NNE Model:**
-- α ~ Normal(-28, 5) — typical NNE values
-- β₁, β₂ ~ Normal(0, 5) — weakly informative
-- τ ~ Exponential(0.2) — random effect SDs
-- σ ~ Exponential(0.2) — residual SD
+### ✅ **STEP 1: Verify Model Convergence**
+**Check:** `results/diagnostic_report.txt`
 
-## Interpreting Results
+```
+Required:
+□ R-hat < 1.01 for all parameters
+□ ESS > 400 for all parameters  
+□ Divergent transitions = 0
+□ Pareto k < 0.7 (LOO diagnostic)
+```
 
-### Key Parameters
+**If any fail** → See Troubleshooting below
 
-- **α (Intercept):** Estimated baseline value (BASELINE timepoint)
-- **β₁ (Stress effect):** Change from BASELINE to PRE (stress induction)
-- **β₂ (Recovery effect):** Change from PRE to POST (recovery phase)
-- **τ:** Between-person standard deviations
-- **σ:** Residual (within-person) standard deviation
+---
 
-### Posterior Probabilities
+### 📊 **STEP 2: Extract Results for Manuscript**
 
-- **P(β > 0):** Probability that effect is positive
-- **P(β < 0):** Probability that effect is negative
-- Values > 0.95 indicate strong directional evidence
+#### Main Results File (Ready to Use)
+```
+manuscript/results_main_effects_complete.md
+```
+- **What it contains:** Complete Results section with all numerical values populated
+- **How to use:** Copy/paste directly into your manuscript
+- **Auto-generated by:** `05_populate_results.R`
 
-### Effect Size Interpretation
+#### Quick Reference Table
+```
+manuscript/parameter_estimates_summary.csv
+```
 
-**F0 Mean:**
-- Small: 3-5 Hz
-- Medium: 5-10 Hz  
-- Large: >10 Hz
+Example output:
+```
+Parameter          | Median | 95% CI           | P(direction)
+F0: Stress (β₁)    | 3.27   | [0.81, 5.71]    | 0.995
+F0: Recovery (β₂)  | 0.14   | [-2.34, 2.59]   | 0.542
+NNE: Stress (β₁)   | -0.65  | [-1.20, -0.11]  | 0.990
+NNE: Recovery (β₂) | -0.22  | [-0.77, 0.33]   | 0.781
+```
 
-**NNE:**
-- Small: 0.5-1.5 dB
-- Medium: 1.5-3 dB
-- Large: >3 dB
+**Interpretation:**
+- P(direction) > 0.95 → Strong evidence
+- P(direction) 0.80-0.95 → Moderate evidence
+- P(direction) < 0.80 → Weak/ambiguous
+
+---
+
+### 📈 **STEP 3: Publication Materials**
+
+#### Table for Main Text
+```
+results/stress/tables/table1_main_effects.docx  (insert in Word)
+results/stress/tables/table1_main_effects.html  (preview/web)
+```
+
+#### Figures for Main Text
+```
+results/stress/figures/figure1_posterior_distributions.png
+results/stress/figures/figure2_trajectories.png
+results/stress/figures/figure3_effect_sizes.png
+```
+
+#### Supplementary Diagnostics
+```
+figures/diagnostic_trace_f0.png      (MCMC convergence)
+figures/diagnostic_acf_f0.png        (Autocorrelation)
+results/stress/figures/f0_ppc.png    (Posterior predictive checks)
+```
+
+---
+
+### 🔍 **STEP 4: Advanced Verification (Optional)**
+
+If you need to verify specific calculations:
+
+**Full posterior samples:**
+```
+results/stress/models/f0_posterior_samples.csv   (16,000 draws × parameters)
+results/stress/models/nne_posterior_samples.csv
+```
+
+**Descriptive statistics:**
+```
+results/stress/descriptive_statistics.csv
+```
+
+Example:
+```r
+library(tidyverse)
+
+# Load posterior
+post_f0 <- read_csv("results/stress/models/f0_posterior_samples.csv")
+
+# Custom calculation
+median(post_f0$b1)                    # Stress effect median
+quantile(post_f0$b1, c(0.025, 0.975)) # 95% CI
+mean(post_f0$b1 > 0)                  # P(β₁ > 0)
+
+# Effect size relative to baseline variability
+post_f0 %>%
+  summarise(
+    stress_effect = median(b1),
+    baseline_sd = median(`tau[1]`),
+    cohen_d = stress_effect / baseline_sd
+  )
+```
+
+---
 
 ## Expected Results
 
-Based on existing literature and preliminary findings:
+### F0 Mean (Fundamental Frequency)
+- **Stress effect (β₁):** Positive (~3-8 Hz increase)
+  - **Interpretation:** Pitch elevation due to laryngeal tension and arousal
+  - **P(β₁ > 0) > 0.95** → Strong evidence
+  
+- **Recovery effect (β₂):** Variable (may persist, plateau, or normalize)
+  - **β₂ ≈ 0:** Stress-induced elevation persists post-exam
+  - **β₂ < 0:** Partial recovery toward baseline
+  - **β₂ > 0:** Continued elevation
 
-### F0 Mean
-- **Stress effect (β₁):** Positive, robust increase (~5-15 Hz)
-- **Recovery effect (β₂):** Variable (may remain elevated, plateau, or partially normalize)
+### NNE (Normalized Noise Energy)
+- **Stress effect (β₁):** Negative (~0.5-1.5 dB decrease)
+  - **Interpretation:** Reduced glottal noise = more periodic signal (pressed voice)
+  - **P(β₁ < 0) > 0.95** → Strong evidence
+  
+- **Recovery effect (β₂):** Variable (similar patterns to F0)
 
-### NNE
-- **Stress effect (β₁):** Negative, reduction in glottal noise (~1-3 dB decrease)
-- **Recovery effect (β₂):** Variable (may begin to normalize or persist)
+### Dual-Process Interpretation
+- **F0 ↑:** Arousal-driven (sympathetic activation)
+- **NNE ↓:** Control-driven (compensatory phonatory adjustment)
+- **Dissociation:** Supports multiple independent mechanisms
+
+---
 
 ## Troubleshooting
 
-### Convergence Issues
+### Convergence Problems (R-hat > 1.01)
 
-If models fail to converge (R-hat > 1.01):
+**Solution 1:** Increase adapt_delta
+```r
+# In 01_main_effects_analysis.R, line ~212
+adapt_delta = 0.99  # increase from 0.95
+```
 
-1. Increase `adapt_delta`:
-   ```r
-   control = list(adapt_delta = 0.99)
-   ```
+**Solution 2:** More iterations
+```r
+iter_warmup = 3000,    # increase from 2000
+iter_sampling = 6000,  # increase from 4000
+```
 
-2. Increase iterations:
-   ```r
-   iter = 6000, warmup = 3000
-   ```
+**Solution 3:** Check data
+```r
+# Look for outliers
+df_voice %>%
+  group_by(timepoint) %>%
+  summarise(across(c(y_f0, y_nne), 
+                   list(min = min, max = max, mean = mean, sd = sd)))
+```
 
-3. Check for data issues (outliers, missing values)
+### Divergent Transitions > 0
+
+This usually indicates:
+1. **Model misspecification** (unlikely with these simple models)
+2. **Extreme parameter values** (check priors are reasonable)
+3. **Numerical issues** (try stronger priors on τ)
+
+**Fix:**
+```r
+# In .stan files, line ~45-46
+tau ~ exponential(1.0);  # stronger prior (faster decay)
+```
 
 ### Memory Issues
 
-If you encounter memory errors:
+**Solution:** Thin posterior samples
+```r
+# In 05_populate_results.R, after loading
+post_f0 <- post_f0 %>% slice_sample(n = 4000)  # reduce from 16,000
+```
 
-1. Reduce posterior samples saved:
-   ```r
-   post_f0 <- as_draws_df(fit_f0) %>% slice_sample(n = 4000)
-   ```
+---
 
-2. Process models separately (comment out one model fit at a time)
+## File Paths Reference
 
-### Data Structure Errors
+### Input
+```
+data/raw/acustic_features/datiacustici/AUDIO.xlsx
+```
 
-Common issues:
-- Ensure `subj_id` is sequential integers (1, 2, 3, ...)
-- Check for missing timepoints (each participant needs all 3)
-- Verify contrast codes sum to zero
+### Stan Models
+```
+stan/stress/f0_main_effects.stan
+stan/stress/nne_main_effects.stan
+```
+
+### Outputs (Generated)
+```
+results/stress/
+├── models/
+│   ├── fit_f0_main_effects.rds          # Fitted model objects
+│   ├── fit_nne_main_effects.rds
+│   ├── f0_posterior_samples.csv         # Full posterior (16k draws)
+│   └── nne_posterior_samples.csv
+├── figures/
+│   ├── figure1_posterior_distributions.png
+│   ├── figure2_trajectories.png
+│   ├── figure3_effect_sizes.png
+│   ├── f0_ppc.png
+│   └── nne_ppc.png
+├── tables/
+│   ├── table1_main_effects.html
+│   └── table1_main_effects.docx
+└── descriptive_statistics.csv
+
+manuscript/
+├── results_main_effects_complete.md     # ← COPY THIS TO MANUSCRIPT
+└── parameter_estimates_summary.csv      # Quick reference
+
+results/
+└── diagnostic_report.txt                # ← CHECK THIS FIRST
+```
+
+---
+
+## Parameter Interpretation Guide
+
+### Fixed Effects
+- **α (alpha):** Grand mean at BASELINE (after accounting for contrasts)
+- **β₁ (b1):** Average change PRE → BASELINE (stress effect)
+- **β₂ (b2):** Average change POST → PRE (recovery effect)
+
+### Random Effects
+- **τ₁ (tau[1]):** SD of individual baselines
+- **τ₂ (tau[2]):** SD of individual stress effects (reactivity heterogeneity)
+- **τ₃ (tau[3]):** SD of individual recovery effects
+- **σ (sigma_y):** Residual SD (within-person noise)
+
+### Variance Partitioning
+```r
+# Intraclass correlation (baseline)
+ICC = τ₁² / (τ₁² + σ²)
+
+# Proportion of stress variance between-person
+R² = τ₂² / (τ₂² + σ²)
+```
+
+---
+
+## Effect Size Benchmarks
+
+### F0 Mean (Hz)
+- **Small:** 3-5 Hz
+- **Medium:** 5-10 Hz
+- **Large:** >10 Hz
+
+**Context:** Just-noticeable difference ~1-2 Hz; clinical significance ~5 Hz
+
+### NNE (dB)
+- **Small:** 0.5-1.5 dB
+- **Medium:** 1.5-3 dB
+- **Large:** >3 dB
+
+**Context:** NNE typically ranges -15 to -30 dB; 1 dB change is perceptible
+
+---
 
 ## Citation
 
 If you use this pipeline, please cite:
 
+```bibtex
+@article{yourname2025stress,
+  title={Acoustic signatures of exam stress: A hierarchical Bayesian analysis},
+  author={Your Name and Collaborators},
+  journal={Journal Name},
+  year={2025},
+  note={Analysis code: https://github.com/yourrepo}
+}
 ```
-[Your manuscript citation here]
-```
-
-## Contact
-
-For questions or issues:
-- Email: [your email]
-- GitHub Issues: [repository link if applicable]
-
-## License
-
-[Specify your license here, e.g., MIT, CC-BY-4.0]
 
 ---
 
-## Advanced Usage
+## Questions?
 
-### Customizing Priors
+**Common issues:**
+- Model won't converge → See Troubleshooting section
+- Results look weird → Check `results/diagnostic_report.txt` first
+- Path errors → Verify working directory with `here::here()`
+- Missing packages → Run Prerequisites section
 
-Edit the `.stan` files to modify prior specifications:
+**For additional support:**
+- GitHub Issues: [repository link]
+- Email: [your email]
 
-```stan
-// In f0_main_effects.stan, line 58-61:
-alpha ~ normal(220, 30);  // Change mean and SD as needed
-b1 ~ normal(0, 10);       // Adjust informativeness
-```
+---
 
-### Adding Covariates
+## Version
 
-To include additional predictors (e.g., age, gender):
-
-1. Add to `data` block:
-   ```stan
-   vector[N_obs] age;
-   ```
-
-2. Add to `parameters`:
-   ```stan
-   real b_age;
-   ```
-
-3. Include in likelihood:
-   ```stan
-   real mu = alpha + u0[s] + b_age * age[n] + ...
-   ```
-
-### Posterior Predictive Checks
-
-Generate additional PPCs:
-
-```r
-# Density overlay by timepoint
-ppc_dens_overlay_grouped(
-  y = stan_data_f0$y,
-  yrep = y_rep_f0[1:100, ],
-  group = df$timepoint
-)
-```
-
-### Model Comparison
-
-Compare nested models using LOO-CV:
-
-```r
-# Fit null model (no stress effects)
-fit_null <- stan(...)
-
-# Compare
-loo_compare(loo_null, loo_f0)
-```
-
-## Version History
-
-- **v1.0** (2025-01-XX): Initial release
-  - Main effects models for F0 and NNE
-  - Complete manuscript sections
-  - Visualization pipeline
-
-## Acknowledgments
-
-This pipeline was developed for analyzing exam stress effects on vocal production using hierarchical Bayesian methods. Thanks to [acknowledge collaborators/funding here].
+- **v1.0** (2025-01): Initial release
+- **Analysis date:** Check timestamp in `diagnostic_report.txt`
