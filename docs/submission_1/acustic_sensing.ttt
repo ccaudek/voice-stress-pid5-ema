@@ -1,0 +1,91 @@
+\begin{table*}[hbt]
+\ifnextchar[{\eatarg}{}
+[h]
+\caption{Personality Moderation of Fundamental Frequency (F0)}
+\label{tab:f0-moderation}
+\small
+\begin{tabular}{lcccc}
+\hline
+\multirow{2}{*}{Domain} & \multicolumn{2}{c}{Stress ($\gamma_1$)} & \multicolumn{2}{c}{Recovery ($\gamma_2$)} \\
+\cmidrule(lr){2-3} \cmidrule(lr){4-5}
+ & Median [95\% CrI] & PD & Median [95\% CrI] & PD \\
+\hline
+\textbf{Negative Affectivity} & \textbf{3.14 [0.37, 5.89]} & \textbf{0.97} & -0.31 [-3.13, 2.51] & 0.60 \\
+Detachment & -0.38 [-3.10, 2.31] & 0.59 & -2.02 [-4.84, 0.76] & 0.88 \\
+\textbf{Antagonism} & 0.09 [-2.51, 2.69] & 0.52 & \textbf{3.16 [0.51, 5.78]} & \textbf{0.97} \\
+Disinhibition & 0.61 [-2.60, 3.82] & 0.64 & 0.68 [-2.51, 3.87] & 0.67 \\
+Psychoticism & -0.13 [-2.74, 2.46] & 0.54 & -1.22 [-3.81, 1.32] & 0.80 \\
+\hline
+\end{tabular}
+\begin{tablenotes}
+\small
+\item \textit{Note.} Moderation effects in Hz per SD of trait. PD = Probability of Direction. Bold = strong certainty (PD > 0.95). CrI = Credible Interval.
+\end{tablenotes}
+\end{table*}
+\begin{table*}[hbt]
+\ifnextchar[{\eatarg}{}
+[h]
+\caption{Personality Moderation of Normalized Noise Energy (NNE)}
+\label{tab:nne-moderation}
+\small
+\begin{tabular}{lcccc}
+\hline
+\multirow{2}{*}{Domain} & \multicolumn{2}{c}{Stress Moderation ($\gamma_1$)} & \multicolumn{2}{c}{Recovery Moderation ($\gamma_2$)} \\
+\cmidrule(lr){2-3} \cmidrule(lr){4-5}
+ & Median [95\% CrI] & PD & Median [95\% CrI] & PD \\
+\hline
+Negative Affectivity & -0.46 [-1.45, 0.52] & 0.83 & -0.39 [-1.38, 0.62] & 0.79 \\
+Detachment & 0.29 [-0.69, 1.30] & 0.72 & 0.21 [-0.77, 1.21] & 0.66 \\
+Antagonism & -0.01 [-0.94, 0.90] & 0.51 & -0.43 [-1.37, 0.49] & 0.82 \\
+Disinhibition & 0.33 [-0.86, 1.51] & 0.71 & -0.39 [-1.56, 0.79] & 0.74 \\
+\textbf{Psychoticism} & -0.02 [-1.04, 0.97] & 0.52 & \textbf{0.88 [0.05, 1.72]} & \textbf{0.96} \\
+\hline
+\end{tabular}
+\begin{tablenotes}
+\small
+\item \textit{Note.} Moderation effects represent the change in NNE (dB) associated with a one-standard-deviation increase in the trait. Positive values indicate less negative NNE (increased glottal noise). PD = Probability of Direction (maximum of P($\gamma$ > 0) and P($\gamma$ < 0)). Bold indicates strong directional certainty (PD > 0.95). CrI = Credible Interval.
+\end{tablenotes}
+\end{table*}
+\begin{table*}[hbt]
+\ifnextchar[{\eatarg}{}
+[h]
+\caption{Model Comparison: Out-of-Sample Predictive Performance}
+\label{tab:model-comparison}
+\small
+\begin{tabular}{lcccc}
+\hline
+ & \multicolumn{2}{c}{ELPD} & \multicolumn{2}{c}{LOOIC} \\
+\cmidrule(lr){2-3} \cmidrule(lr){4-5}
+Model & Estimate (SE) & Δ (SE) & Estimate (SE) & p\_loo (SE) \\
+\hline
+EMA & -1247.3 (16.8) & — & 2494.6 (33.7) & 110.3 (9.2) \\
+Combined & -1250.3 (16.7) & -3.0 (3.6) & 2500.6 (33.3) & 118.0 (9.4) \\
+Baseline & -1251.9 (16.9) & -4.6 (4.0) & 2503.8 (33.8) & 109.0 (8.9) \\
+\hline
+\end{tabular}
+\begin{tablenotes}
+\small
+\item \textit{Note.} ELPD = Expected Log Predictive Density, LOOIC = Leave-One-Out Information Criterion, SE = Standard Error. The Δ ELPD column shows the difference relative to the best-performing model (EMA).
+\end{tablenotes}
+\end{table*}
+\begin{table*}[hbt]
+\ifnextchar[{\eatarg}{}
+[h]
+\caption{Comparison of Negative Affectivity × Stress Moderation Estimates Across Measurement Approaches}
+\label{tab:na-stress-moderation-comparison}
+\small
+\begin{tabular}{lcccc}
+\hline
+ & \multicolumn{3}{c}{Negative Affectivity × Stress ($\gamma_1$)} & \\
+\cmidrule(lr){2-4}
+Model & Mean (Hz) & 90\% CrI & PD & Improvement \\
+\hline
+EMA & 3.07 & $[-0.44, 6.55]$ & 0.96 & +28\% \\
+Baseline & 2.65 & $[-2.20, 7.52]$ & 0.86 & -- \\
+\hline
+\end{tabular}
+\begin{tablenotes}
+\small
+\item \textit{Note.} $\gamma_1$ = moderation effect of Negative Affectivity on stress-induced F0 change; PD = probability of direction (proportion of posterior above/below zero); CrI Width = credible interval width; Improvement = precision gain of EMA relative to Baseline [(Baseline width - EMA width) / Baseline width]. The EMA-based estimate shows \textbf{28\% narrower uncertainty bounds} while maintaining comparable point estimates, reflecting enhanced precision through explicit measurement error modeling across repeated assessments.
+\end{tablenotes}
+\end{table*}

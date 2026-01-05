@@ -1,0 +1,203 @@
+---
+title             : "The title"
+shorttitle        : "Title"
+
+author: 
+  - name          : "First Author"
+    affiliation   : "1"
+    corresponding : yes    # Define only one corresponding author
+    address       : "Postal address"
+    email         : "my@email.com"
+    role: # Contributorship roles (e.g., CRediT, https://credit.niso.org/)
+      - "Conceptualization"
+      - "Writing - Original Draft Preparation"
+      - "Writing - Review & Editing"
+  - name          : "Ernst-August Doelle"
+    affiliation   : "1,2"
+    role:
+      - "Writing - Review & Editing"
+      - "Supervision"
+
+affiliation:
+  - id            : "1"
+    institution   : "Wilhelm-Wundt-University"
+  - id            : "2"
+    institution   : "Konstanz Business School"
+
+authornote: |
+  Add complete departmental affiliations for each author here. Each new line herein must be indented, like this line.
+
+  Enter author note here.
+
+abstract: |
+  One or two sentences providing a **basic introduction** to the field,  comprehensible to a scientist in any discipline.
+  Two to three sentences of **more detailed background**, comprehensible  to scientists in related disciplines.
+  One sentence clearly stating the **general problem** being addressed by  this particular study.
+  One sentence summarizing the main result (with the words "**here we show**" or their equivalent).
+  Two or three sentences explaining what the **main result** reveals in direct comparison to what was thought to be the case previously, or how the  main result adds to previous knowledge.
+  One or two sentences to put the results into a more **general context**.
+  Two or three sentences to provide a **broader perspective**, readily comprehensible to a scientist in any discipline.
+  
+  <!-- https://tinyurl.com/ybremelq -->
+  
+keywords          : "keywords"
+wordcount         : "X"
+
+bibliography      : "r-references.bib"
+
+floatsintext      : no
+linenumbers       : yes
+draft             : no
+mask              : no
+
+figurelist        : no
+tablelist         : no
+footnotelist      : no
+
+classoption       : "man"
+output            : papaja::apa6_pdf
+---
+
+```{r setup, include = FALSE}
+library("papaja")
+r_refs("r-references.bib")
+```
+
+```{r analysis-preferences}
+# Seed for random number generation
+set.seed(42)
+knitr::opts_chunk$set(cache.extra = knitr::rand_seed)
+```
+
+# Main Effects of Exam Stress on Vocal Production
+
+## F0
+
+Between-person variability in baseline F0 was substantial (τ₁ = 19.86281 Hz, 95% CI 
+[17.68257, 22.44086]), accounting for 83% of total variance (ICC = 0.83). Individual 
+differences in stress reactivity were moderate (τ₂ = 1.080926 Hz, 95% CI [0.04109089, 4.452379]), 
+with a τ₂/β₁ ratio of 0.33, indicating that individual variability was approximately 
+one-third the magnitude of the average stress effect. Importantly, using the posterior 
+distribution of random slopes, we estimated that 95% of individuals exhibited 
+stress-related F0 increases ranging from 1.2 to 5.4 Hz, indicating that while the 
+magnitude varied across individuals, the direction of the effect was consistent: 
+all participants showed pitch elevation under stress.
+
+## NNE
+
+Between-person variability in baseline NNE was substantial (τ₁ = [2.146829] dB, 95% CI 
+[1.840238, 2.508342]), accounting for 55% of total variance (ICC = 0.55). Critically, 
+individual differences in stress reactivity were very large (τ₂ = [0.8301103] dB, 95% CI 
+[0.0432476, 1.911727]), with a τ₂/β₁ ratio of 1.27, indicating that individual heterogeneity exceeded the magnitude of the average population effect. 
+
+Using the posterior distribution of random slopes, we estimated that 95% of individuals exhibited stress-related NNE changes ranging from -2.3 to +1.0 dB. This wide prediction interval crosses zero, revealing substantial heterogeneity in individual responses. 
+Specifically, we estimate that approximately 22% of individuals showed stress-related 
+increases in glottal noise (positive NNE changes), contrary to the population-level 
+trend toward noise reduction. This pronounced between-person heterogeneity contrasts 
+sharply with the consistency of F0 responses, where all individuals showed pitch 
+elevation under stress, and suggests that phonatory control adjustments are more 
+strongly influenced by individual differences than arousal-driven pitch changes.
+
+
+| Metric | F0 Mean | NNE |
+|--------|---------|-----|
+| Population effect (β₁) | +3.3 Hz*** | -0.65 dB*** |
+| Between-person SD (τ₂) | 1.1 Hz | 0.83 dB |
+| Ratio τ₂/β₁ | 0.33 | 1.27 |
+| ICC (baseline) | 82.6% | 54.5% |
+| 95% PI for individual effect | [1.2, 5.4] Hz | [-2.3, +1.0] dB |
+| % with opposite effect | 0% | 21.6% |
+| **Interpretation** | **Universal response** | **Heterogeneous response** |
+
+
+## Individual Variability: Universal F0 Elevation vs Heterogeneous NNE Responses
+
+### Contrasting Patterns of Individual Differences
+
+A critical finding emerged from variance partitioning: stress-induced F0 elevation was 
+remarkably consistent across individuals (τ₂/β₁ = 0.33; 95% PI: 1.2–5.4 Hz, all positive), 
+whereas NNE responses showed pronounced heterogeneity (τ₂/β₁ = 1.27; 95% PI: -2.3 to +1.0 dB, 
+crossing zero). This fourfold difference in relative variability indicates fundamentally 
+different processes underlying these two dimensions of vocal stress response.
+
+Most strikingly, while 100% of individuals exhibited stress-related pitch elevation, our 
+model estimates that approximately 22% showed stress-related increases in glottal noise—
+directly opposite to the population-level trend toward reduced noise. This is not merely 
+statistical noise: individuals showing "paradoxical" NNE increases may represent a distinct 
+subgroup employing qualitatively different phonatory strategies under stress.
+
+### Theoretical Implications
+
+**Why is F0 universal but NNE heterogeneous?**
+
+The universality of F0 elevation likely reflects the obligatory nature of autonomic stress 
+responses. Sympathetic activation increases laryngeal muscle tension and subglottal pressure 
+via relatively automatic, phylogenetically conserved pathways that operate similarly across 
+individuals. While the magnitude varies (presumably reflecting trait differences in 
+autonomic reactivity), the direction is invariant.
+
+In contrast, NNE—indexing the balance between harmonic and noise energy in the glottal 
+signal—depends on fine-grained adjustments in vocal fold contact patterns, adduction force, 
+and phonatory mode. These adjustments likely reflect a combination of:
+
+1. **Compensatory vocal strategies**: Some speakers may habitually adopt pressed phonation 
+   under stress (reducing noise), while others maintain modal phonation or even shift toward 
+   breathy voice (increasing noise)
+
+2. **Baseline vocal habits**: Individuals with habitually pressed or tense voice quality may 
+   show ceiling effects, limiting further noise reduction
+
+3. **Attentional modulation**: Stress-induced hypervigilance might promote conscious vocal 
+   monitoring in some individuals (enhancing control, reducing noise) but distraction in 
+   others (degrading control, increasing noise)
+
+4. **Physiological constraints**: Anatomical differences in laryngeal structure or chronic 
+   vocal tension may constrain the range of phonatory adjustments available under stress
+
+### Practical and Clinical Implications
+
+These findings have important implications for applied stress detection:
+
+**F0 as a population-level biomarker**: The consistency of stress-related F0 elevation across 
+all individuals—despite variation in magnitude—suggests F0 could serve as a relatively 
+robust, calibration-free indicator of acute stress in real-world applications.
+
+**NNE requires individual calibration**: The 22% of individuals showing opposite effects means 
+NNE cannot be interpreted without individual baseline data or additional contextual information. 
+This may explain why personality trait moderators (examined separately) showed stronger effects 
+for F0 than NNE: traits may predict magnitude of universal responses more reliably than 
+direction of heterogeneous responses.
+
+**Multi-parameter approaches essential**: The dissociation underscores that vocal stress 
+responses are multidimensional. Relying solely on NNE (or any single parameter) risks 
+misclassifying the ~22% of individuals whose responses deviate from population trends. 
+Combining F0 (universal) with NNE (heterogeneous but informative about individual strategies) 
+provides complementary information about both general arousal state and individual-specific 
+regulatory dynamics.
+
+### Unanswered Questions
+
+Why do ~22% of individuals show increased glottal noise under stress? Potential explanations 
+include:
+
+- **Vocal fatigue**: If stress-induced tension leads to incomplete glottal closure in some 
+  individuals
+- **Breathy phonation as anxiety marker**: Some individuals may adopt breathy voice as a 
+  submissive or affiliative signal under evaluative stress
+- **Measurement confounds**: Increased respiratory rate under stress might introduce 
+  turbulent noise that NNE captures but that reflects respiration rather than phonation
+
+Future work should:
+1. Examine whether the 22% showing paradoxical NNE increases differ systematically in 
+   personality, vocal training, or baseline voice quality
+2. Use laryngeal imaging or EGG to directly observe glottal dynamics in high vs low NNE 
+   responders
+3. Test whether individual NNE response patterns are stable across stressors or represent 
+   state-dependent variation
+   
+\newpage
+
+# References
+
+::: {#refs custom-style="Bibliography"}
+:::
