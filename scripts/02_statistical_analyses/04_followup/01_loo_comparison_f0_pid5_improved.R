@@ -282,9 +282,21 @@ stan_data_combined <- list(
 cat("=== COMPILING IMPROVED STAN MODELS ===\n")
 
 # Point to the improved .stan files in stan/followup/
-stan_file_ema <- here("stan", "followup", "f0mean_pid5_moderation_improved.stan")
-stan_file_baseline <- here("stan", "followup", "pid5_baseline_moderation_improved.stan")
-stan_file_combined <- here("stan", "followup", "pid5_ema_plus_baseline_moderation_improved.stan")
+stan_file_ema <- here(
+  "stan",
+  "followup",
+  "f0mean_pid5_moderation_improved.stan"
+)
+stan_file_baseline <- here(
+  "stan",
+  "followup",
+  "pid5_baseline_moderation_improved.stan"
+)
+stan_file_combined <- here(
+  "stan",
+  "followup",
+  "pid5_ema_plus_baseline_moderation_improved.stan"
+)
 
 # Verify files exist
 for (f in c(stan_file_ema, stan_file_baseline, stan_file_combined)) {
@@ -314,9 +326,9 @@ cat("=== FITTING MODELS ===\n")
 # and still get good convergence. Start conservatively.
 n_chains <- 4
 n_warmup <- 2000
-n_sampling <- 6000  # Can reduce to 4000 for initial testing
-adapt_delta <- 0.995  # Reduced from 0.999 (NCP often needs less)
-max_treedepth <- 15   # Reduced from 17
+n_sampling <- 6000 # Can reduce to 4000 for initial testing
+adapt_delta <- 0.995 # Reduced from 0.999 (NCP often needs less)
+max_treedepth <- 15 # Reduced from 17
 
 # Paths
 path_ema <- "results/followup/fit_f0_ema_improved.rds"
@@ -341,12 +353,20 @@ if (file.exists(path_ema)) {
     refresh = 200,
     show_messages = TRUE
   )
-  
+
   # Print quick diagnostics
   cat("\nQuick diagnostics:\n")
-  cat("Divergent transitions:", sum(fit_ema$diagnostic_summary()$num_divergent), "\n")
-  cat("Max treedepth hits:", sum(fit_ema$diagnostic_summary()$num_max_treedepth), "\n")
-  
+  cat(
+    "Divergent transitions:",
+    sum(fit_ema$diagnostic_summary()$num_divergent),
+    "\n"
+  )
+  cat(
+    "Max treedepth hits:",
+    sum(fit_ema$diagnostic_summary()$num_max_treedepth),
+    "\n"
+  )
+
   fit_ema$save_object(path_ema)
 }
 
@@ -368,11 +388,19 @@ if (file.exists(path_baseline)) {
     refresh = 500,
     show_messages = TRUE
   )
-  
+
   cat("\nQuick diagnostics:\n")
-  cat("Divergent transitions:", sum(fit_baseline$diagnostic_summary()$num_divergent), "\n")
-  cat("Max treedepth hits:", sum(fit_baseline$diagnostic_summary()$num_max_treedepth), "\n")
-  
+  cat(
+    "Divergent transitions:",
+    sum(fit_baseline$diagnostic_summary()$num_divergent),
+    "\n"
+  )
+  cat(
+    "Max treedepth hits:",
+    sum(fit_baseline$diagnostic_summary()$num_max_treedepth),
+    "\n"
+  )
+
   fit_baseline$save_object(path_baseline)
 }
 
@@ -394,11 +422,19 @@ if (file.exists(path_combined)) {
     refresh = 500,
     show_messages = TRUE
   )
-  
+
   cat("\nQuick diagnostics:\n")
-  cat("Divergent transitions:", sum(fit_combined$diagnostic_summary()$num_divergent), "\n")
-  cat("Max treedepth hits:", sum(fit_combined$diagnostic_summary()$num_max_treedepth), "\n")
-  
+  cat(
+    "Divergent transitions:",
+    sum(fit_combined$diagnostic_summary()$num_divergent),
+    "\n"
+  )
+  cat(
+    "Max treedepth hits:",
+    sum(fit_combined$diagnostic_summary()$num_max_treedepth),
+    "\n"
+  )
+
   fit_combined$save_object(path_combined)
 }
 
@@ -412,25 +448,25 @@ cat("=== DETAILED CONVERGENCE DIAGNOSTICS ===\n\n")
 
 check_convergence <- function(fit, model_name) {
   cat("--- ", model_name, " ---\n", sep = "")
-  
+
   summ <- fit$summary()
-  
+
   # Rhat
   max_rhat <- max(summ$rhat, na.rm = TRUE)
   n_bad_rhat <- sum(summ$rhat > 1.01, na.rm = TRUE)
   cat("Max Rhat:", round(max_rhat, 4), "\n")
   cat("Parameters with Rhat > 1.01:", n_bad_rhat, "\n")
-  
+
   # ESS
   min_ess_bulk <- min(summ$ess_bulk, na.rm = TRUE)
   min_ess_tail <- min(summ$ess_tail, na.rm = TRUE)
   cat("Min ESS bulk:", round(min_ess_bulk), "\n")
   cat("Min ESS tail:", round(min_ess_tail), "\n")
-  
+
   # Divergences
   n_div <- sum(fit$diagnostic_summary()$num_divergent)
   cat("Total divergent transitions:", n_div, "\n")
-  
+
   # Status
   if (max_rhat < 1.01 && n_div == 0 && min_ess_bulk > 400) {
     cat("✓ CONVERGED: All diagnostics look good!\n\n")
@@ -497,16 +533,34 @@ cat("\n=== PARETO K DIAGNOSTICS ===\n\n")
 
 summarize_pareto_k <- function(loo_obj, model_name) {
   k_vals <- loo_obj$diagnostics$pareto_k
-  
+
   cat(model_name, ":\n")
-  cat("  Good (k < 0.5):", sum(k_vals < 0.5), 
-      sprintf("(%.1f%%)", sum(k_vals < 0.5) / length(k_vals) * 100), "\n")
-  cat("  OK (0.5 ≤ k < 0.7):", sum(k_vals >= 0.5 & k_vals < 0.7),
-      sprintf("(%.1f%%)", sum(k_vals >= 0.5 & k_vals < 0.7) / length(k_vals) * 100), "\n")
-  cat("  Bad (0.7 ≤ k < 1):", sum(k_vals >= 0.7 & k_vals < 1),
-      sprintf("(%.1f%%)", sum(k_vals >= 0.7 & k_vals < 1) / length(k_vals) * 100), "\n")
-  cat("  Very bad (k ≥ 1):", sum(k_vals >= 1),
-      sprintf("(%.1f%%)\n\n", sum(k_vals >= 1) / length(k_vals) * 100))
+  cat(
+    "  Good (k < 0.5):",
+    sum(k_vals < 0.5),
+    sprintf("(%.1f%%)", sum(k_vals < 0.5) / length(k_vals) * 100),
+    "\n"
+  )
+  cat(
+    "  OK (0.5 ≤ k < 0.7):",
+    sum(k_vals >= 0.5 & k_vals < 0.7),
+    sprintf(
+      "(%.1f%%)",
+      sum(k_vals >= 0.5 & k_vals < 0.7) / length(k_vals) * 100
+    ),
+    "\n"
+  )
+  cat(
+    "  Bad (0.7 ≤ k < 1):",
+    sum(k_vals >= 0.7 & k_vals < 1),
+    sprintf("(%.1f%%)", sum(k_vals >= 0.7 & k_vals < 1) / length(k_vals) * 100),
+    "\n"
+  )
+  cat(
+    "  Very bad (k ≥ 1):",
+    sum(k_vals >= 1),
+    sprintf("(%.1f%%)\n\n", sum(k_vals >= 1) / length(k_vals) * 100)
+  )
 }
 
 summarize_pareto_k(loo_ema, "EMA")
@@ -570,8 +624,8 @@ extract_moderation <- function(fit, param_prefix = "g1") {
           domain = d,
           mean = mean(x),
           sd = sd(x),
-          q05 = quantile(x, 0.05),
-          q95 = quantile(x, 0.95),
+          q025 = quantile(x, 0.025),
+          q975 = quantile(x, 0.975),
           pd = pd(x),
           p_gt0 = mean(x > 0)
         )
@@ -634,13 +688,16 @@ moderation_comparison <- moderation_comparison %>%
     )
   )
 
-write_csv(moderation_comparison, "results/followup/moderation_comparison_improved.csv")
+write_csv(
+  moderation_comparison,
+  "results/followup/moderation_comparison_improved.csv"
+)
 
 cat("\nModeration effects by model:\n")
 print(
   moderation_comparison %>%
     filter(contrast == "Stress", domain == 1) %>%
-    select(model, mean, q05, q95, pd)
+    select(model, mean, q025, q975, pd)
 )
 
 cat("\nSaved: results/followup/moderation_comparison_improved.csv\n")
