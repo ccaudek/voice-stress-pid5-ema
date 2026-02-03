@@ -1,5 +1,41 @@
 \begin{table*}[hbt]
 \ifnextchar[{\eatarg}{}
+[p]
+\centering
+\caption{Principal Acoustic Features of Speech: Definitions and Psychological Significance}
+\label{tab:acoustic-features}
+\begin{threeparttable}
+\scriptsize
+\begin{tabular}{p{2.4cm} p{3.2cm} p{2.6cm} p{3.0cm}}
+\hline
+Feature & Definition & Physiological basis & Psychological significance \\
+\hline
+Fundamental frequency (F0) & Rate of vocal fold vibration (Hz); acoustic correlate of perceived pitch &
+Cricothyroid and vocalis muscle tension regulates vocal fold stiffness and vibratory rate &
+Most robust acoustic marker of stress: F0 increases reliably under acute stress, cognitive load, and evaluative threat via sympathetic activation \\[4pt]
+
+Normalized Noise Energy (NNE) & Ratio of inharmonic to harmonic spectral energy (dB); index of glottal noise &
+Degree of glottal closure completeness during phonation &
+Reflects phonatory control and vocal effort; stress may increase noise (incomplete closure under arousal) or decrease it (compensatory hyperadduction and pressed phonation) \\[4pt]
+
+Jitter\textsuperscript{a} & Cycle-to-cycle variation in F0 period (\%); measure of frequency perturbation &
+Irregularity of successive vocal fold vibratory cycles &
+Proposed as an index of vocal instability and reduced neuromuscular control; elevated in some emotional and clinical states \\
+\hline
+\end{tabular}
+
+\begin{tablenotes}[para,flushleft]
+\footnotesize
+\item \textit{Note.} F0 and NNE were retained as primary outcome variables in the present study.
+\textsuperscript{a}Jitter was extracted but not included in the main analyses for the following reasons:
+(a) the literature on jitter and psychological stress is inconsistent, with effect sizes that are small, heterogeneous in direction, and often non-significant across studies (Giddens et al., 2013);
+(b) jitter is highly sensitive to recording conditions, signal-to-noise ratio, and extraction algorithm parameters, resulting in substantial measurement noise in field settings (Titze, 1994); and
+(c) unlike F0 and NNE, which index theoretically distinct mechanisms (autonomic arousal vs.\ phonatory control), jitter does not map onto a clearly separable psychophysiological pathway, limiting its interpretive value in the context of personality moderation hypotheses.
+\end{tablenotes}
+\end{threeparttable}
+\end{table*}
+\begin{table*}[hbt]
+\ifnextchar[{\eatarg}{}
 [h]
 \caption{Personality Moderation of Fundamental Frequency (F0)}
 \label{tab:f0-moderation}
