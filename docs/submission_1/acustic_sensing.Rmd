@@ -55,10 +55,10 @@ header-includes:
   - \usepackage{threeparttablex}
 
 output:
-  papaja::apa6_pdf:
-    latex_engine: xelatex
-  # papaja::apa6_word:
-  #   default
+  # papaja::apa6_pdf:
+  #   latex_engine: xelatex
+  papaja::apa6_word:
+    default
 ---
 
 ```{r setup, include = FALSE}
@@ -137,7 +137,7 @@ By integrating passive voice-based acoustic sensing with intensive longitudinal 
 
 ## Participants
 
-We recruited 141 female university students (M_age = [DA INSERIRE], SD = [DA INSERIRE]) from the University of Florence through course announcements and online postings. The sample was restricted to female participants to control for sex-related variation in vocal pitch characteristics [@gelfer2005relative], which could obscure personality-related effects and reduce statistical power. Fundamental frequency (F0) differs substantially between males and females (approximately 100 Hz lower in males) due to anatomical differences in vocal fold length and mass, making direct comparison problematic without large samples or complex statistical controls.
+We recruited 141 female university students (M_age = 22.06, SD = 3.74) from the University of Florence through course announcements and online postings. The sample was restricted to female participants to control for sex-related variation in vocal pitch characteristics [@gelfer2005relative], which could obscure personality-related effects and reduce statistical power. Fundamental frequency (F0) differs substantially between males and females (approximately 100 Hz lower in males) due to anatomical differences in vocal fold length and mass, making direct comparison problematic without large samples or complex statistical controls.
 
 All participants were native Italian speakers with no reported history of voice disorders or current respiratory illness. Exclusion criteria included: (1) current or past psychiatric disorders requiring treatment, (2) substance use disorders, (3) self-reported hearing impairments that could affect voice monitoring, and (4) professional voice training (e.g., singing lessons), which could alter baseline vocal characteristics. Participants provided written informed consent and received course credit for participation. The study was approved by the University of Trieste Ethics Committee (protocol #05/23052025).
 
@@ -159,7 +159,7 @@ Between T1 and T3, participants completed twice-weekly ecological momentary asse
 
 ### Personality Pathology
 
-**Full PID-5 (Baseline).** At T1, participants completed the 220-item Personality Inventory for DSM-5 (Krueger et al., 2012), which assesses five maladaptive trait domains: Negative Affectivity ($\alpha$ = [INSERIRE]), Detachment ($\alpha$ = [INSERIRE]), Antagonism ($\alpha$ = [INSERIRE]), Disinhibition ($\alpha$ = [INSERIRE]), and Psychoticism ($\alpha$ = [INSERIRE]). Items are rated on a 0-3 scale (0 = very false/often false, 3 = very true/often true). PID-5 domain scale scores were calculated as an average of the three most representative facet scores included under each domain as per formal scoring procedures [@APA2014_PersonalityInventory].
+**Full PID-5 (Baseline).** At T1, participants completed the 220-item Personality Inventory for DSM-5 (Krueger et al., 2012), which assesses five maladaptive trait domains: Negative Affectivity ($\omega$ = 0.85), Detachment ($\omega$ = 0.84), Antagonism ($\omega$ = 0.82), Disinhibition ($\omega$ = 0.84), and Psychoticism ($\omega$ = 0.90). Items are rated on a 0-3 scale (0 = very false/often false, 3 = very true/often true). PID-5 domain scale scores were calculated as an average of the three most representative facet scores included under each domain as per formal scoring procedures [@APA2014_PersonalityInventory].
 
 **Brief PID-5 for EMA.** To reduce participant burden while maintaining construct coverage, we administered a brief version of the PID-5 in the EMA assessments, comprising a small subset of items per domain. Items were selected based on their factor loadings and domain representativeness in a large independent sample drawn from the same population, as reported in prior validation studies [@bottesi2024advancing; @sica2024comparing]. This selection strategy aimed to maximize construct validity while minimizing redundancy and assessment burden in intensive longitudinal designs.
 
@@ -195,21 +195,15 @@ Acoustic features were extracted using two complementary approaches: (1) traditi
 
 **Normalized Noise Energy (NNE).** Normalized noise energy, expressed in decibels, quantifies the relative contribution of aperiodic (noise) energy to the overall voice signal and serves as an index of phonatory quality and glottal closure completeness [@kasuya1986normalized]. Higher NNE values indicate a greater proportion of noise relative to harmonic energy and are typically associated with reduced or incomplete glottal closure and breathier voice quality. Unlike perturbation measures such as jitter and shimmer, which primarily capture cycle-to-cycle instability, NNE is sensitive to broader stress-related changes in phonatory control and vocal effort. Empirical findings suggest that acute stress can have bidirectional effects on vocal noise: it may increase NNE through incomplete glottal closure and increased airflow turbulence under heightened arousal, or decrease NNE through compensatory hyperadduction and pressed phonation aimed at maintaining vocal control [@mendoza1998acoustic; @scherer2003vocal]. The direction of these effects appears to depend on individual coping strategies and task demands. Accordingly, NNE may capture individual differences in stress-related vocal regulation, reflecting whether arousal is accompanied by vocal degradation or compensatory control. Examining NNE alongside F0 therefore allows dissociation between arousal-driven changes in pitch and stress-related adjustments in phonatory control, clarifying whether stress manifests primarily as vocal degradation or as compensatory tightening of the phonatory system.
 
-Although derived from speech signals, both F0 and NNE index peripheral physiological processes involved in phonation and autonomic regulation, enabling their use as objective, physiology-linked indicators that are largely independent of self-report.
+<!-- Although derived from speech signals, both F0 and NNE index peripheral physiological processes involved in phonation and autonomic regulation, enabling their use as objective, physiology-linked indicators that are largely independent of self-report. -->
 
-**Theoretical rationale.** The selection of F0 and NNE was guided by converging neurophysiological and psychophysiological models linking stress to alterations in muscular activation and motor control during speech production (Scherer, 1986; Titze, 1994; Giddens et al., 2013). Stress-related increases in general muscular tone, including at the laryngeal level, are expected to elevate vocal fold tension and vibratory rate, resulting in higher F0. In contrast, predictions for voice quality measures such as NNE are less straightforward. Moderate increases in laryngeal tension may improve glottal adduction and reduce aperiodic energy, whereas excessive or asymmetric tension may stiffen the vocal fold mucosa, disrupt the regularity of the mucosal wave, and increase airflow turbulence at the glottis, leading to higher noise levels [@titze1994principles]. This mechanistic ambiguity is consistent with the smaller and less consistent stress effects typically reported for voice quality parameters relative to F0 [@giddens2013progressive; @van2018voice].
+<!-- **Theoretical rationale.** The selection of F0 and NNE was guided by converging neurophysiological and psychophysiological models linking stress to alterations in muscular activation and motor control during speech production (Scherer, 1986; Titze, 1994; Giddens et al., 2013). Stress-related increases in general muscular tone, including at the laryngeal level, are expected to elevate vocal fold tension and vibratory rate, resulting in higher F0. In contrast, predictions for voice quality measures such as NNE are less straightforward. Moderate increases in laryngeal tension may improve glottal adduction and reduce aperiodic energy, whereas excessive or asymmetric tension may stiffen the vocal fold mucosa, disrupt the regularity of the mucosal wave, and increase airflow turbulence at the glottis, leading to higher noise levels [@titze1994principles]. This mechanistic ambiguity is consistent with the smaller and less consistent stress effects typically reported for voice quality parameters relative to F0 [@giddens2013progressive; @van2018voice]. -->
 
-## Data Quality and Missingness
+## Data Quality 
 
 ### EMA Compliance and Quality Control
 
-Participants with fewer than 5 or more than 40 EMA assessments were excluded prior to analysis (n excluded = [INSERIRE]). We implemented additional quality checks to identify careless responding:
-
-1. **Within-subject variability:** Participants with SD < 0.30 on the Negative Affectivity composite (which should exhibit temporal variation) were flagged for review.
-2. **Response patterns:** Excessive use of scale endpoints or preference for round numbers (>80% responses divisible by 10 on 0-100 visual analog scales) indicated potential inattention.
-3. **A priori exclusions:** Based on suspicious response patterns identified in preliminary screening, n = [INSERIRE] participants were excluded before analysis.
-
-Final sample included N = 119 participants with complete voice data and valid EMA responses.
+EMA data quality was ensured by applying compliance and quality control criteria prior to analysis. Participants with fewer than 5 assessments were excluded. Additional checks targeted careless responding, including insufficient within-subject variability and atypical response patterns (e.g., excessive use of scale endpoints). Applying these criteria resulted in the exclusion of 12 participants, reducing the sample from $n$ = 141 to $n$ = 119. The final sample included participants with complete voice data and valid EMA responses.
 
 ## Convergent Validity of EMA Measures
 
@@ -260,13 +254,13 @@ Effects were considered credible if 95% credible intervals excluded zero. We rep
 
 ### Data and Code Availability
 
-All analysis code and de-identified data will be made publicly available upon publication at [OSF LINK]. Models were fit using brms 2.21 with cmdstanr 0.7.
+All analysis code and de-identified data will be made publicly available upon publication at [OSF LINK]. 
 
 # Results
 
 <!-- We report results in four sections. First, we establish the main effects of exam-related stress on vocal production, focusing on fundamental frequency (F0) and normalized noise energy (NNE). Second, we examine whether PID-5 personality domains moderate these stress responses. Third, we compare the predictive performance and precision of EMA-based versus baseline PID-5 assessments. Fourth, we evaluate within-person temporal covariation between momentary personality states and acoustic parameters.  -->
 
-All analyses used hierarchical Bayesian models implemented in Stan via the rstan package, with four chains of 4,000 iterations each (2,000 warmup). Convergence was verified through R-hat statistics (all < 1.01) and trace plot inspection. We report posterior medians with 95% credible intervals (CrIs) and directional probabilities.
+<!-- All analyses used hierarchical Bayesian models implemented in Stan via the rstan package, with four chains of 4,000 iterations each (2,000 warmup). Convergence was verified through R-hat statistics (all < 1.01) and trace plot inspection. We report posterior medians with 95% credible intervals (CrIs) and directional probabilities. -->
 
 ## Main Effects of Exam-Related Stress on Vocal Acoustics
 
@@ -393,17 +387,8 @@ Baseline & 2.65 & $[-2.20, 7.52]$ & 0.86 & -- \\
 \end{tablenotes}
 \end{table}
 
-## Within-Person Temporal Covariation
-
-Finally, we examined whether momentary fluctuations in personality states—assessed via EMA immediately before each voice recording—covaried with concurrent F0 levels. This tests whether trait-level moderation effects have within-person analogs: do individuals show higher F0 when they report elevated negative affectivity in the moment?
-
-We compared hierarchical specifications with fixed effects (population-average slopes only) versus random slopes (allowing individual differences in within-person associations). Random slopes models substantially outperformed fixed-effects specifications ($R^2$ = 35% vs 2.5%; ELPD difference $\approx$ 40 points). However, with only three observations per person, posterior distributions for individual slopes were extremely wide—99.7% of participant × domain combinations yielded credible intervals spanning zero.
-
-This pattern reveals a critical distinction: the population shows clear evidence of slope heterogeneity (nonzero $\sigma_\beta$ for several domains), but we cannot reliably identify which specific individuals have nonzero slopes. This reflects statistical power limitations rather than modeling failure. Denser temporal sampling would be required to resolve individual-level within-person dynamics.
-
 ## Discussion
 
-<!-- This study provides evidence that the *context-dependent expression of maladaptive personality traits* can be captured through objective psychophysiological markers in everyday life by combining vocal acoustics with Ecological Momentary Assessment (EMA). -->
 Across an ecologically valid academic stressor, we observed reliable stress-related changes in two complementary vocal parameters, fundamental frequency (F0) and normalized noise energy (NNE), and found *selective, domain- and phase-specific moderation* by PID-5 trait domains. In addition, repeated brief EMA-based trait assessment achieved *comparable predictive accuracy* to a complete baseline PID-5 questionnaire while yielding *greater precision* in key moderation estimates. Together, these findings support transactional accounts of personality pathology by showing that maladaptive trait domains are expressed not only in average tendencies, but also in *how individuals’ psychophysiological responses change across situational demands and recovery periods*.
 
 ### Vocal acoustics as objective indicators of situational stress
@@ -438,7 +423,7 @@ Disinhibition showed no meaningful moderation of either acoustic parameter (all 
 
 ### Implications for transactional models of personality pathology
 
-The dissociations observed across trait domains (Negative Affectivity, Antagonism, Psychoticism), acoustic parameters (F0 vs. NNE), and temporal phases (stress reactivity vs. recovery) are consistent with transactional models in which personality pathology shapes *how* individuals respond to contextual demands rather than simply predicting static levels of functioning (Bolger & Zuckerman, 1995). In this view, different domains may map onto distinct stress-process mechanisms: Negative Affectivity primarily amplifies arousal reactivity; Antagonism may be linked to persistence of activation following stress; and Psychoticism may be associated with post-stressor instability in control-related vocal processes. Importantly, these interpretations remain provisional and should be tested in designs that incorporate richer characterization of situational features and more continuous measurement during recovery.
+The dissociations observed across trait domains (Negative Affectivity, Antagonism, Psychoticism), acoustic parameters (F0 vs. NNE), and temporal phases (stress reactivity vs. recovery) are consistent with transactional models in which personality pathology shapes *how* individuals respond to contextual demands rather than simply predicting static levels of functioning (Bolger & Zuckerman, 1995). In this view, different domains may map onto distinct stress-process mechanisms: Negative Affectivity primarily amplifies arousal reactivity; Antagonism may be linked to persistence of activation following stress; and Psychoticism may be associated with post-stressor instability in control-related vocal processes. Taken together, these findings underscore the importance of moving beyond global notions of “stress reactivity” in personality pathology research. The PID-5 domains do not appear to represent interchangeable indicators of generalized vulnerability; instead, they map onto partially dissociable psychophysiological pathways that are differentially engaged across phases of the stress-response cycle. This process-oriented interpretation is consistent with transactional models of personality pathology, which emphasize dynamic person–situation interactions rather than static trait effects (Bolger & Zuckerman, 1995; Wright & Simms, 2016). More broadly, the results suggest that the theoretical value of the PID-5 lies not only in its descriptive coverage of maladaptive traits, but also in its potential to guide mechanistically informed hypotheses about when, how, and through which biological channels personality pathology is expressed in everyday life. Importantly, these interpretations remain provisional and should be tested in designs that incorporate richer characterization of situational features and more continuous measurement during recovery.
 
 At the same time, the present findings suggest that vocal acoustics can contribute to a more differentiated phenotyping of stress responses. Relying solely on pitch-based markers may primarily detect internalizing-related vulnerability (Negative Affectivity), whereas incorporating voice-quality indices may reveal additional processes relevant to cognitive–perceptual dysregulation (Psychoticism) or other domains. Future ambulatory work that models multiple vocal dimensions across multiple stressor types may help build more precise, trait-informed accounts of vulnerability and adaptation.
 

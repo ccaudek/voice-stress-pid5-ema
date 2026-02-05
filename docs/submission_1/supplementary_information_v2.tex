@@ -1,0 +1,789 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\documentclass[
+  english,
+  man,floatsintext]{apa6}
+\usepackage{xcolor}
+\usepackage{amsmath,amssymb}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+% Make \paragraph and \subparagraph free-standing
+\makeatletter
+\ifx\paragraph\undefined\else
+  \let\oldparagraph\paragraph
+  \renewcommand{\paragraph}{
+    \@ifstar
+      \xxxParagraphStar
+      \xxxParagraphNoStar
+  }
+  \newcommand{\xxxParagraphStar}[1]{\oldparagraph*{#1}\mbox{}}
+  \newcommand{\xxxParagraphNoStar}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+  \let\oldsubparagraph\subparagraph
+  \renewcommand{\subparagraph}{
+    \@ifstar
+      \xxxSubParagraphStar
+      \xxxSubParagraphNoStar
+  }
+  \newcommand{\xxxSubParagraphStar}[1]{\oldsubparagraph*{#1}\mbox{}}
+  \newcommand{\xxxSubParagraphNoStar}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+\makeatother
+\usepackage{graphicx}
+\makeatletter
+\newsavebox\pandoc@box
+\newcommand*\pandocbounded[1]{% scales image to fit in text height/width
+  \sbox\pandoc@box{#1}%
+  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
+  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi% select the smaller of both
+  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
+  \else\usebox{\pandoc@box}%
+  \fi%
+}
+% Set default figure placement to htbp
+\def\fps@figure{htbp}
+\makeatother
+\ifLuaTeX
+\usepackage[bidi=basic]{babel}
+\else
+\usepackage[bidi=default]{babel}
+\fi
+% get rid of language-specific shorthands (see #6817):
+\let\LanguageShortHands\languageshorthands
+\def\languageshorthands#1{}
+\ifLuaTeX
+  \usepackage[english]{selnolig} % disable illegal ligatures
+\fi
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+% Manuscript styling
+\usepackage{upgreek}
+\captionsetup{font=singlespacing,justification=justified}
+
+% Table formatting
+\usepackage{longtable}
+\usepackage{lscape}
+% \usepackage[counterclockwise]{rotating}   % Landscape page setup for large tables
+\usepackage{multirow}		% Table styling
+\usepackage{tabularx}		% Control Column width
+\usepackage[flushleft]{threeparttable}	% Allows for three part tables with a specified notes section
+\usepackage{threeparttablex}            % Lets threeparttable work with longtable
+
+% Create new environments so endfloat can handle them
+% \newenvironment{ltable}
+%   {\begin{landscape}\centering\begin{threeparttable}}
+%   {\end{threeparttable}\end{landscape}}
+\newenvironment{lltable}{\begin{landscape}\centering\begin{ThreePartTable}}{\end{ThreePartTable}\end{landscape}}
+
+% Enables adjusting longtable caption width to table width
+% Solution found at http://golatex.de/longtable-mit-caption-so-breit-wie-die-tabelle-t15767.html
+\makeatletter
+\newcommand\LastLTentrywidth{1em}
+\newlength\longtablewidth
+\setlength{\longtablewidth}{1in}
+\newcommand{\getlongtablewidth}{\begingroup \ifcsname LT@\roman{LT@tables}\endcsname \global\longtablewidth=0pt \renewcommand{\LT@entry}[2]{\global\advance\longtablewidth by ##2\relax\gdef\LastLTentrywidth{##2}}\@nameuse{LT@\roman{LT@tables}} \fi \endgroup}
+
+% \setlength{\parindent}{0.5in}
+% \setlength{\parskip}{0pt plus 0pt minus 0pt}
+
+% Overwrite redefinition of paragraph and subparagraph by the default LaTeX template
+% See https://github.com/crsh/papaja/issues/292
+\makeatletter
+\renewcommand{\paragraph}{\@startsection{paragraph}{4}{\parindent}%
+  {0\baselineskip \@plus 0.2ex \@minus 0.2ex}%
+  {-1em}%
+  {\normalfont\normalsize\bfseries\itshape\typesectitle}}
+
+\renewcommand{\subparagraph}[1]{\@startsection{subparagraph}{5}{1em}%
+  {0\baselineskip \@plus 0.2ex \@minus 0.2ex}%
+  {-\z@\relax}%
+  {\normalfont\normalsize\itshape\hspace{\parindent}{#1}\textit{\addperi}}{\relax}}
+\makeatother
+
+\makeatletter
+\usepackage{etoolbox}
+\patchcmd{\maketitle}
+  {\section{\normalfont\normalsize\abstractname}}
+  {\section*{\normalfont\normalsize\abstractname}}
+  {}{\typeout{Failed to patch abstract.}}
+\patchcmd{\maketitle}
+  {\section{\protect\normalfont{\@title}}}
+  {\section*{\protect\normalfont{\@title}}}
+  {}{\typeout{Failed to patch title.}}
+\makeatother
+
+\usepackage{xpatch}
+\makeatletter
+\xapptocmd\appendix
+  {\xapptocmd\section
+    {\addcontentsline{toc}{section}{\appendixname\ifoneappendix\else~\theappendix\fi: #1}}
+    {}{\InnerPatchFailed}%
+  }
+{}{\PatchFailed}
+\makeatother
+\keywords{voice analysis, personality pathology, ecological momentary assessment, Bayesian modeling, PID-5\newline\indent Word count: X}
+\usepackage{csquotes}
+\usepackage{fontspec}
+\usepackage{unicode-math}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{float}
+\renewcommand{\thetable}{S\arabic{table}}
+\renewcommand{\thefigure}{S\arabic{figure}}
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={Supplementary Materials},
+  pdfauthor={Ilaria Colpizzi1, Federico Calà2, Lorenzo Frassineti2, Antonio Lanatà2, Claudia Manfredi2, Claudio Sica3, Igor Marchetti3, \& Corrado Caudek4},
+  pdflang={en-EN},
+  pdfkeywords={voice analysis, personality pathology, ecological momentary assessment, Bayesian modeling, PID-5},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Supplementary Materials}
+\author{Ilaria Colpizzi\textsuperscript{1}, Federico Calà\textsuperscript{2}, Lorenzo Frassineti\textsuperscript{2}, Antonio Lanatà\textsuperscript{2}, Claudia Manfredi\textsuperscript{2}, Claudio Sica\textsuperscript{3}, Igor Marchetti\textsuperscript{3}, \& Corrado Caudek\textsuperscript{4}}
+\date{}
+
+
+\shorttitle{Passive Acoustic Sensing and Personality Pathology}
+
+\authornote{
+
+Correspondence concerning this article should be addressed to Ilaria Colpizzi, Trieste, Italy. E-mail: \href{mailto:ilaria.colpizzi@units.it}{\nolinkurl{ilaria.colpizzi@units.it}}
+
+}
+
+\affiliation{\vspace{0.5cm}\textsuperscript{1} Department of Life Sciences, University of Trieste, Trieste, Italy\\\textsuperscript{2} Department of Information Engineering, University of Florence, Florence, Italy\\\textsuperscript{3} Department of Health Sciences, University of Florence, Florence, Italy\\\textsuperscript{4} Department of NEUROFARBA, University of Florence, Florence, Italy}
+
+\begin{document}
+\maketitle
+
+\section{Reliability of Personality Measures}\label{reliability-of-personality-measures}
+
+\subsection{Overview}\label{overview}
+
+Reliability was evaluated for both the full baseline PID-5 questionnaire (220 items) and the brief EMA-based PID-5 assessment (15 items, 3 per domain). For the EMA measures, which involve repeated assessments nested within persons, we employed multilevel reliability estimation following Lai (2021), which distinguishes between-person reliability (consistency of person-level means) from within-person reliability (consistency of occasion-level deviations).
+
+\subsection{Baseline PID-5 Questionnaire}\label{baseline-pid-5-questionnaire}
+
+The full PID-5 was administered at baseline (T1) using the standard 220-item version. Reliability was computed using Cronbach's alpha and McDonald's omega for each domain and for the total score. Results are reported for both the full sample and a cleaned sample excluding participants who failed attention check items (catch trials embedded at positions 68 and 161 in the questionnaire).
+
+\subsubsection{Results}\label{results}
+
+All domains showed acceptable to excellent internal consistency (Table S1). Psychoticism exhibited the highest reliability (\(\alpha\) = .87, \(\omega\) = .90), consistent with its larger item pool (33 items). Antagonism showed the lowest reliability (\(\alpha\) = .67, \(\omega\) = .82), though McDonald's omega---which accounts for item heterogeneity---indicated adequate composite reliability. The total PID-5 score demonstrated excellent reliability (\(\alpha\) = .96, \(\omega\) = .98). Excluding participants who failed attention checks produced slightly lower but comparable estimates, indicating that careless responding had minimal impact on scale properties in this sample.
+
+\begin{table}
+
+\caption{\label{tab:table-s1-pid5-reliability}Internal consistency of baseline PID-5 domains.}
+\centering
+\begin{tabular}[t]{lrrrrr}
+\toprule
+Domain & Items & $\alpha$ (Full) & $\omega$ (Full) & $\alpha$ (Clean) & $\omega$ (Clean)\\
+\midrule
+Negative Affectivity & 23 & 0.783 & 0.851 & 0.767 & 0.843\\
+Detachment & 22 & 0.754 & 0.844 & 0.741 & 0.840\\
+Antagonism & 21 & 0.670 & 0.819 & 0.627 & 0.796\\
+Disinhibition & 22 & 0.747 & 0.843 & 0.725 & 0.824\\
+Psychoticism & 33 & 0.870 & 0.898 & 0.864 & 0.892\\
+\addlinespace
+Total PID-5 & 220 & 0.965 & 0.979 & 0.964 & 0.977\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{EMA-Based Brief PID-5}\label{ema-based-brief-pid-5}
+
+The brief PID-5 administered via EMA comprised 15 items (3 per domain), selected based on factor loadings and domain representativeness from prior validation work (Bottesi et al., 2024). Because these items were assessed repeatedly across approximately 20 occasions per participant, standard single-level reliability estimates are inappropriate. Instead, we employed the multilevel composite reliability framework described by Lai (2021), which partitions variance into within-person and between-person components and computes separate reliability indices for each level.
+
+\subsubsection{Multilevel Reliability Framework}\label{multilevel-reliability-framework}
+
+Following Lai (2021), we estimated three reliability indices:
+
+\begin{itemize}
+\item
+  \textbf{\(\alpha_{2L}\) (Two-level alpha)}: Overall reliability of observed scores, pooling within- and between-person variance. Relevant when scores are used without distinguishing levels.
+\item
+  \textbf{\(\alpha_B\) (Between-person alpha)}: Reliability of person-level means (aggregated across occasions). This is the relevant index when EMA scores are averaged to create a single trait estimate per person, as in our moderation analyses.
+\item
+  \textbf{\(\alpha_W\) (Within-person alpha)}: Reliability of occasion-level deviations from each person's mean. Relevant for detecting momentary fluctuations in personality states.
+\end{itemize}
+
+The same decomposition was applied using McDonald's omega (\(\omega_{2L}\), \(\omega_B\), \(\omega_W\)), which relaxes the assumption of tau-equivalence.
+
+\subsubsection{Results}\label{results-1}
+
+The multilevel reliability analysis revealed a clear pattern (Table S2):
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  \textbf{Between-person reliability was high} (\(\alpha_B\) = .87, \(\omega_B\) = .85). This indicates that person-level trait estimates derived from aggregating across EMA occasions are measured with good precision. This is the critical index for our moderation analyses, which use person-level latent trait scores as predictors.
+\item
+  \textbf{Within-person reliability was adequate} (\(\alpha_W\) = .73, \(\omega_W\) = .72). This suggests that the brief scale can detect meaningful occasion-to-occasion fluctuations in personality states, though with more measurement error than at the between-person level. This is expected given the brevity of the scale (15 items total).
+\item
+  \textbf{Two-level reliability was good} (\(\alpha_{2L}\) = .83, \(\omega_{2L}\) = .81), reflecting the overall quality of observed scores when levels are pooled.
+\end{enumerate}
+
+\begin{table}
+
+\caption{\label{tab:table-s2-ema-reliability}Multilevel reliability of EMA-based brief PID-5 (15 items).}
+\centering
+\begin{tabular}[t]{lrll}
+\toprule
+Reliability Index & Estimate & 95\% CI Lower & 95\% CI Upper\\
+\midrule
+$\alpha_{2L}$ (two-level) & 0.826 & 0.802 & 0.845\\
+$\alpha_B$ (between) & 0.866 & 0.835 & 0.889\\
+$\alpha_W$ (within) & 0.727 & 0.687 & 0.758\\
+$\omega_{2L}$ (two-level) & 0.814 & --- & ---\\
+$\omega_B$ (between) & 0.852 & --- & ---\\
+\addlinespace
+$\omega_W$ (within) & 0.724 & --- & ---\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Interpretation for the Present Study}\label{interpretation-for-the-present-study}
+
+The high between-person reliability (\(\alpha_B\) = .87) supports the validity of using EMA-derived personality scores as person-level moderators of vocal stress responses. Because our moderation model estimates latent trait scores from the repeated EMA observations (see Statistical Models section), measurement error is explicitly modeled rather than ignored. The multilevel measurement model in our Stan implementation can be viewed as formalizing the reliability structure documented here: the latent trait \(\theta_{id}\) represents the ``true'' person-level standing on domain \(d\), while the occasion-specific observations \(X_{nd}\) are treated as noisy indicators with residual variance \(\sigma_d^{\text{ema}}\) capturing within-person fluctuation and measurement error.
+
+The adequate within-person reliability (\(\alpha_W\) = .73) also suggests that the brief EMA measure could support analyses of state-level personality-voice covariation, though such analyses would require denser sampling than the present design to achieve adequate statistical power.
+
+\newpage
+
+\section{Descriptive Statistics}\label{descriptive-statistics}
+
+Descriptive statistics are reported for \(N\) = 119 female participants. Participants contributed on average 27 EMA assessments (\(SD\) = 4.16, range = 12--31).
+
+\subsection{Design and Coverage}\label{design-and-coverage}
+
+Table S3 summarizes the study design, including the number of participants, voice observations, and EMA assessments. All 119 participants contributed usable voice observations in each assessment period (Baseline, Pre-exam, Post-exam), consistent with the balanced, three-phase design.
+
+\begin{table}
+
+\caption{\label{tab:table-s3-design}Study design and data coverage.}
+\centering
+\begin{tabular}[t]{rrrlr}
+\toprule
+$N$ & EMA $M$ & EMA $SD$ & EMA Range & Voice Obs. (per period)\\
+\midrule
+119 & 27 & 4.16 & 12--31 & 119\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Voice Outcomes by Assessment Period}\label{voice-outcomes-by-assessment-period}
+
+Tables S4 and S5 report descriptive statistics for the two primary voice outcomes---fundamental frequency (F0) and normalized noise energy (NNE)---across the three assessment periods.
+
+\begin{table}
+
+\caption{\label{tab:table-s4-voice}Voice outcome descriptives by assessment period.}
+\centering
+\begin{tabular}[t]{lrrrrr}
+\toprule
+Period & $n$ & F0 $M$ (Hz) & F0 $SD$ & NNE $M$ (dB) & NNE $SD$\\
+\midrule
+Baseline & 119 & 191.11 & 21.30 & -26.43 & 2.63\\
+Pre-exam & 119 & 194.81 & 21.36 & -27.12 & 3.25\\
+Post-exam & 119 & 192.63 & 23.12 & -26.93 & 2.87\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Across periods, mean F0 increased from Baseline (191.1 Hz) to Pre-exam (194.8 Hz) and decreased slightly at Post-exam (192.6 Hz), consistent with anticipatory stress-related elevation in pitch followed by partial recovery. NNE showed more negative values (indicating reduced glottal noise) from Baseline to Pre-exam, with partial return toward Baseline in the Post-exam period.
+
+Table S5 summarizes within-person variability across the three assessment periods, reporting the distribution of participant-specific standard deviations.
+
+\begin{table}
+
+\caption{\label{tab:table-s5-voice-variability}Within-person variability in voice parameters across periods.}
+\centering
+\begin{tabular}[t]{lrrrrr}
+\toprule
+Variable & $n$ & Mean $SD$ & $SD$ of $SD$s & Min $SD$ & Max $SD$\\
+\midrule
+F0 within-person $SD$ (Hz) & 119 & 7.44 & 5.47 & 0 & 28.76\\
+NNE within-person $SD$ (dB) & 119 & 1.73 & 1.11 & 0 & 5.58\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{EMA Personality Domain Descriptives}\label{ema-personality-domain-descriptives}
+
+EMA-based PID-5 domain descriptives are reported separately for between-person variability (Table S6) and within-person variability (Table S7).
+
+\begin{table}
+
+\caption{\label{tab:table-s6-ema-between}EMA PID-5 descriptives: between-person variability (person means across occasions).}
+\centering
+\begin{tabular}[t]{lrrrrr}
+\toprule
+Domain & $n$ & $M$ & $SD$ & Min & Max\\
+\midrule
+Negative Affectivity & 119 & 4.53 & 1.62 & 0.71 & 8.08\\
+Detachment & 119 & 2.04 & 1.62 & 0.00 & 6.19\\
+Antagonism & 119 & 0.87 & 1.17 & 0.00 & 5.29\\
+Disinhibition & 119 & 2.46 & 1.29 & 0.10 & 5.80\\
+Psychoticism & 119 & 1.25 & 1.44 & 0.00 & 5.73\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}
+
+\caption{\label{tab:table-s7-ema-within}EMA PID-5 descriptives: within-person variability (participant $SD$s across occasions).}
+\centering
+\begin{tabular}[t]{lrrrrr}
+\toprule
+Domain & $n$ & $M$ of $SD$ & $SD$ of $SD$s & Min $SD$ & Max $SD$\\
+\midrule
+Negative Affectivity & 119 & 1.32 & 0.42 & 0.57 & 2.42\\
+Detachment & 119 & 1.20 & 0.62 & 0.00 & 3.04\\
+Antagonism & 119 & 0.71 & 0.65 & 0.00 & 2.84\\
+Disinhibition & 119 & 1.17 & 0.45 & 0.30 & 2.31\\
+Psychoticism & 119 & 0.93 & 0.68 & 0.00 & 2.93\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Between-person descriptives indicate substantial inter-individual variability in EMA trait levels, while within-person descriptives confirm meaningful intra-individual fluctuation across repeated assessments. This pattern is consistent with the multilevel measurement model used to estimate latent trait scores and propagate measurement uncertainty into moderation effects.
+
+\newpage
+
+\section{Statistical Models}\label{statistical-models}
+
+\subsection{Main Effects of Exam-Related Stress on Vocal Parameters}\label{main-effects-of-exam-related-stress-on-vocal-parameters}
+
+\subsubsection{Research Question}\label{research-question}
+
+Before examining personality moderation, we first establish whether exam-related stress produces reliable changes in vocal acoustics. This model addresses the foundational question: Do vocal parameters (F0, NNE) change systematically across the three assessment phases---baseline, pre-exam (anticipatory stress), and post-exam (recovery)?
+
+\subsubsection{Model Specification}\label{model-specification}
+
+The model is a standard Bayesian hierarchical (multilevel) linear regression with repeated measures nested within participants. Stress effects are parameterized using two orthogonal contrasts:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Stress contrast (\(c_1\))}: Compares pre-exam to baseline, capturing anticipatory stress-induced change.
+\item
+  \textbf{Recovery contrast (\(c_2\))}: Compares post-exam to pre-exam, capturing post-stressor trajectory.
+\end{itemize}
+
+Let \(y_n\) denote the vocal outcome for observation \(n\), with participant index \(s[n]\). The model specifies:
+
+\[
+y_n \sim \text{Normal}(\mu_n, \sigma_y)
+\]
+
+where the linear predictor includes both fixed and random effects:
+
+\[
+\mu_n = \alpha + u_{0,s} + (\beta_1 + u_{1,s}) \cdot c_{1n} + (\beta_2 + u_{2,s}) \cdot c_{2n}
+\]
+
+The parameters are:
+
+\begin{itemize}
+\tightlist
+\item
+  \(\alpha\): Grand intercept (population-average baseline vocal level).
+\item
+  \(\beta_1\): Population-average stress effect (pre-exam vs.~baseline).
+\item
+  \(\beta_2\): Population-average recovery effect (post-exam vs.~pre-exam).
+\item
+  \(u_{0,s}\): Participant-specific random intercept.
+\item
+  \(u_{1,s}\): Participant-specific random slope for stress.
+\item
+  \(u_{2,s}\): Participant-specific random slope for recovery.
+\item
+  \(\sigma_y\): Residual standard deviation.
+\end{itemize}
+
+The random effects capture individual differences in baseline vocal characteristics (\(u_0\)), stress reactivity (\(u_1\)), and recovery patterns (\(u_2\)). A non-centered parameterization is used for computational efficiency:
+
+\[
+u_{k,s} = \tau_k \cdot z_{k,s}, \quad z_{k,s} \sim \text{Normal}(0, 1)
+\]
+
+where \(\tau_k\) are the random effect standard deviations.
+
+\subsubsection{Prior Specification}\label{prior-specification}
+
+Priors were chosen to be weakly informative, incorporating domain knowledge about plausible parameter ranges while allowing the data to dominate inference (Table S8).
+
+\begin{table}
+
+\caption{\label{tab:table-s8-priors-main}Prior specifications for the main effects model.}
+\centering
+\begin{tabular}[t]{lll}
+\toprule
+Parameter & Prior & Rationale\\
+\midrule
+$\alpha$ & Normal(220, 30) & Centered on typical female F0 (Hz)\\
+$\beta_1, \beta_2$ & Normal(0, 10) & Weakly informative; allows effects up to $\pm$20 Hz\\
+$\tau_k$ & Exponential(0.5) & Weakly informative for random effect SDs\\
+$\sigma_y$ & Exponential(0.1) & Allows residual SD in plausible range\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Interpretation}\label{interpretation}
+
+The key parameters of interest are \(\beta_1\) (stress effect) and \(\beta_2\) (recovery effect):
+
+\begin{itemize}
+\tightlist
+\item
+  A positive \(\beta_1\) indicates that F0 increases from baseline to pre-exam, consistent with heightened autonomic arousal elevating vocal pitch.
+\item
+  A negative \(\beta_2\) would indicate that F0 decreases from pre-exam to post-exam, suggesting recovery toward baseline levels.
+\end{itemize}
+
+The random effect standard deviations (\(\tau_1\), \(\tau_2\), \(\tau_3\)) quantify the degree of individual differences in baseline levels, stress reactivity, and recovery patterns. Large values of \(\tau_2\) or \(\tau_3\) would indicate substantial heterogeneity in how participants respond to stress---heterogeneity that might be explained by personality traits, motivating the moderation analyses presented in the next section.
+
+The \texttt{generated\ quantities} block produces posterior predictive samples for model checking and pointwise log-likelihoods for model comparison via LOO-CV.
+
+\subsection{Personality Moderation of Vocal Stress Responses}\label{personality-moderation-of-vocal-stress-responses}
+
+\subsubsection{Research Question}\label{research-question-1}
+
+The central question addressed by this model is whether the effect of exam-related stress on vocal acoustics (F0, NNE) is moderated by individual differences in personality pathology. Specifically, we ask: Do the five PID-5 domains---Negative Affectivity, Detachment, Antagonism, Disinhibition, and Psychoticism---differentially amplify or attenuate the stress-induced changes in vocal parameters during (a) anticipatory stress and (b) post-stressor recovery?
+
+\subsubsection{The Challenge: Personality Traits from Intensive Longitudinal Data}\label{the-challenge-personality-traits-from-intensive-longitudinal-data}
+
+A key methodological challenge in this study concerns how personality traits are represented in the moderation analysis. Each participant completed approximately 20 EMA assessments over 2.5 months, providing repeated measures of each PID-5 domain. A naive approach would aggregate these observations into a single person-level mean for each domain and use these means as predictors in a standard multilevel regression. However, this approach discards valuable information and fails to account for measurement error: the observed person-means are noisy estimates of the true latent traits, and treating them as known quantities underestimates uncertainty in the moderation effects.
+
+Our model addresses this problem through a \emph{joint measurement-and-outcome model} that simultaneously estimates latent personality traits from the EMA data and their moderating influence on vocal stress responses. This integrated approach has three key advantages:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  \textbf{Measurement error correction}: Rather than using observed means as fixed predictors, the model estimates each participant's true latent trait score (\(\theta_{id}\)) as a parameter, with appropriate uncertainty. This uncertainty propagates into the moderation estimates, yielding appropriately calibrated credible intervals.
+\item
+  \textbf{Borrowing strength across observations}: The repeated EMA measurements inform the latent trait estimates through a measurement model, allowing the model to distinguish stable trait variance from occasion-specific fluctuations.
+\item
+  \textbf{Coherent uncertainty quantification}: Because the latent traits and their effects are estimated jointly, the posterior distributions for moderation parameters (\(\gamma_1\), \(\gamma_2\)) fully reflect uncertainty about both the traits themselves and their influence on vocal outcomes.
+\end{enumerate}
+
+\subsubsection{Model Specification}\label{model-specification-1}
+
+The model comprises two interconnected components: a \emph{measurement model} for the EMA-based personality assessments and an \emph{outcome model} for the vocal parameters.
+
+\paragraph{Measurement Model (EMA)}\label{measurement-model-ema}
+
+Let \(X_{nd}\) denote the observed score for participant \(i\) on domain \(d\) at EMA occasion \(n\). The measurement model specifies:
+
+\[
+X_{nd} \sim \text{Normal}(\theta_{i[n],d}, \sigma_d^{\text{ema}})
+\]
+
+where \(\theta_{id}\) is the latent true trait score for participant \(i\) on domain \(d\), and \(\sigma_d^{\text{ema}}\) captures occasion-to-occasion variability (including both state fluctuations and measurement error). The latent traits are given standard normal priors:
+
+\[
+\theta_{id} \sim \text{Normal}(0, 1)
+\]
+
+This formulation treats each participant's approximately 20 EMA observations as repeated noisy indicators of a stable underlying trait, with the model learning both the trait estimates and the amount of occasion-level variability for each domain.
+
+\paragraph{Outcome Model (Vocal Parameters)}\label{outcome-model-vocal-parameters}
+
+Let \(y_j\) denote the vocal outcome (F0 or NNE) for observation \(j\), with participant index \(i[j]\). Stress effects are parameterized using two orthogonal contrasts:
+
+\begin{itemize}
+\tightlist
+\item
+  \(c_1\): Stress contrast (pre-exam vs.~baseline);
+\item
+  \(c_2\): Recovery contrast (post-exam vs.~pre-exam).
+\end{itemize}
+
+The outcome model specifies:
+
+\[
+y_j \sim \text{Normal}(\mu_j, \sigma_y)
+\]
+
+where the linear predictor \(\mu_j\) includes fixed effects, random effects, and the crucial trait × contrast interactions:
+
+\[
+\mu_j = \alpha + u_{i,1} + (\beta_1 + u_{i,2}) \cdot c_{1j} + (\beta_2 + u_{i,3}) \cdot c_{2j} + \sum_{d=1}^{5} \left[ a_d \cdot \theta_{id} + \gamma_{1d} \cdot c_{1j} \cdot \theta_{id} + \gamma_{2d} \cdot c_{2j} \cdot \theta_{id} \right]
+\]
+
+The parameters are:
+
+\begin{itemize}
+\tightlist
+\item
+  \(\alpha\): Grand mean (baseline vocal parameter);
+\item
+  \(\beta_1\), \(\beta_2\): Population-average stress and recovery effects;
+\item
+  \(u_{i,1}\), \(u_{i,2}\), \(u_{i,3}\): Participant-specific random intercept and slopes;
+\item
+  \(a_d\): Main effect of trait \(d\) on baseline vocal level;
+\item
+  \(\gamma_{1d}\): \textbf{Stress moderation}---how trait \(d\) amplifies or attenuates the stress effect;
+\item
+  \(\gamma_{2d}\): \textbf{Recovery moderation}---how trait \(d\) shapes post-stressor trajectory.
+\end{itemize}
+
+The moderation parameters \(\gamma_{1d}\) and \(\gamma_{2d}\) are the quantities of primary theoretical interest. A positive \(\gamma_{1d}\) indicates that higher levels of trait \(d\) are associated with larger stress-induced changes in the vocal parameter.
+
+\paragraph{Random Effects Structure}\label{random-effects-structure}
+
+Participant-level random effects are specified using a non-centered parameterization for computational efficiency:
+
+\[
+u_{i,k} = z_{i,k} \cdot \tau_k, \quad z_{i,k} \sim \text{Normal}(0, 1)
+\]
+
+where \(\tau_k\) are the random effect standard deviations. This structure allows for individual differences in baseline levels (\(u_{i,1}\)), stress reactivity (\(u_{i,2}\)), and recovery (\(u_{i,3}\)) beyond what is explained by the PID-5 traits.
+
+\subsubsection{Prior Specification}\label{prior-specification-1}
+
+Priors were chosen to be weakly informative, incorporating domain knowledge about plausible parameter ranges while allowing the data to dominate inference (Table S9).
+
+\begin{table}
+
+\caption{\label{tab:table-s9-priors-moderation}Prior specifications for the moderation model.}
+\centering
+\begin{tabular}[t]{lll}
+\toprule
+Parameter & Prior & Rationale\\
+\midrule
+$\alpha$ & Normal(220, 30) & Centered on typical female F0 (Hz)\\
+$\beta_1, \beta_2$ & Normal(0, 10) & Allows stress effects up to $\pm$20 Hz\\
+$a_d$ & Normal(0, 5) & Modest trait effects on baseline\\
+$\gamma_{1d}, \gamma_{2d}$ & Normal(0, 3) & Regularization toward zero\\
+$\tau_k$ & Exponential(0.5) & Weakly informative for SDs\\
+\addlinespace
+$\sigma_y$ & Exponential(0.1) & Allows residual SD up to $\sim$10 Hz\\
+$\sigma_d^{\text{ema}}$ & Exponential(1) & Weakly informative for EMA variability\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The priors on the moderation parameters (\(\gamma_{1d}\), \(\gamma_{2d}\)) provide modest regularization, shrinking estimates toward zero in the absence of strong evidence. This helps guard against overfitting given the 10 moderation parameters (5 domains × 2 contrasts) being estimated.
+
+\subsubsection{Stan Implementation}\label{stan-implementation}
+
+The model was implemented in Stan. The complete code is available in the online repository accompanying this article.
+
+\subsubsection{Interpretation of Key Parameters}\label{interpretation-of-key-parameters}
+
+The model yields posterior distributions for 10 moderation parameters of primary interest:
+
+\begin{itemize}
+\tightlist
+\item
+  \(\gamma_{1,\text{NegAff}}, \ldots, \gamma_{1,\text{Psych}}\): How each PID-5 domain moderates stress-induced vocal change (stress contrast × trait).
+\item
+  \(\gamma_{2,\text{NegAff}}, \ldots, \gamma_{2,\text{Psych}}\): How each domain moderates recovery-phase vocal change (recovery contrast × trait).
+\end{itemize}
+
+These parameters are expressed in the original units of the vocal outcome (Hz for F0, dB for NNE) per standard deviation of the latent trait. For example, \(\gamma_{1,\text{NegAff}} = 3.0\) would indicate that a one-SD increase in latent Negative Affectivity is associated with an additional 3 Hz increase in F0 during the stress phase, beyond the population-average stress effect.
+
+\subsubsection{Posterior Predictive Checks}\label{posterior-predictive-checks}
+
+The \texttt{generated\ quantities} block produces posterior predictive samples (\(y_{\text{rep}}\)) for model checking. These were used to verify that the model adequately captured the distributional properties of the observed vocal data, including means, variances, and the pattern of individual differences across assessment phases.
+
+\newpage
+
+\section{MCMC Convergence Diagnostics}\label{mcmc-convergence-diagnostics}
+
+\subsection{Estimation Procedure}\label{estimation-procedure}
+
+All Bayesian models were estimated using Hamiltonian Monte Carlo (HMC) via Stan (Carpenter et al., 2017), accessed through the cmdstanr package in R. For the primary F0 moderation model, we ran 4 independent chains with 2,000 warmup iterations and 6,000 sampling iterations per chain, yielding 24,000 total post-warmup draws. Sampler adaptation parameters were set conservatively to ensure reliable exploration of the posterior: \texttt{adapt\_delta\ =\ 0.99} and \texttt{max\_treedepth\ =\ 15}. The same estimation procedure was applied to the NNE moderation model.
+
+\subsection{Convergence Assessment}\label{convergence-assessment}
+
+Convergence was assessed using standard diagnostics recommended for HMC estimation (Vehtari et al., 2021):
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  \textbf{Divergent transitions}: No divergent transitions were observed in either model, indicating that the sampler explored the posterior without encountering regions of high curvature that would compromise inference.
+\item
+  \textbf{Maximum treedepth}: No iterations exceeded the maximum treedepth, suggesting that the sampler did not require truncation of its trajectory length.
+\item
+  \textbf{Energy Bayesian Fraction of Missing Information (E-BFMI)}: All chains showed E-BFMI values well above the recommended threshold of 0.2, indicating adequate exploration of the energy distribution.
+\item
+  \textbf{\(\hat{R}\) (R-hat)}: The potential scale reduction factor was computed for all parameters. For the F0 model, all \(\hat{R}\) values for key parameters (fixed effects, moderation coefficients, variance components) were below 1.01, and no parameters across the full model exceeded 1.05. Table S10 reports \(\hat{R}\) values for key parameters.
+\item
+  \textbf{Effective Sample Size (ESS)}: Both bulk-ESS and tail-ESS were computed for all parameters. Bulk-ESS, which reflects the efficiency of sampling for posterior means and medians, exceeded 4,000 for all key parameters. Tail-ESS, which reflects sampling efficiency for posterior quantiles, exceeded 3,000 for all key parameters. These values substantially exceed the minimum recommended threshold of 400 (Vehtari et al., 2021).
+\end{enumerate}
+
+\begin{table}
+
+\caption{\label{tab:table-s10-diagnostics}Posterior summary and convergence diagnostics for key parameters (F0 moderation model).}
+\centering
+\begin{tabular}[t]{lrrrrr}
+\toprule
+Parameter & Mean & $SD$ & $\hat{R}$ & ESS (bulk) & ESS (tail)\\
+\midrule
+Intercept ($\alpha$) & 192.95 & 1.78 & 1.001 & 4490 & 8441\\
+Stress effect ($\beta_1$) & 3.43 & 1.33 & 1.000 & 38288 & 19497\\
+Recovery effect ($\beta_2$) & -0.49 & 1.34 & 1.000 & 38539 & 20141\\
+$\gamma_1$ Negative Affectivity & 3.14 & 1.68 & 1.000 & 39739 & 20045\\
+$\gamma_1$ Detachment & -0.36 & 1.68 & 1.000 & 37929 & 20076\\
+\addlinespace
+$\gamma_1$ Antagonism & -0.10 & 1.61 & 1.000 & 38621 & 18464\\
+$\gamma_1$ Disinhibition & -0.21 & 1.84 & 1.000 & 37799 & 19097\\
+$\gamma_1$ Psychoticism & -0.26 & 1.71 & 1.000 & 38639 & 19968\\
+$\gamma_2$ Negative Affectivity & -0.45 & 1.70 & 1.000 & 37632 & 19706\\
+$\gamma_2$ Detachment & -2.02 & 1.71 & 1.000 & 37665 & 19891\\
+\addlinespace
+$\gamma_2$ Antagonism & 3.16 & 1.61 & 1.000 & 37825 & 20302\\
+$\gamma_2$ Disinhibition & -0.18 & 1.87 & 1.000 & 34125 & 19595\\
+$\gamma_2$ Psychoticism & -1.42 & 1.70 & 1.000 & 39361 & 20089\\
+Residual SD ($\sigma_y$) & 8.85 & 0.44 & 1.000 & 14363 & 17189\\
+Random intercept SD ($\tau_1$) & 18.81 & 1.27 & 1.000 & 5855 & 11332\\
+\addlinespace
+Random stress slope SD ($\tau_2$) & 1.33 & 1.14 & 1.000 & 12845 & 13041\\
+Random recovery slope SD ($\tau_3$) & 1.65 & 1.43 & 1.000 & 10546 & 13300\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Visual Diagnostics}\label{visual-diagnostics}
+
+Trace plots for all key parameters showed excellent mixing across chains, with no visible trends or differences between chains. Representative trace plots are shown in Figure S1.
+
+\begin{figure}
+\includegraphics[width=1\linewidth]{../../results/diagnostics/trace_main_effects} \caption{Trace plots for main fixed effects parameters showing good mixing across four chains.}\label{fig:trace-figure}
+\end{figure}
+
+Autocorrelation plots indicated low autocorrelation at lag 1 and negligible autocorrelation beyond lag 10 for all parameters, consistent with the high effective sample sizes reported above.
+
+\subsection{Posterior Predictive Checks}\label{posterior-predictive-checks-1}
+
+Model adequacy was assessed using posterior predictive checks (Gelman et al., 2013). Figure S2 shows the posterior predictive density overlaid on the observed F0 distribution. The model accurately captured the location, spread, and shape of the observed data.
+
+\begin{figure}
+\includegraphics[width=0.8\linewidth]{../../results/diagnostics/ppc_density_overlay} \caption{Posterior predictive check showing 100 draws from the posterior predictive distribution (light blue) overlaid on the observed F0 distribution (dark blue).}\label{fig:ppc-figure}
+\end{figure}
+
+Additional posterior predictive checks confirmed that the model adequately recovered:
+
+\begin{itemize}
+\tightlist
+\item
+  The mean F0 across all observations (observed: 192.5 Hz; 95\% PPC interval: {[}191.2, 193.8{]})
+\item
+  The standard deviation of F0 (observed: 22.1 Hz; 95\% PPC interval: {[}20.8, 23.4{]})
+\item
+  The pattern of means across assessment periods (Baseline \textless{} Post-exam \textless{} Pre-exam)
+\end{itemize}
+
+\subsection{Summary}\label{summary}
+
+All convergence diagnostics indicated that the MCMC sampler successfully explored the posterior distribution. The absence of divergent transitions, combined with \(\hat{R}\) values below 1.01 and effective sample sizes exceeding 4,000, provides strong evidence that the posterior summaries reported in the main text are reliable. Posterior predictive checks confirmed that the model adequately captured the key features of the observed data.
+
+\subsection{NNE Model Diagnostics}\label{nne-model-diagnostics}
+
+The same estimation and diagnostic procedures were applied to the NNE moderation model. Table S11 summarizes the convergence diagnostics for both models.
+
+\begin{table}[H]
+\centering
+\caption{\label{tab:table-s11-diagnostics-comparison}Convergence diagnostics summary for F0 and NNE moderation models.}
+\centering
+\resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{
+\fontsize{9}{11}\selectfont
+\begin{tabular}[t]{lrrrrrr}
+\toprule
+Model & Divergences & Max Treedepth Exceeded & $\hat{R}$ (max) & $\hat{R} > 1.01$ & ESS Bulk (min) & ESS Tail (min)\\
+\midrule
+F0 & 0 & 0 & 1.0015 & 0 & 4490 & 8441\\
+NNE & 0 & 0 & 1.0013 & 0 & 3775 & 4659\\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+The NNE model showed equally good convergence properties: no divergent transitions, no iterations exceeding maximum treedepth, all \(\hat{R}\) values below 1.01, and minimum effective sample sizes well above recommended thresholds. Posterior predictive checks for the NNE model (Figure S3) confirmed adequate model fit.
+
+\begin{figure}
+\includegraphics[width=0.8\linewidth]{../../results/diagnostics/ppc_density_overlay_nne} \caption{Posterior predictive check for the NNE moderation model.}\label{fig:ppc-nne-figure}
+\end{figure}
+
+\newpage
+
+\section{Posterior Predictive Assurance of Moderation Effects}\label{posterior-predictive-assurance-of-moderation-effects}
+
+\subsection{Rationale}\label{rationale}
+
+Beyond estimating posterior distributions for the moderation parameters, we conducted a posterior predictive assurance analysis to quantify the probability that the \emph{direction} of the observed moderation effect would replicate under the same study design. Rather than addressing statistical significance or interval exclusion criteria, this analysis focuses on directional replicability: given the fitted model and the uncertainty in its parameters, how likely is it that a new study with the same design would yield a moderation effect in the same direction?
+
+This approach is conceptually distinct from frequentist power analysis. Instead of assuming a fixed but unknown true effect size, posterior predictive assurance integrates over the full posterior distribution of the model parameters, thereby reflecting uncertainty about both the magnitude of the effect and the data-generating process.
+
+\subsection{Procedure}\label{procedure}
+
+Posterior predictive simulations were conducted using draws from the joint posterior distribution of the fitted moderation model. For each simulation, a new dataset was generated under the same design as the original study, including the same number of participants, the same stress and recovery contrasts, and a comparable distribution of EMA observations per participant. Latent personality traits for the new participants were drawn from their population prior distributions, consistent with the generative assumptions of the model.
+
+For each simulated dataset, the moderation effect of interest---specifically, the interaction between Negative Affectivity and the stress contrast---was re-estimated using a fast proxy model. Replication success was defined using a minimal and directionally focused criterion: the estimated moderation effect was required to be positive (\textgreater{} 0). This criterion captures whether the effect would replicate in direction, without imposing additional thresholds related to statistical significance or effect size magnitude. This process was repeated 1,000 times, yielding an empirical estimate of the posterior predictive probability of directional replication (assurance).
+
+\subsection{Results}\label{results-2}
+
+Across posterior predictive replications, the moderation effect was positive in 92.1\% of simulated datasets. The estimated posterior predictive probability of replication success was therefore 0.92, with a 95\% credible interval of {[}0.90, 0.94{]}, reflecting Monte Carlo uncertainty in the simulation-based estimate.
+
+\subsection{Interpretation}\label{interpretation-1}
+
+These results indicate a high probability that the direction of the moderation effect would replicate in a new sample drawn under the same design assumptions. In other words, given the fitted model and the uncertainty in its parameters, the interaction between Negative Affectivity and stress is expected to be positive in the large majority of replications.
+
+At the same time, this analysis does not imply precise recovery of the effect magnitude. The posterior distribution of the moderation parameter remains relatively wide, indicating substantial uncertainty about the exact size of the effect. The assurance analysis therefore supports \emph{directional robustness} of the moderation effect, while remaining agnostic about the degree of precision with which its magnitude can be estimated.
+
+Taken together with the posterior estimates reported in the main analysis, these results suggest that the observed moderation effect is unlikely to be a chance reversal in direction, even though its quantitative strength should be interpreted with appropriate caution.
+
+\newpage
+
+\section{References}\label{references}
+
+Bottesi, G., Caudek, C., Colpizzi, I., Iannattone, S., Palmieri, G., \& Sica, C. (2024). Advancing understanding of the relation between criterion A of the alternative model for personality disorders and hierarchical taxonomy of psychopathology: Insights from an external validity analysis. \emph{Personality Disorders: Theory, Research, and Treatment}.
+
+Carpenter, B., Gelman, A., Hoffman, M. D., Lee, D., Goodrich, B., Betancourt, M., \ldots{} \& Riddell, A. (2017). Stan: A probabilistic programming language. \emph{Journal of Statistical Software, 76}, 1--32.
+
+Gelman, A., Carlin, J. B., Stern, H. S., Dunson, D. B., Vehtari, A., \& Rubin, D. B. (2013). \emph{Bayesian data analysis} (3rd ed.). Chapman \& Hall/CRC.
+
+Lai, M. H. (2021). Composite reliability of multilevel data: It's about observed scores and construct meanings. \emph{Psychological Methods, 26}(1), 90--102.
+
+Vehtari, A., Gelman, A., Simpson, D., Carpenter, B., \& Bürkner, P.-C. (2021). Rank-normalization, folding, and localization: An improved \(\hat{R}\) for assessing convergence of MCMC (with discussion). \emph{Bayesian Analysis, 16}(2), 667--718.
+
+
+\end{document}
