@@ -49,12 +49,14 @@ p_dir <- function(x, direction = c("gt0", "lt0")) {
 }
 pd <- function(x) mean(x > 0) %>% (\(p) max(p, 1 - p))()
 
+# Posterior summaries use central 89% credible intervals (equal-tailed),
+# reported as magnitude-uncertainty ranges; pd is the primary directional index.
 summ <- function(x) {
   tibble(
     mean = mean(x),
     median = median(x),
-    q05 = quantile(x, 0.05),
-    q95 = quantile(x, 0.95),
+    ci_lower = quantile(x, 0.055),
+    ci_upper = quantile(x, 0.945),
     pd = pd(x),
     p_gt0 = mean(x > 0),
     p_lt0 = mean(x < 0)
@@ -104,15 +106,15 @@ mod_tbl <- map_dfr(seq_len(D), function(d) {
 
     # moderation on stress (interaction c1*trait)
     g1_mean = mean(g1d),
-    g1_q05 = quantile(g1d, 0.05),
-    g1_q95 = quantile(g1d, 0.95),
+    g1_lower = quantile(g1d, 0.055),
+    g1_upper = quantile(g1d, 0.945),
     g1_pd = pd(g1d),
     g1_p_expected = p_dir(g1d, expected_stress), # if you expect "amplification" of b1 direction
 
     # moderation on recovery (interaction c2*trait)
     g2_mean = mean(g2d),
-    g2_q05 = quantile(g2d, 0.05),
-    g2_q95 = quantile(g2d, 0.95),
+    g2_lower = quantile(g2d, 0.055),
+    g2_upper = quantile(g2d, 0.945),
     g2_pd = pd(g2d),
     g2_p_expected = p_dir(g2d, expected_recover) # if you expect trait makes recovery more negative
   )

@@ -1,0 +1,4 @@
+source("02_ema_manipulation_check_negative_affect_itemwise_priors.R")
+source("04_ema_manipulation_check_appraisal_reviewer_ready.R")
+source("03_descriptives_and_reliability_reviewers.R")
+source("05_compile_manipulation_check_reviewer_tables.R")

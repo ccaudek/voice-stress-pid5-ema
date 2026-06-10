@@ -45,7 +45,7 @@ source("scripts/02_statistical_analyses/03_NNE/02_run_nne_pid5_REVISED.R")
 - Compiles Stan model (or loads existing fit)
 - Samples posterior (4 chains, 6000 iter, adapt_delta=0.99)
 - Saves fit: `stan/NNE/nne_mean_pid5_moderation.rds`
-- Saves summary: `results/NNE/model_summary_nne_moderation.csv` ← **NEW!**
+- Saves summary: `results/NNE/model_summary_nne_moderation.csv` 
 - Creates PPC: `results/NNE/ppc_nne_moderation.png`
 
 **Outputs:**
@@ -87,7 +87,7 @@ source("scripts/02_statistical_analyses/03_NNE/04_interpret_nne_pid5_fit.R")
 
 ---
 
-### **Step 5: Differential Effects Analysis** (NEW!)
+### **Step 5: Differential Effects Analysis** 
 ```r
 source("scripts/02_statistical_analyses/03_NNE/05_differential_effects_nne.R")
 ```

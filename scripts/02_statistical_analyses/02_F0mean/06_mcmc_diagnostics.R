@@ -21,6 +21,16 @@ suppressPackageStartupMessages({
 color_scheme_set("brightblue")
 
 # ==============================================================================
+# 0) CREDIBLE INTERVAL SETTINGS
+# ==============================================================================
+
+# Use central 89% credible intervals throughout posterior summaries.
+# This follows the reporting convention used elsewhere in the manuscript.
+cri_level <- 0.89
+cri_probs <- c((1 - cri_level) / 2, 1 - (1 - cri_level) / 2)
+cri_label <- paste0(round(cri_level * 100), "%")
+
+# ==============================================================================
 # 1) LOAD FITTED MODEL
 # ==============================================================================
 
@@ -44,7 +54,8 @@ pid5_vars <- bundle$pid5_vars
 out_dir <- here("results", "diagnostics")
 dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
 
-cat("=== MCMC DIAGNOSTICS FOR F0 MODERATION MODEL ===\n\n")
+cat("=== MCMC DIAGNOSTICS FOR F0 MODERATION MODEL ===\n")
+cat("Posterior summaries use ", cri_label, " credible intervals.\n\n", sep = "")
 
 # ==============================================================================
 # 2) SAMPLING DIAGNOSTICS
@@ -94,8 +105,18 @@ key_params <- c(
   paste0("sigma_ema[", 1:5, "]")
 )
 
-# Get summary for key parameters
-summary_key <- fit$summary(variables = key_params)
+# Get summary for key parameters with 89% credible intervals
+summary_key <- fit$summary(
+  variables = key_params,
+  mean,
+  median,
+  sd,
+  mad,
+  ~ posterior::quantile2(.x, probs = cri_probs),
+  rhat,
+  ess_bulk,
+  ess_tail
+)
 
 # Add readable parameter names
 param_labels <- c(
@@ -136,9 +157,11 @@ summary_key <- summary_key %>%
   select(
     Parameter = Parameter_Label,
     Mean = mean,
+    Median = median,
     SD = sd,
-    `2.5%` = q5,
-    `97.5%` = q95,
+    MAD = mad,
+    CrI89_Lower = `q5.5`,
+    CrI89_Upper = `q94.5`,
     Rhat = rhat,
     ESS_bulk = ess_bulk,
     ESS_tail = ess_tail
@@ -160,7 +183,7 @@ cat("Parameters with ESS < 400:", ess_issues, "\n")
 # Save full summary
 write_csv(
   summary_key,
-  file.path(out_dir, "convergence_diagnostics_key_params.csv")
+  file.path(out_dir, "convergence_diagnostics_key_params_89cri.csv")
 )
 
 # ==============================================================================
@@ -217,7 +240,8 @@ text_summary <- data.frame(
     "Rhat max (key params)",
     "Rhat > 1.01 (all params)",
     "ESS bulk min (key params)",
-    "ESS tail min (key params)"
+    "ESS tail min (key params)",
+    "Credible interval level"
   ),
   Value = c(
     n_total_params,
@@ -232,7 +256,8 @@ text_summary <- data.frame(
     round(rhat_max, 3),
     n_rhat_above_101,
     round(ess_bulk_min),
-    round(ess_tail_min)
+    round(ess_tail_min),
+    cri_label
   )
 )
 
@@ -537,13 +562,13 @@ supp_table <- summary_key %>%
       )
   ) %>%
   mutate(
-    across(c(Mean, SD, `2.5%`, `97.5%`), ~ round(.x, 2)),
+    across(c(Mean, Median, SD, MAD, CrI89_Lower, CrI89_Upper), ~ round(.x, 2)),
     Rhat = round(Rhat, 3),
     ESS_bulk = round(ESS_bulk),
     ESS_tail = round(ESS_tail)
   )
 
-write_csv(supp_table, file.path(out_dir, "supplementary_table_diagnostics.csv"))
+write_csv(supp_table, file.path(out_dir, "supplementary_table_diagnostics_89cri.csv"))
 
 cat("\n=== DIAGNOSTICS COMPLETE ===\n")
 cat("Output saved to:", out_dir, "\n")

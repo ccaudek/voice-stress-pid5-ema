@@ -14,6 +14,7 @@ suppressPackageStartupMessages({
   library(bayesplot)
   library(loo)
   library(posterior)
+  library(cmdstanr)
 })
 
 # Stan options
@@ -296,29 +297,28 @@ f0_summary <- post_f0 %>%
   summarise(
     alpha_median = median(alpha),
     alpha_mad = mad(alpha),
-    alpha_ci_lower = quantile(alpha, 0.025),
-    alpha_ci_upper = quantile(alpha, 0.975),
+    alpha_ci_lower = quantile(alpha, 0.055),
+    alpha_ci_upper = quantile(alpha, 0.945),
 
     b1_median = median(b1),
     b1_mad = mad(b1),
-    b1_ci_lower = quantile(b1, 0.025),
-    b1_ci_upper = quantile(b1, 0.975),
+    b1_ci_lower = quantile(b1, 0.055),
+    b1_ci_upper = quantile(b1, 0.945),
     b1_prob_positive = mean(b1 > 0),
 
     b2_median = median(b2),
     b2_mad = mad(b2),
-    b2_ci_lower = quantile(b2, 0.025),
-    b2_ci_upper = quantile(b2, 0.975),
+    b2_ci_lower = quantile(b2, 0.055),
+    b2_ci_upper = quantile(b2, 0.945),
     b2_prob_positive = mean(b2 > 0)
   )
 
 data.frame(f0_summary)
-# alpha_median alpha_mad alpha_ci_lower alpha_ci_upper b1_median  b1_mad b1_ci_lower
-# 1     192.4769   1.73356       189.0708       195.9646  3.271918 1.25095   0.8127971
-# b1_ci_upper b1_prob_positive b2_median   b2_mad b2_ci_lower b2_ci_upper
-# 1    5.708922          0.99525 0.1404935 1.241791   -2.340882    2.593917
-# b2_prob_positive
-# 1         0.542375
+# alpha_median alpha_mad alpha_ci_lower alpha_ci_upper b1_median  b1_mad b1_ci_lower b1_ci_upper
+# 1     192.4769   1.73356       189.7238       195.3165  3.271918 1.25095    1.251535    5.273085
+# b1_prob_positive b2_median   b2_mad b2_ci_lower b2_ci_upper b2_prob_positive
+# 1          0.99525 0.1404935 1.241791   -1.893408    2.107448         0.542375
+# # 1         0.542375
 
 cat("\n=== NNE MAIN EFFECTS SUMMARY ===\n")
 
@@ -326,29 +326,27 @@ nne_summary <- post_nne %>%
   summarise(
     alpha_median = median(alpha),
     alpha_mad = mad(alpha),
-    alpha_ci_lower = quantile(alpha, 0.025),
-    alpha_ci_upper = quantile(alpha, 0.975),
+    alpha_ci_lower = quantile(alpha, 0.055),
+    alpha_ci_upper = quantile(alpha, 0.945),
 
     b1_median = median(b1),
     b1_mad = mad(b1),
-    b1_ci_lower = quantile(b1, 0.025),
-    b1_ci_upper = quantile(b1, 0.975),
+    b1_ci_lower = quantile(b1, 0.055),
+    b1_ci_upper = quantile(b1, 0.945),
     b1_prob_negative = mean(b1 < 0),
 
     b2_median = median(b2),
     b2_mad = mad(b2),
-    b2_ci_lower = quantile(b2, 0.025),
-    b2_ci_upper = quantile(b2, 0.975),
+    b2_ci_lower = quantile(b2, 0.055),
+    b2_ci_upper = quantile(b2, 0.945),
     b2_prob_positive = mean(b2 > 0)
   )
 
 data.frame(nne_summary)
-# alpha_median alpha_mad alpha_ci_lower alpha_ci_upper  b1_median   b1_mad b1_ci_lower
-# 1    -26.86714 0.2020028      -27.27755      -26.46701 -0.6511491 0.284773   -1.203382
-# b1_ci_upper b1_prob_negative  b2_median   b2_mad b2_ci_lower b2_ci_upper
-# 1  -0.1077927          0.98975 -0.2207684 0.284177  -0.7677878    0.330555
-# b2_prob_positive
-# 1        0.2194375
+# alpha_median alpha_mad alpha_ci_lower alpha_ci_upper  b1_median   b1_mad b1_ci_lower b1_ci_upper
+# 1    -26.86714 0.2020028      -27.19834      -26.53494 -0.6511491 0.284773   -1.100997   -0.205207
+# b1_prob_negative  b2_median   b2_mad b2_ci_lower b2_ci_upper b2_prob_positive
+# 1          0.98975 -0.2207684 0.284177  -0.6699983   0.2338667        0.2194375
 
 # ----------------------------
 # 11) VISUALIZATIONS
@@ -362,8 +360,8 @@ draws_nne <- fit_nne$draws(variables = c("b1", "b2"))
 # F0 posterior distributions
 p_f0_post <- mcmc_areas(
   draws_f0,
-  prob = 0.95,
-  prob_outer = 0.99
+  prob = 0.89,
+  prob_outer = 0.89
 ) +
   labs(
     title = "F0 Mean: Posterior Distributions of Main Effects",
@@ -382,8 +380,8 @@ ggsave(
 # NNE posterior distributions
 p_nne_post <- mcmc_areas(
   draws_nne,
-  prob = 0.95,
-  prob_outer = 0.99
+  prob = 0.89,
+  prob_outer = 0.89
 ) +
   labs(
     title = "NNE: Posterior Distributions of Main Effects",
@@ -440,14 +438,14 @@ marginal_f0 <- tibble(
     median(pred_post_f0)
   ),
   lower = c(
-    quantile(pred_baseline_f0, 0.025),
-    quantile(pred_pre_f0, 0.025),
-    quantile(pred_post_f0, 0.025)
+    quantile(pred_baseline_f0, 0.055),
+    quantile(pred_pre_f0, 0.055),
+    quantile(pred_post_f0, 0.055)
   ),
   upper = c(
-    quantile(pred_baseline_f0, 0.975),
-    quantile(pred_pre_f0, 0.975),
-    quantile(pred_post_f0, 0.975)
+    quantile(pred_baseline_f0, 0.945),
+    quantile(pred_pre_f0, 0.945),
+    quantile(pred_post_f0, 0.945)
   )
 )
 
@@ -486,14 +484,14 @@ marginal_nne <- tibble(
     median(pred_post_nne)
   ),
   lower = c(
-    quantile(pred_baseline_nne, 0.025),
-    quantile(pred_pre_nne, 0.025),
-    quantile(pred_post_nne, 0.025)
+    quantile(pred_baseline_nne, 0.055),
+    quantile(pred_pre_nne, 0.055),
+    quantile(pred_post_nne, 0.055)
   ),
   upper = c(
-    quantile(pred_baseline_nne, 0.975),
-    quantile(pred_pre_nne, 0.975),
-    quantile(pred_post_nne, 0.975)
+    quantile(pred_baseline_nne, 0.945),
+    quantile(pred_pre_nne, 0.945),
+    quantile(pred_post_nne, 0.945)
   )
 )
 

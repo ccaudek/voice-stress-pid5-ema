@@ -69,17 +69,27 @@ if (!file.exists(fit_path)) {
 
 cat("\n=== MCMC DIAGNOSTICS ===\n")
 
-# Summary parametri chiave
-summary_results <- fit$summary(c(
-  "alpha",
-  "b1",
-  "b2",
-  "g1",
-  "g2",
-  "sigma_y",
-  "tau",
-  "sigma_ema"
-))
+# Summary parametri chiave (89%)
+summary_results <- fit$summary(
+  variables = c(
+    "alpha",
+    "b1",
+    "b2",
+    "g1",
+    "g2",
+    "sigma_y",
+    "tau",
+    "sigma_ema"
+  ),
+  mean,
+  median,
+  sd,
+  mad,
+  ~ posterior::quantile2(.x, probs = c(0.055, 0.945)),
+  rhat,
+  ess_bulk,
+  ess_tail
+)
 
 print(summary_results, n = Inf)
 

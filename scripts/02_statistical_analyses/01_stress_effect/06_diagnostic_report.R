@@ -202,20 +202,20 @@ comparison <- tibble(
     mad(post_nne$b2)
   ),
   CI_Lower = c(
-    quantile(post_f0$alpha, 0.025),
-    quantile(post_f0$b1, 0.025),
-    quantile(post_f0$b2, 0.025),
-    quantile(post_nne$alpha, 0.025),
-    quantile(post_nne$b1, 0.025),
-    quantile(post_nne$b2, 0.025)
+    quantile(post_f0$alpha, 0.055),
+    quantile(post_f0$b1, 0.055),
+    quantile(post_f0$b2, 0.055),
+    quantile(post_nne$alpha, 0.055),
+    quantile(post_nne$b1, 0.055),
+    quantile(post_nne$b2, 0.055)
   ),
   CI_Upper = c(
-    quantile(post_f0$alpha, 0.975),
-    quantile(post_f0$b1, 0.975),
-    quantile(post_f0$b2, 0.975),
-    quantile(post_nne$alpha, 0.975),
-    quantile(post_nne$b1, 0.975),
-    quantile(post_nne$b2, 0.975)
+    quantile(post_f0$alpha, 0.945),
+    quantile(post_f0$b1, 0.945),
+    quantile(post_f0$b2, 0.945),
+    quantile(post_nne$alpha, 0.945),
+    quantile(post_nne$b1, 0.945),
+    quantile(post_nne$b2, 0.945)
   ),
   P_Direction = c(
     max(mean(post_f0$alpha > 0), mean(post_f0$alpha < 0)),
@@ -247,16 +247,13 @@ f0_b1_size <- case_when(
 
 cat("F0 Stress Effect (β₁):\n")
 cat(sprintf("   Magnitude: %.2f Hz\n", f0_b1_median))
-cat(sprintf("   Classification: %s\n", f0_b1_size))
+cat(sprintf("   Approx. magnitude (descriptive): %s\n", f0_b1_size))
 cat(sprintf("   Evidence strength: P(β₁ > 0) = %.3f\n", mean(post_f0$b1 > 0)))
 
-if (mean(post_f0$b1 > 0) > 0.95) {
-  cat("   Interpretation: Strong evidence for stress-induced F0 elevation\n")
-} else if (mean(post_f0$b1 > 0) > 0.80) {
-  cat("   Interpretation: Moderate evidence for stress-induced F0 elevation\n")
-} else {
-  cat("   Interpretation: Weak or ambiguous evidence\n")
-}
+cat(sprintf(
+  "   Probability of direction: pd = %.3f (continuous directional evidence; no threshold applied)\n",
+  mean(post_f0$b1 > 0)
+))
 
 # NNE stress effect
 nne_b1_median <- median(post_nne$b1)
@@ -269,16 +266,13 @@ nne_b1_size <- case_when(
 
 cat("\nNNE Stress Effect (β₁):\n")
 cat(sprintf("   Magnitude: %.2f dB\n", nne_b1_median))
-cat(sprintf("   Classification: %s\n", nne_b1_size))
+cat(sprintf("   Approx. magnitude (descriptive): %s\n", nne_b1_size))
 cat(sprintf("   Evidence strength: P(β₁ < 0) = %.3f\n", mean(post_nne$b1 < 0)))
 
-if (mean(post_nne$b1 < 0) > 0.95) {
-  cat("   Interpretation: Strong evidence for stress-induced noise reduction\n")
-} else if (mean(post_nne$b1 < 0) > 0.80) {
-  cat("   Interpretation: Moderate evidence for stress-induced noise reduction\n")
-} else {
-  cat("   Interpretation: Weak or ambiguous evidence\n")
-}
+cat(sprintf(
+  "   Probability of direction: pd = %.3f (continuous directional evidence; no threshold applied)\n",
+  mean(post_nne$b1 < 0)
+))
 
 # ==============================================================================
 # RECOMMENDATIONS

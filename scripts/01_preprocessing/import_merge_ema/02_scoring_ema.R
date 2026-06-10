@@ -1,4 +1,5 @@
 # Script purpose: scoring EMA scales.
+# Checked on 11/05/2026
 
 suppressPackageStartupMessages({
   library(psych)
@@ -16,7 +17,6 @@ suppressPackageStartupMessages({
 
 df <- rio::import(here(
   "scripts",
-  "ema_by_timepoint",
   "01_preprocessing",
   "import_merge_ema",
   "interim_data",
@@ -68,7 +68,6 @@ rio::export(
   df,
   here(
     "scripts",
-    "ema_by_timepoint",
     "01_preprocessing",
     "import_merge_ema",
     "interim_data",

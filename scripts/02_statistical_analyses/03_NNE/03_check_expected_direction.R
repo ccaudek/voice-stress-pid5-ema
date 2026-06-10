@@ -95,14 +95,16 @@ diff_summary <- diffs |>
   summarise(
     n = n(),
     mean_d_stress = mean(d_stress, na.rm = TRUE),
-    q05_d_stress = quantile(d_stress, 0.05, na.rm = TRUE),
-    q95_d_stress = quantile(d_stress, 0.95, na.rm = TRUE),
+    # NB: questi sono percentili descrittivi delle differenze grezze entro-soggetto,
+    # non intervalli di credibilità; usiamo comunque l'89% per uniformità nel repo.
+    q055_d_stress = quantile(d_stress, 0.055, na.rm = TRUE),
+    q945_d_stress = quantile(d_stress, 0.945, na.rm = TRUE),
     p_d_stress_gt0 = mean(d_stress > 0, na.rm = TRUE),
     p_d_stress_lt0 = mean(d_stress < 0, na.rm = TRUE),
 
     mean_d_recovery = mean(d_recovery, na.rm = TRUE),
-    q05_d_recovery = quantile(d_recovery, 0.05, na.rm = TRUE),
-    q95_d_recovery = quantile(d_recovery, 0.95, na.rm = TRUE),
+    q055_d_recovery = quantile(d_recovery, 0.055, na.rm = TRUE),
+    q945_d_recovery = quantile(d_recovery, 0.945, na.rm = TRUE),
     p_d_recovery_gt0 = mean(d_recovery > 0, na.rm = TRUE),
     p_d_recovery_lt0 = mean(d_recovery < 0, na.rm = TRUE)
   )

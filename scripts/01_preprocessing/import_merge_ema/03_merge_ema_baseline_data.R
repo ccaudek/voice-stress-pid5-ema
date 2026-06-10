@@ -1,5 +1,6 @@
 # EMA + Scales: Merge & QC
 # Data assembly and quality checks
+# Checked on 11/05/2026
 
 suppressPackageStartupMessages({
   library(tidyverse)
@@ -13,7 +14,6 @@ suppressPackageStartupMessages({
 # Paths & inputs
 ema_rds_path <- here::here(
   "scripts",
-  "ema_by_timepoint",
   "01_preprocessing",
   "import_merge_ema",
   "interim_data",

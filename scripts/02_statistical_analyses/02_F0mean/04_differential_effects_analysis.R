@@ -1,7 +1,9 @@
 # ==============================================================================
-# 04_differential_effects_analysis.R
-# Analisi pattern differenziali: quali domini mostrano moderazioni distinguibili?
-# Focus: Direction certainty + Contrasti tra domini + Theoretical alignment
+# 04_differential_effects_analysis_89cri.R
+# Differential moderation patterns: PID-5 domains x stress/recovery
+# Uses central 89% credible intervals throughout.
+# PD, SNR, and pairwise probabilities are reported descriptively, without
+# binary decision thresholds such as PD > .95.
 # ==============================================================================
 
 suppressPackageStartupMessages({
@@ -17,8 +19,17 @@ suppressPackageStartupMessages({
 # SETUP
 # ==============================================================================
 
+# Central 89% credible intervals, following McElreath-style reporting
+cri_level <- 0.89
+cri_probs <- c((1 - cri_level) / 2, 1 - (1 - cri_level) / 2)
+cri_label <- paste0(round(cri_level * 100), "%")
+
+# Check: should be 0.055 and 0.945
+print(cri_probs)
+
 fit <- readRDS("stan/F0/f0mean_pid5_moderation.RDS")
 bundle <- readRDS("results/stan_bundle_f0mean_pid5.rds")
+
 stan_data <- bundle$stan_data
 pid5_vars <- bundle$pid5_vars
 
@@ -31,39 +42,47 @@ pid5_labels <- c(
 )
 
 draws <- fit$draws()
-sigma_y <- median(as.numeric(draws[,, "sigma_y"]))
+sigma_y <- median(as.numeric(draws[, , "sigma_y"]))
+
+# Output directory
+out_dir <- here("results", "f0mean")
+dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
 
 cat("\n=== DIFFERENTIAL MODERATION EFFECTS ANALYSIS ===\n")
-cat("Focus: Identifying domains with distinguishable moderation patterns\n")
+cat("Focus: descriptive posterior summaries, pairwise contrasts, and theory alignment\n")
+cat("Credible intervals:", cri_label, "central intervals\n")
 cat("Residual SD (sigma_y) =", round(sigma_y, 2), "Hz\n\n")
 
 # ==============================================================================
-# PARTE 1: DIRECTION CERTAINTY - La certezza della direzione conta!
+# PART 1: DIRECTIONAL POSTERIOR SUMMARIES
 # ==============================================================================
 
-cat("=== PART 1: DIRECTION CERTAINTY ===\n\n")
+cat("=== PART 1: DIRECTIONAL POSTERIOR SUMMARIES ===\n\n")
 
-# Funzione per estrarre metriche chiave
+pd_fun <- function(x) {
+  max(mean(x > 0), mean(x < 0))
+}
+
 extract_metrics <- function(draws_param) {
   tibble(
     median = median(draws_param),
     mean = mean(draws_param),
     mad = mad(draws_param),
-    ci_lower = quantile(draws_param, 0.025),
-    ci_upper = quantile(draws_param, 0.975),
-    pd = max(mean(draws_param > 0), mean(draws_param < 0)),
+    ci_lower = unname(quantile(draws_param, cri_probs[1])),
+    ci_upper = unname(quantile(draws_param, cri_probs[2])),
+    pd = pd_fun(draws_param),
     p_positive = mean(draws_param > 0),
     p_negative = mean(draws_param < 0),
-    snr = abs(median(draws_param)) / mad(draws_param) # Signal-to-noise ratio
+    snr = abs(median(draws_param)) / mad(draws_param)
   )
 }
 
-# Analizza tutti i parametri
+# Analyze all moderation parameters
 direction_table <- tibble()
 
-for (d in 1:5) {
+for (d in seq_along(pid5_labels)) {
   # Stress moderation
-  g1 <- as.numeric(draws[,, paste0("g1[", d, "]")])
+  g1 <- as.numeric(draws[, , paste0("g1[", d, "]")])
   metrics_g1 <- extract_metrics(g1)
 
   direction_table <- bind_rows(
@@ -71,12 +90,12 @@ for (d in 1:5) {
     metrics_g1 %>%
       mutate(
         domain = pid5_labels[d],
-        parameter = "Stress (γ₁)"
+        parameter = "Stress (gamma1)"
       )
   )
 
   # Recovery moderation
-  g2 <- as.numeric(draws[,, paste0("g2[", d, "]")])
+  g2 <- as.numeric(draws[, , paste0("g2[", d, "]")])
   metrics_g2 <- extract_metrics(g2)
 
   direction_table <- bind_rows(
@@ -84,34 +103,21 @@ for (d in 1:5) {
     metrics_g2 %>%
       mutate(
         domain = pid5_labels[d],
-        parameter = "Recovery (γ₂)"
+        parameter = "Recovery (gamma2)"
       )
   )
 }
 
-# Classificazione basata su certezza direzione + SNR
+# Descriptive summary only: no PD-based decision categories
 direction_summary <- direction_table %>%
   mutate(
     direction = ifelse(median > 0, "positive", "negative"),
-    direction_certainty = case_when(
-      pd > 0.95 & abs(median) > 1.0 ~ "Strong",
-      pd > 0.90 & abs(median) > 0.5 ~ "Moderate",
-      pd > 0.80 ~ "Suggestive",
-      TRUE ~ "Weak"
-    ),
-    signal_quality = case_when(
-      snr > 1.5 ~ "Clear signal",
-      snr > 1.0 ~ "Detectable signal",
-      snr > 0.5 ~ "Weak signal",
-      TRUE ~ "Noise-dominated"
-    ),
-    interpretation = paste0(
-      direction_certainty,
-      " ",
-      direction,
-      " (",
-      signal_quality,
-      ")"
+    pd_label = sprintf("PD = %.2f", pd),
+    interval_label = sprintf(
+      "%.2f [%0.2f, %0.2f]",
+      median,
+      ci_lower,
+      ci_upper
     )
   ) %>%
   select(
@@ -121,53 +127,54 @@ direction_summary <- direction_table %>%
     ci_lower,
     ci_upper,
     pd,
+    p_positive,
+    p_negative,
     snr,
-    direction_certainty,
-    signal_quality,
-    interpretation
+    direction,
+    pd_label,
+    interval_label
   )
 
 print(direction_summary, n = Inf)
 
 write_csv(
   direction_summary,
-  here("results", "f0mean", "direction_certainty_table.csv")
+  here(out_dir, "direction_posterior_summary_89cri.csv")
 )
 
 # ==============================================================================
-# PARTE 2: DIFFERENTIAL EFFECTS - Quali domini si distinguono?
+# PART 2: DIFFERENTIAL EFFECTS - PAIRWISE PROBABILITIES
 # ==============================================================================
 
 cat("\n=== PART 2: DIFFERENTIAL EFFECTS ANALYSIS ===\n\n")
 
-# Identifica "stand-out" effects
-standout_effects <- direction_summary %>%
-  filter(direction_certainty %in% c("Strong", "Moderate")) %>%
-  arrange(desc(pd))
+# Highest PD values, reported descriptively rather than as thresholded findings
+top_directional_effects <- direction_summary %>%
+  arrange(desc(pd)) %>%
+  slice_head(n = 5)
 
-cat("Domains with Strong/Moderate directional certainty:\n")
+cat("Top moderation effects by posterior probability of direction:\n")
 print(
-  standout_effects %>%
-    select(domain, parameter, median, pd, direction_certainty)
+  top_directional_effects %>%
+    select(domain, parameter, median, ci_lower, ci_upper, pd)
 )
 
-# Confronti diretti: calcola P(domain_A > domain_B)
 cat("\n--- Pairwise Contrasts (Stress moderation) ---\n")
 
-# Esempio: P(NA > tutti gli altri)
-g1_na <- as.numeric(draws[,, "g1[1]"])
+# Example: P(NA > each other domain)
+g1_na <- as.numeric(draws[, , "g1[1]"])
 for (d in 2:5) {
-  g1_other <- as.numeric(draws[,, paste0("g1[", d, "]")])
+  g1_other <- as.numeric(draws[, , paste0("g1[", d, "]")])
   p_greater <- mean(g1_na > g1_other)
   cat(sprintf("  P(NA > %s) = %.1f%%\n", pid5_labels[d], p_greater * 100))
 }
 
 cat("\n--- Pairwise Contrasts (Recovery moderation) ---\n")
 
-# P(Antagonism > tutti gli altri per recovery)
-g2_ant <- as.numeric(draws[,, "g2[3]"])
+# P(Antagonism > each other domain) for recovery
+g2_ant <- as.numeric(draws[, , "g2[3]"])
 for (d in c(1, 2, 4, 5)) {
-  g2_other <- as.numeric(draws[,, paste0("g2[", d, "]")])
+  g2_other <- as.numeric(draws[, , paste0("g2[", d, "]")])
   p_greater <- mean(g2_ant > g2_other)
   cat(sprintf(
     "  P(Antagonism > %s) = %.1f%%\n",
@@ -177,43 +184,43 @@ for (d in c(1, 2, 4, 5)) {
 }
 
 # ==============================================================================
-# PARTE 3: MAGNITUDE UNCERTAINTY vs DIRECTION CERTAINTY
+# PART 3: MAGNITUDE UNCERTAINTY AND DIRECTIONAL PROBABILITY
 # ==============================================================================
 
-cat("\n=== PART 3: MAGNITUDE UNCERTAINTY vs DIRECTION CERTAINTY ===\n\n")
+cat("\n=== PART 3: MAGNITUDE UNCERTAINTY AND DIRECTIONAL PROBABILITY ===\n\n")
 
-# Per i domini chiave, mostra che la DIREZIONE è certa anche se la DIMENSIONE è incerta
 key_effects <- direction_summary %>%
   filter(domain %in% c("Negative Affectivity", "Antagonism", "Detachment")) %>%
   filter(
-    (domain == "Negative Affectivity" & parameter == "Stress (γ₁)") |
-      (domain == "Antagonism" & parameter == "Recovery (γ₂)") |
-      (domain == "Detachment" & parameter == "Recovery (γ₂)")
+    (domain == "Negative Affectivity" & parameter == "Stress (gamma1)") |
+      (domain == "Antagonism" & parameter == "Recovery (gamma2)") |
+      (domain == "Detachment" & parameter == "Recovery (gamma2)")
   )
 
-cat("Key findings:\n")
-for (i in 1:nrow(key_effects)) {
+cat("Key posterior summaries:\n")
+for (i in seq_len(nrow(key_effects))) {
   cat(sprintf("\n%s - %s:\n", key_effects$domain[i], key_effects$parameter[i]))
   cat(sprintf(
-    "  Median effect: %.2f Hz [%.2f, %.2f]\n",
+    "  Median effect: %.2f Hz [%s CrI: %.2f, %.2f]\n",
     key_effects$median[i],
+    cri_label,
     key_effects$ci_lower[i],
     key_effects$ci_upper[i]
   ))
   cat(sprintf(
-    "  Direction certainty: %.1f%% (PD = %.3f)\n",
+    "  Probability of direction: %.1f%% (PD = %.3f)\n",
     key_effects$pd[i] * 100,
     key_effects$pd[i]
   ))
   cat(sprintf("  Signal-to-noise ratio: %.2f\n", key_effects$snr[i]))
 
-  # Calcola probabilità soglie multiple
+  # Magnitude probabilities are descriptive
   if (key_effects$domain[i] == "Negative Affectivity") {
-    g <- as.numeric(draws[,, "g1[1]"])
+    g <- as.numeric(draws[, , "g1[1]"])
   } else if (key_effects$domain[i] == "Antagonism") {
-    g <- as.numeric(draws[,, "g2[3]"])
+    g <- as.numeric(draws[, , "g2[3]"])
   } else {
-    g <- as.numeric(draws[,, "g2[2]"])
+    g <- as.numeric(draws[, , "g2[2]"])
   }
 
   cat("  Magnitude probabilities:\n")
@@ -223,27 +230,37 @@ for (i in 1:nrow(key_effects)) {
 }
 
 # ==============================================================================
-# VISUALIZZAZIONE 1: Direction Certainty Plot
+# VISUALIZATION 1: Directional posterior summaries
 # ==============================================================================
 
-# Prepara dati per plot
 direction_plot_data <- direction_summary %>%
   mutate(
-    domain = factor(domain, levels = rev(pid5_labels)),
-    highlight = direction_certainty %in% c("Strong", "Moderate")
+    domain = factor(domain, levels = rev(pid5_labels))
   )
 
 fig_direction <- ggplot(
   direction_plot_data,
   aes(x = median, y = domain)
 ) +
-  geom_vline(xintercept = 0, linetype = "dashed", color = "gray50", size = 1) +
-  geom_linerange(
-    aes(xmin = ci_lower, xmax = ci_upper, color = highlight),
-    size = 1.5,
-    alpha = 0.8
+  geom_vline(
+    xintercept = 0,
+    linetype = "dashed",
+    color = "gray50",
+    linewidth = 1
   ) +
-  geom_point(aes(fill = highlight), size = 4, shape = 21, stroke = 0.5) +
+  geom_linerange(
+    aes(xmin = ci_lower, xmax = ci_upper),
+    linewidth = 1.3,
+    alpha = 0.8,
+    color = "gray40"
+  ) +
+  geom_point(
+    size = 4,
+    shape = 21,
+    stroke = 0.5,
+    fill = "white",
+    color = "black"
+  ) +
   geom_text(
     aes(
       label = sprintf("PD=%.2f", pd),
@@ -254,19 +271,11 @@ fig_direction <- ggplot(
     color = "gray30"
   ) +
   facet_wrap(~parameter) +
-  scale_color_manual(
-    values = c("TRUE" = "#d62728", "FALSE" = "gray60"),
-    guide = "none"
-  ) +
-  scale_fill_manual(
-    values = c("TRUE" = "#d62728", "FALSE" = "gray60"),
-    guide = "none"
-  ) +
   labs(
     x = "Moderation Effect (Hz per SD)",
     y = NULL,
-    title = "Direction Certainty of Moderation Effects",
-    subtitle = "Red = Strong/Moderate directional certainty (PD > 0.90); 95% credible intervals"
+    title = "Directional Posterior Summaries of Moderation Effects",
+    subtitle = paste0("Posterior medians with ", cri_label, " credible intervals; PD is descriptive")
   ) +
   theme_minimal(base_size = 12) +
   theme(
@@ -277,26 +286,32 @@ fig_direction <- ggplot(
 print(fig_direction)
 
 ggsave(
-  filename = here("results", "f0mean", "figure_direction_certainty.png"),
+  filename = here(out_dir, "figure_direction_posterior_summary_89cri.png"),
   plot = fig_direction,
   width = 12,
   height = 6,
   dpi = 300
 )
 
+ggsave(
+  filename = here(out_dir, "figure_direction_posterior_summary_89cri.pdf"),
+  plot = fig_direction,
+  width = 12,
+  height = 6
+)
+
 # ==============================================================================
-# VISUALIZZAZIONE 2: Posterior Contrasts - "Stand-out" effects
+# VISUALIZATION 2: Posterior contrasts for selected stand-out patterns
 # ==============================================================================
 
-# Calcola tutte le differenze per stress moderation
 contrast_data <- tibble()
 
+# Stress moderation: Negative Affectivity versus each other domain
 g1_list <- list()
-for (d in 1:5) {
-  g1_list[[d]] <- as.numeric(draws[,, paste0("g1[", d, "]")])
+for (d in seq_along(pid5_labels)) {
+  g1_list[[d]] <- as.numeric(draws[, , paste0("g1[", d, "]")])
 }
 
-# NA vs others
 for (d in 2:5) {
   diff <- g1_list[[1]] - g1_list[[d]]
   contrast_data <- bind_rows(
@@ -310,10 +325,10 @@ for (d in 2:5) {
   )
 }
 
-# Antagonism vs others per recovery
+# Recovery moderation: Antagonism versus each other domain
 g2_list <- list()
-for (d in 1:5) {
-  g2_list[[d]] <- as.numeric(draws[,, paste0("g2[", d, "]")])
+for (d in seq_along(pid5_labels)) {
+  g2_list[[d]] <- as.numeric(draws[, , paste0("g2[", d, "]")])
 }
 
 for (d in c(1, 2, 4, 5)) {
@@ -329,29 +344,35 @@ for (d in c(1, 2, 4, 5)) {
   )
 }
 
-# Summarize
 contrast_summary <- contrast_data %>%
   group_by(contrast, parameter) %>%
   summarise(
     median_diff = median(difference),
-    ci_lower = quantile(difference, 0.025),
-    ci_upper = quantile(difference, 0.975),
+    ci_lower = unname(quantile(difference, cri_probs[1])),
+    ci_upper = unname(quantile(difference, cri_probs[2])),
     p_greater = unique(p_positive),
     .groups = "drop"
-  ) %>%
-  mutate(
-    strong_contrast = p_greater > 0.90
   )
+
+write_csv(
+  contrast_summary,
+  here(out_dir, "pairwise_contrasts_summary_89cri.csv")
+)
 
 fig_contrasts <- contrast_data %>%
   mutate(
     contrast = factor(contrast, levels = unique(contrast_summary$contrast))
   ) %>%
   ggplot(aes(x = difference, y = contrast)) +
-  geom_vline(xintercept = 0, linetype = "dashed", color = "gray50") +
+  geom_vline(
+    xintercept = 0,
+    linetype = "dashed",
+    color = "gray50"
+  ) +
   stat_halfeye(
-    .width = 0.95,
-    fill = "#1f77b4",
+    .width = cri_level,
+    point_interval = "median_qi",
+    fill = "gray70",
     alpha = 0.7,
     normalize = "xy"
   ) +
@@ -359,8 +380,10 @@ fig_contrasts <- contrast_data %>%
     data = contrast_summary,
     aes(
       x = ci_upper + 0.5,
+      y = contrast,
       label = sprintf("P>0: %.1f%%", p_greater * 100)
     ),
+    inherit.aes = FALSE,
     hjust = 0,
     size = 3
   ) +
@@ -368,8 +391,8 @@ fig_contrasts <- contrast_data %>%
   labs(
     x = "Difference in moderation effect (Hz)",
     y = NULL,
-    title = "Pairwise Contrasts: Stand-out Effects",
-    subtitle = "Distributions show difference between key domains and others"
+    title = "Pairwise Posterior Contrasts for Selected Domain Comparisons",
+    subtitle = paste0("Distributions show posterior differences; intervals are ", cri_label, " credible intervals")
   ) +
   theme_minimal(base_size = 12) +
   theme(
@@ -380,41 +403,47 @@ fig_contrasts <- contrast_data %>%
 print(fig_contrasts)
 
 ggsave(
-  filename = here("results", "f0mean", "figure_pairwise_contrasts.png"),
+  filename = here(out_dir, "figure_pairwise_contrasts_89cri.png"),
   plot = fig_contrasts,
   width = 12,
   height = 8,
   dpi = 300
 )
 
+ggsave(
+  filename = here(out_dir, "figure_pairwise_contrasts_89cri.pdf"),
+  plot = fig_contrasts,
+  width = 12,
+  height = 8
+)
+
 # ==============================================================================
-# VISUALIZZAZIONE 3: Signal-to-Noise Ratio
+# VISUALIZATION 3: Signal-to-noise ratio
 # ==============================================================================
 
 snr_plot_data <- direction_summary %>%
   mutate(
-    domain = factor(domain, levels = rev(pid5_labels)),
-    strong_signal = snr > 1.0
+    domain = factor(domain, levels = rev(pid5_labels))
   )
 
 fig_snr <- ggplot(
   snr_plot_data,
-  aes(x = snr, y = domain, color = strong_signal)
+  aes(x = snr, y = domain)
 ) +
   geom_vline(xintercept = 1, linetype = "dashed", alpha = 0.5) +
   geom_vline(xintercept = 1.5, linetype = "dotted", alpha = 0.5) +
-  geom_segment(aes(x = 0, xend = snr, y = domain, yend = domain), size = 1.5) +
-  geom_point(size = 4) +
-  facet_wrap(~parameter) +
-  scale_color_manual(
-    values = c("TRUE" = "#d62728", "FALSE" = "gray60"),
-    guide = "none"
+  geom_segment(
+    aes(x = 0, xend = snr, y = domain, yend = domain),
+    linewidth = 1.3,
+    color = "gray50"
   ) +
+  geom_point(size = 4, color = "black") +
+  facet_wrap(~parameter) +
   labs(
-    x = "Signal-to-Noise Ratio (|median| / MAD)",
+    x = "Signal-to-noise ratio: |posterior median| / MAD",
     y = NULL,
-    title = "Effect Size Relative to Uncertainty",
-    subtitle = "SNR > 1.0 (dashed line) indicates effect exceeds uncertainty; >1.5 (dotted) is clear signal"
+    title = "Effect Magnitude Relative to Posterior Uncertainty",
+    subtitle = "Reference lines at SNR = 1.0 and 1.5 are descriptive only"
   ) +
   theme_minimal(base_size = 12) +
   theme(
@@ -425,82 +454,83 @@ fig_snr <- ggplot(
 print(fig_snr)
 
 ggsave(
-  filename = here("results", "f0mean", "figure_snr.png"),
+  filename = here(out_dir, "figure_snr_descriptive.png"),
   plot = fig_snr,
   width = 12,
   height = 6,
   dpi = 300
 )
 
+ggsave(
+  filename = here(out_dir, "figure_snr_descriptive.pdf"),
+  plot = fig_snr,
+  width = 12,
+  height = 6
+)
+
 # ==============================================================================
-# PARTE 4: THEORETICAL ALIGNMENT
+# PART 4: THEORETICAL ALIGNMENT
 # ==============================================================================
 
 cat("\n=== PART 4: THEORETICAL ALIGNMENT ===\n\n")
 
-# Definisci predizioni teoriche (a priori)
+# A priori theoretical predictions
 theoretical_predictions <- tribble(
   ~domain,
   ~parameter,
   ~predicted_direction,
   ~rationale,
   "Negative Affectivity",
-  "Stress (γ₁)",
+  "Stress (gamma1)",
   "positive",
-  "High NA → greater stress reactivity",
+  "High NA -> greater stress reactivity",
   "Negative Affectivity",
-  "Recovery (γ₂)",
+  "Recovery (gamma2)",
   "negative",
-  "High NA → impaired recovery",
+  "High NA -> impaired recovery",
   "Detachment",
-  "Stress (γ₁)",
+  "Stress (gamma1)",
   "negative",
-  "High Det → blunted reactivity",
+  "High Detachment -> blunted reactivity",
   "Detachment",
-  "Recovery (γ₂)",
+  "Recovery (gamma2)",
   "negative",
-  "High Det → slower recovery",
+  "High Detachment -> slower recovery",
   "Antagonism",
-  "Stress (γ₁)",
+  "Stress (gamma1)",
   "ambiguous",
-  "Complex - could suppress or amplify",
+  "Complex pattern; could suppress or amplify",
   "Antagonism",
-  "Recovery (γ₂)",
+  "Recovery (gamma2)",
   "negative",
-  "High Ant → impaired recovery (low empathy)",
+  "High Antagonism -> impaired recovery",
   "Disinhibition",
-  "Stress (γ₁)",
+  "Stress (gamma1)",
   "positive",
-  "High Dis → greater reactivity",
+  "High Disinhibition -> greater reactivity",
   "Disinhibition",
-  "Recovery (γ₂)",
+  "Recovery (gamma2)",
   "negative",
-  "High Dis → impaired regulation",
+  "High Disinhibition -> impaired regulation",
   "Psychoticism",
-  "Stress (γ₁)",
+  "Stress (gamma1)",
   "ambiguous",
   "Unclear theoretical prediction",
   "Psychoticism",
-  "Recovery (γ₂)",
+  "Recovery (gamma2)",
   "negative",
-  "High Psy → impaired recovery"
+  "High Psychoticism -> impaired recovery"
 )
 
-# Confronta con risultati empirici
+# Compare observed and predicted directions without thresholding PD
 alignment_table <- direction_summary %>%
   left_join(theoretical_predictions, by = c("domain", "parameter")) %>%
   mutate(
     observed_direction = ifelse(median > 0, "positive", "negative"),
     alignment = case_when(
       predicted_direction == "ambiguous" ~ "No clear prediction",
-      observed_direction == predicted_direction & pd > 0.80 ~
-        "Aligned (certain)",
-      observed_direction == predicted_direction & pd <= 0.80 ~
-        "Aligned (uncertain)",
-      observed_direction != predicted_direction & pd > 0.80 ~
-        "Contrary (certain)",
-      observed_direction != predicted_direction & pd <= 0.80 ~
-        "Contrary (uncertain)",
+      observed_direction == predicted_direction ~ "Same direction as prediction",
+      observed_direction != predicted_direction ~ "Opposite direction from prediction",
       TRUE ~ "Unclear"
     )
   ) %>%
@@ -509,60 +539,53 @@ alignment_table <- direction_summary %>%
     parameter,
     predicted_direction,
     observed_direction,
+    median,
+    ci_lower,
+    ci_upper,
     pd,
     alignment,
     rationale
   )
 
-cat("Theoretical Alignment:\n")
-print(
-  alignment_table %>%
-    filter(alignment %in% c("Aligned (certain)", "Contrary (certain)")),
-  n = Inf
-)
+cat("Theoretical alignment table:\n")
+print(alignment_table, n = Inf)
 
 write_csv(
   alignment_table,
-  here("results", "f0mean", "theoretical_alignment_table.csv")
+  here(out_dir, "theoretical_alignment_table_descriptive_89cri.csv")
 )
 
-# Conta allineamenti
 alignment_counts <- alignment_table %>%
   count(alignment) %>%
   arrange(desc(n))
 
-cat("\nAlignment Summary:\n")
+cat("\nAlignment summary:\n")
 print(alignment_counts)
 
 # ==============================================================================
-# PARTE 5: INDIVIDUAL PREDICTIONS (simplified)
+# PART 5: INDIVIDUAL-LEVEL HETEROGENEITY
 # ==============================================================================
 
 cat("\n=== PART 5: INDIVIDUAL-LEVEL HETEROGENEITY ===\n\n")
 
-# Estrai theta e u
 theta_array <- as_draws_array(fit$draws(variables = "theta"))
 theta_df <- as_draws_df(theta_array)
+
 u_array <- as_draws_array(fit$draws(variables = "u"))
 u_df <- as_draws_df(u_array)
 
-# Calcola stress response per ogni soggetto (basato su NA)
-alpha <- as.numeric(draws[,, "alpha"])
-b1 <- as.numeric(draws[,, "b1"])
-g1_na <- as.numeric(draws[,, "g1[1]"])
+alpha <- as.numeric(draws[, , "alpha"])
+b1 <- as.numeric(draws[, , "b1"])
+g1_na <- as.numeric(draws[, , "g1[1]"])
 
 individual_responses <- tibble()
 
 for (i in 1:stan_data$N_subj) {
   theta_i <- mean(as.numeric(theta_df[[paste0("theta[", i, ",1]")]]))
-  u_i_int <- mean(as.numeric(u_df[[paste0("u[", i, ",1]")]]))
   u_i_slope <- mean(as.numeric(u_df[[paste0("u[", i, ",2]")]]))
 
-  # Stress response = change from baseline to pre
-  # At baseline: c1 = -0.5, at pre: c1 = 0.5
-  # Delta = (b1 + u_slope) * (0.5 - (-0.5)) + g1_na * (0.5 - (-0.5)) * theta
-  #       = (b1 + u_slope + g1_na * theta) * 1
-
+  # Stress response = change from baseline to pre-stress.
+  # With the coding used in the model, Delta c1 = 1.
   stress_response <- mean(b1) + u_i_slope + mean(g1_na) * theta_i
 
   individual_responses <- bind_rows(
@@ -575,7 +598,6 @@ for (i in 1:stan_data$N_subj) {
   )
 }
 
-# Correlazione
 cor_theta_stress <- cor(
   individual_responses$theta_na,
   individual_responses$stress_response
@@ -586,26 +608,30 @@ cat(sprintf(
   "  Correlation (theta_NA, stress_response): r = %.3f\n",
   cor_theta_stress
 ))
-cat(sprintf("  Explained variance: r² = %.1f%%\n", cor_theta_stress^2 * 100))
+cat(sprintf("  Explained variance: r^2 = %.1f%%\n", cor_theta_stress^2 * 100))
 cat(sprintf(
   "  Unexplained variance: %.1f%% (random effects + other factors)\n",
   (1 - cor_theta_stress^2) * 100
 ))
 
-# Plot
+write_csv(
+  individual_responses,
+  here(out_dir, "individual_predicted_stress_responses.csv")
+)
+
 fig_individual <- ggplot(
   individual_responses,
   aes(x = theta_na, y = stress_response)
 ) +
   geom_hline(yintercept = 0, linetype = "dashed", color = "gray50") +
-  geom_point(alpha = 0.6, size = 3, color = "#1f77b4") +
-  geom_smooth(method = "lm", se = TRUE, color = "#d62728", fill = "#d62728") +
+  geom_point(alpha = 0.6, size = 3, color = "gray40") +
+  geom_smooth(method = "lm", se = FALSE, color = "black") +
   annotate(
     "text",
     x = Inf,
     y = Inf,
     label = sprintf(
-      "r = %.3f\nr² = %.1f%%",
+      "r = %.3f\nr^2 = %.1f%%",
       cor_theta_stress,
       cor_theta_stress^2 * 100
     ),
@@ -614,13 +640,13 @@ fig_individual <- ggplot(
     size = 5
   ) +
   labs(
-    x = "Negative Affectivity (latent trait θ)",
-    y = "Predicted Stress Response (ΔF0, Hz)",
-    title = "Individual Variation in Stress Response by NA Trait",
+    x = "Negative Affectivity (latent trait theta)",
+    y = "Predicted Stress Response (Delta F0, Hz)",
+    title = "Individual Variation in Predicted Stress Response by Negative Affectivity",
     subtitle = paste0(
       "N = ",
       stan_data$N_subj,
-      " subjects; positive slope confirms moderation"
+      " subjects; smooth line is descriptive"
     )
   ) +
   theme_minimal(base_size = 12)
@@ -628,11 +654,18 @@ fig_individual <- ggplot(
 print(fig_individual)
 
 ggsave(
-  filename = here("results", "f0mean", "figure_individual_heterogeneity.png"),
+  filename = here(out_dir, "figure_individual_heterogeneity_descriptive.png"),
   plot = fig_individual,
   width = 8,
   height = 6,
   dpi = 300
+)
+
+ggsave(
+  filename = here(out_dir, "figure_individual_heterogeneity_descriptive.pdf"),
+  plot = fig_individual,
+  width = 8,
+  height = 6
 )
 
 # ==============================================================================
@@ -642,111 +675,40 @@ ggsave(
 cat("\n=== ANALYSIS COMPLETE ===\n\n")
 
 cat("Files created:\n")
-cat("  1. results/f0mean/direction_certainty_table.csv\n")
-cat("  2. results/f0mean/theoretical_alignment_table.csv\n")
-cat("  3. results/f0mean/figure_direction_certainty.png\n")
-cat("  4. results/f0mean/figure_pairwise_contrasts.png\n")
-cat("  5. results/f0mean/figure_snr.png\n")
-cat("  6. results/f0mean/figure_individual_heterogeneity.png\n")
+cat("  1. results/f0mean/direction_posterior_summary_89cri.csv\n")
+cat("  2. results/f0mean/pairwise_contrasts_summary_89cri.csv\n")
+cat("  3. results/f0mean/theoretical_alignment_table_descriptive_89cri.csv\n")
+cat("  4. results/f0mean/individual_predicted_stress_responses.csv\n")
+cat("  5. results/f0mean/figure_direction_posterior_summary_89cri.png/pdf\n")
+cat("  6. results/f0mean/figure_pairwise_contrasts_89cri.png/pdf\n")
+cat("  7. results/f0mean/figure_snr_descriptive.png/pdf\n")
+cat("  8. results/f0mean/figure_individual_heterogeneity_descriptive.png/pdf\n")
 
-cat("\n=== KEY FINDINGS ===\n\n")
+cat("\n=== KEY POSTERIOR DESCRIPTIVES ===\n\n")
 
-cat("1. STRONG DIRECTIONAL EFFECTS:\n")
-strong_dir <- direction_summary %>%
-  filter(direction_certainty == "Strong") %>%
-  arrange(desc(pd))
-
-if (nrow(strong_dir) > 0) {
-  for (i in 1:nrow(strong_dir)) {
-    cat(sprintf(
-      "   %s - %s: %.2f Hz (PD = %.3f)\n",
-      strong_dir$domain[i],
-      strong_dir$parameter[i],
-      strong_dir$median[i],
-      strong_dir$pd[i]
-    ))
-  }
-} else {
-  cat("   None\n")
+cat("Top moderation effects by probability of direction:\n")
+for (i in seq_len(nrow(top_directional_effects))) {
+  cat(sprintf(
+    "   %s - %s: median = %.2f Hz [%s CrI %.2f, %.2f], PD = %.3f\n",
+    top_directional_effects$domain[i],
+    top_directional_effects$parameter[i],
+    top_directional_effects$median[i],
+    cri_label,
+    top_directional_effects$ci_lower[i],
+    top_directional_effects$ci_upper[i],
+    top_directional_effects$pd[i]
+  ))
 }
 
-cat("\n2. MODERATE DIRECTIONAL EFFECTS:\n")
-mod_dir <- direction_summary %>%
-  filter(direction_certainty == "Moderate") %>%
-  arrange(desc(pd))
-
-if (nrow(mod_dir) > 0) {
-  for (i in 1:nrow(mod_dir)) {
-    cat(sprintf(
-      "   %s - %s: %.2f Hz (PD = %.3f)\n",
-      mod_dir$domain[i],
-      mod_dir$parameter[i],
-      mod_dir$median[i],
-      mod_dir$pd[i]
-    ))
-  }
-}
-
-cat("\n3. DIFFERENTIAL PATTERNS:\n")
-cat(sprintf("   NA shows distinct stress amplification (vs other domains)\n"))
-cat(sprintf(
-  "   Antagonism shows distinct recovery facilitation (vs other domains)\n"
-))
-
-cat("\n4. THEORETICAL ALIGNMENT:\n")
-aligned <- alignment_table %>%
-  filter(alignment == "Aligned (certain)")
-if (nrow(aligned) > 0) {
-  cat("   Aligned with predictions:\n")
-  for (i in 1:nrow(aligned)) {
-    cat(sprintf(
-      "     - %s %s: %s\n",
-      aligned$domain[i],
-      aligned$parameter[i],
-      aligned$rationale[i]
-    ))
-  }
-}
-
-contrary <- alignment_table %>%
-  filter(alignment == "Contrary (certain)")
-if (nrow(contrary) > 0) {
-  cat("   Contrary to predictions (unexpected findings):\n")
-  for (i in 1:nrow(contrary)) {
-    cat(sprintf(
-      "     - %s %s: predicted %s, observed %s (PD = %.2f)\n",
-      contrary$domain[i],
-      contrary$parameter[i],
-      contrary$predicted_direction[i],
-      contrary$observed_direction[i],
-      contrary$pd[i]
-    ))
-  }
-}
-
-cat("\n5. INDIVIDUAL HETEROGENEITY:\n")
-cat(sprintf(
-  "   Trait explains %.1f%% of variance in stress responses\n",
-  cor_theta_stress^2 * 100
-))
-cat(sprintf(
-  "   Substantial individual variation (%.1f%%) beyond trait effects\n",
-  (1 - cor_theta_stress^2) * 100
-))
+cat("\nPairwise contrast summaries are posterior probabilities, not binary tests.\n")
+cat("The plots use 89% credible intervals throughout.\n")
+cat("PD, SNR, and P(contrast > 0) are reported descriptively.\n")
+cat("No color coding or labels are based on PD > .95 or similar thresholds.\n")
 
 cat("\n=== INTERPRETATION GUIDANCE ===\n\n")
-cat("These results demonstrate DIFFERENTIAL PATTERNS of moderation:\n")
-cat(
-  "- Direction is CERTAIN for key effects (NA, Antagonism) even if magnitude uncertain\n"
-)
-cat("- These domains show DISTINGUISHABLE patterns from others\n")
-cat("- Findings align with (or challenge) theoretical predictions\n")
-cat("- Effects are MARKERS of trait-specific stress reactivity profiles\n")
-cat(
-  "\nFocus: Which traits show distinguishable moderation? (Answer: NA, Antagonism)\n"
-)
-cat(
-  "NOT: Are effects 'large enough'? (Wrong question for subtle individual differences)\n"
-)
+cat("These analyses describe differential posterior patterns of moderation.\n")
+cat("Focus on posterior direction, magnitude, uncertainty, and pairwise probabilities.\n")
+cat("Avoid interpreting PD values as hard decision thresholds.\n")
+cat("Use the 89% credible intervals as the reported uncertainty intervals.\n")
 
-# eof ---
+# eof

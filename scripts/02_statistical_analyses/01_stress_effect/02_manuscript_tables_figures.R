@@ -49,16 +49,16 @@ format_posterior <- function(samples, param_name) {
   tibble(
     Median = median(values),
     MAD = mad(values),
-    CI_lower = quantile(values, 0.025),
-    CI_upper = quantile(values, 0.975),
+    CI_lower = quantile(values, 0.055),
+    CI_upper = quantile(values, 0.945),
     P_direction = ifelse(median(values) > 0, mean(values > 0), mean(values < 0))
   ) %>%
     mutate(
       Estimate = sprintf("%.2f (%.2f)", Median, MAD),
-      CI_95 = sprintf("[%.2f, %.2f]", CI_lower, CI_upper),
+      CrI_89 = sprintf("[%.2f, %.2f]", CI_lower, CI_upper),
       P_dir = sprintf("%.3f", P_direction)
     ) %>%
-    dplyr::select(Estimate, CI_95, P_dir)
+    dplyr::select(Estimate, CrI_89, P_dir)
 }
 
 # F0 table
@@ -92,19 +92,19 @@ table_nne <- bind_rows(
 
 # Combine tables
 table_combined <- bind_rows(table_f0, table_nne) %>%
-  dplyr::select(Outcome, Parameter, Estimate, CI_95, P_dir)
+  dplyr::select(Outcome, Parameter, Estimate, CrI_89, P_dir)
 
 # Create formatted table with gt
 gt_table <- table_combined %>%
   gt(groupname_col = "Outcome") %>%
   tab_header(
     title = "Hierarchical Bayesian Models: Main Effects of Exam Stress on Vocal Parameters",
-    subtitle = "Posterior median (MAD) and 95% credible intervals"
+    subtitle = "Posterior median (MAD) and 89% credible intervals"
   ) %>%
   cols_label(
     Parameter = "Parameter",
     Estimate = "Estimate (MAD)",
-    CI_95 = "95% CI",
+    CrI_89 = "89% CrI",
     P_dir = "P(direction)"
   ) %>%
   tab_footnote(
@@ -229,8 +229,8 @@ trajectory_summary <- trajectory_data %>%
   group_by(outcome, timepoint) %>%
   summarise(
     median = median(value),
-    lower = quantile(value, 0.025),
-    upper = quantile(value, 0.975),
+    lower = quantile(value, 0.055),
+    upper = quantile(value, 0.945),
     .groups = "drop"
   )
 
@@ -246,7 +246,7 @@ fig2 <- ggplot(trajectory_summary, aes(x = timepoint, y = median, group = 1)) +
   facet_wrap(~outcome, scales = "free_y", ncol = 1) +
   labs(
     title = "Model-Implied Vocal Parameter Trajectories",
-    subtitle = "Median estimates with 95% credible intervals",
+    subtitle = "Median estimates with 89% credible intervals",
     x = "Assessment Timepoint",
     y = "Parameter Value"
   ) +
@@ -275,16 +275,16 @@ effects_data <- bind_rows(
     outcome = "F0 Mean (Hz)",
     effect = "Stress\n(PRE vs BASELINE)",
     median = median(post_f0$b1),
-    lower = quantile(post_f0$b1, 0.025),
-    upper = quantile(post_f0$b1, 0.975),
+    lower = quantile(post_f0$b1, 0.055),
+    upper = quantile(post_f0$b1, 0.945),
     prob = mean(post_f0$b1 > 0)
   ),
   tibble(
     outcome = "F0 Mean (Hz)",
     effect = "Recovery\n(POST vs PRE)",
     median = median(post_f0$b2),
-    lower = quantile(post_f0$b2, 0.025),
-    upper = quantile(post_f0$b2, 0.975),
+    lower = quantile(post_f0$b2, 0.055),
+    upper = quantile(post_f0$b2, 0.945),
     prob = mean(post_f0$b2 > 0)
   ),
   # NNE effects
@@ -292,41 +292,43 @@ effects_data <- bind_rows(
     outcome = "NNE (dB)",
     effect = "Stress\n(PRE vs BASELINE)",
     median = median(post_nne$b1),
-    lower = quantile(post_nne$b1, 0.025),
-    upper = quantile(post_nne$b1, 0.975),
+    lower = quantile(post_nne$b1, 0.055),
+    upper = quantile(post_nne$b1, 0.945),
     prob = mean(post_nne$b1 < 0)
   ),
   tibble(
     outcome = "NNE (dB)",
     effect = "Recovery\n(POST vs PRE)",
     median = median(post_nne$b2),
-    lower = quantile(post_nne$b2, 0.025),
-    upper = quantile(post_nne$b2, 0.975),
+    lower = quantile(post_nne$b2, 0.055),
+    upper = quantile(post_nne$b2, 0.945),
     prob = mean(post_nne$b2 > 0)
   )
 ) %>%
   mutate(
-    significance = ifelse(prob > 0.95, "Strong", "Weak"),
-    label = sprintf("P = %.3f", prob)
+    label = sprintf("pd = %.2f", prob)
   )
 
 # Create effect size plot
 fig3 <- ggplot(
   effects_data,
-  aes(x = effect, y = median, color = significance)
+  aes(x = effect, y = median)
 ) +
   geom_hline(yintercept = 0, linetype = "dashed", color = "gray50") +
-  geom_errorbar(aes(ymin = lower, ymax = upper), width = 0.2, linewidth = 1) +
-  geom_point(size = 4) +
+  geom_errorbar(
+    aes(ymin = lower, ymax = upper),
+    width = 0.2,
+    linewidth = 1,
+    color = "#2C7BB6"
+  ) +
+  geom_point(size = 4, color = "#2C7BB6") +
   geom_text(aes(label = label), hjust = -0.2, size = 3, color = "black") +
   facet_wrap(~outcome, scales = "free", ncol = 2) +
-  scale_color_manual(values = c("Strong" = "#2C7BB6", "Weak" = "#D7191C")) +
   labs(
     title = "Effect Sizes with Posterior Uncertainty",
-    subtitle = "95% credible intervals and posterior probabilities",
+    subtitle = "Posterior medians with 89% credible intervals; pd shown descriptively",
     x = "Contrast",
-    y = "Effect Size",
-    color = "Evidence Strength"
+    y = "Effect Size"
   ) +
   theme_minimal(base_size = 12) +
   theme(
@@ -347,13 +349,36 @@ ggsave(
 # SUPPLEMENTARY: Trace Plots and Diagnostics
 # ==============================================================================
 
+# Create supplementary figures directory
+dir.create(
+  here("results", "stress", "figures", "supplementary"),
+  recursive = TRUE,
+  showWarnings = FALSE
+)
+
+pars_trace <- c("alpha", "b1", "b2", "sigma_y")
+
+# Helper: convert cmdstanr fit to bayesplot-compatible draws_array
+get_trace_array <- function(fit, pars) {
+  fit$draws(
+    variables = pars,
+    format = "draws_array",
+    inc_warmup = FALSE
+  )
+}
+
 # F0 trace plots
-trace_f0 <- mcmc_trace(fit_f0, pars = c("alpha", "b1", "b2", "sigma_y")) +
+draws_f0_trace <- get_trace_array(fit_f0, pars_trace)
+
+trace_f0 <- bayesplot::mcmc_trace(
+  draws_f0_trace,
+  pars = pars_trace
+) +
   labs(title = "F0 Model: MCMC Trace Plots") +
   theme_minimal()
 
 ggsave(
-  here("figures", "suppl_f0_traces.png"),
+  here("results", "stress", "figures", "supplementary", "suppl_f0_traces.png"),
   trace_f0,
   width = 10,
   height = 6,
@@ -361,12 +386,17 @@ ggsave(
 )
 
 # NNE trace plots
-trace_nne <- mcmc_trace(fit_nne, pars = c("alpha", "b1", "b2", "sigma_y")) +
+draws_nne_trace <- get_trace_array(fit_nne, pars_trace)
+
+trace_nne <- bayesplot::mcmc_trace(
+  draws_nne_trace,
+  pars = pars_trace
+) +
   labs(title = "NNE Model: MCMC Trace Plots") +
   theme_minimal()
 
 ggsave(
-  here("figures", "suppl_nne_traces.png"),
+  here("results", "stress", "figures", "supplementary", "suppl_nne_traces.png"),
   trace_nne,
   width = 10,
   height = 6,

@@ -61,17 +61,27 @@ ggsave(
   dpi = 300
 )
 
-# ---- Summary ----
-summary_results <- fit$summary(c(
-  "alpha",
-  "b1",
-  "b2",
-  "g1",
-  "g2",
-  "sigma_y",
-  "tau",
-  "sigma_ema"
-))
+# ---- Summary (89%) ----
+summary_results <- fit$summary(
+  variables = c(
+    "alpha",
+    "b1",
+    "b2",
+    "g1",
+    "g2",
+    "sigma_y",
+    "tau",
+    "sigma_ema"
+  ),
+  mean,
+  median,
+  sd,
+  mad,
+  ~ posterior::quantile2(.x, probs = c(0.055, 0.945)),
+  rhat,
+  ess_bulk,
+  ess_tail
+)
 
 # Stampa a schermo
 data.frame(summary_results)

@@ -1,5 +1,6 @@
 # Script purpose: Read individual EMA data files and save an RDS file.
 # @author: Ilaria Colpizzi <ilaria.colpizzi@unifi.it>
+# Checked 11/05/2026
 
 suppressPackageStartupMessages({
   library(psych)
@@ -43,7 +44,6 @@ source(here::here(
 # Folder with all raw data files.
 dir_path <- here::here(
   "scripts",
-  "ema_by_timepoint",
   "01_preprocessing",
   "import_merge_ema",
   "raw_ema_data"
@@ -489,7 +489,6 @@ saveRDS(
   combined_df7,
   here::here(
     "scripts",
-    "ema_by_timepoint",
     "01_preprocessing",
     "import_merge_ema",
     "interim_data",

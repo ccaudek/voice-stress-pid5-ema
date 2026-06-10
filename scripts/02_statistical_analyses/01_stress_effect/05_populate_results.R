@@ -44,8 +44,8 @@ extract_summary <- function(fit, param) {
   list(
     median = median(post),
     mad = mad(post),
-    lower = unname(quantile(post, 0.025)),
-    upper = unname(quantile(post, 0.975)),
+    lower = unname(quantile(post, 0.055)),
+    upper = unname(quantile(post, 0.945)),
     prob_pos = mean(post > 0),
     prob_neg = mean(post < 0)
   )
@@ -198,7 +198,7 @@ results_text <- glue(
 
 We examined the effects of acute exam-related stress on two core acoustic parameters: fundamental frequency (F0 mean, averaged across vowels /a/, /i/, and /u/) and normalized noise energy (NNE, similarly averaged). Hierarchical Bayesian models were specified to account for the nested structure of repeated acoustic measurements within participants. Two orthogonal contrasts captured distinct phases of the stress response: a *stress contrast* (c₁) comparing pre-exam to baseline recordings, and a *recovery contrast* (c₂) comparing post-exam to pre-exam recordings. Models included random intercepts and random slopes for both contrasts, allowing individual variability in baseline vocal parameters and stress reactivity.
 
-All models were implemented in Stan via rstan and estimated using Hamiltonian Monte Carlo with four chains of 4,000 iterations each (2,000 warmup). Convergence was assessed using R-hat statistics (all < 1.01) and visual inspection of trace plots. Posterior inferences are reported as median estimates with 95% credible intervals (CIs), alongside the posterior probability that each effect is in the hypothesized direction.
+All models were implemented in Stan via rstan and estimated using Hamiltonian Monte Carlo with four chains of 4,000 iterations each (2,000 warmup). Convergence was assessed using R-hat statistics (all < 1.01) and visual inspection of trace plots. Following the inferential framework described in the Supplement, we report posterior medians together with the probability of direction (pd) as the primary index of evidence, and 89% equal-tailed credible intervals (CrIs) as summaries of magnitude uncertainty; the intervals are not interpreted as significance tests, and we read the pd as a continuous index of directional certainty rather than against a threshold.
 
 ---
 
@@ -210,13 +210,13 @@ Fundamental frequency exhibited a progressive increase across assessment timepoi
 
 ### Model Results
 
-The hierarchical Bayesian model confirmed robust stress-related elevation in fundamental frequency. The intercept parameter (α), representing estimated F0 at baseline, had a posterior median of {format_est(f0_alpha$median, 1)} Hz (MAD = {format_est(f0_alpha$mad, 1)}, 95% CI [{format_est(f0_alpha$lower, 1)}, {format_est(f0_alpha$upper, 1)}]). 
+The hierarchical Bayesian model confirmed robust stress-related elevation in fundamental frequency. The intercept parameter (α), representing estimated F0 at baseline, had a posterior median of {format_est(f0_alpha$median, 1)} Hz (MAD = {format_est(f0_alpha$mad, 1)}, 89% CrI [{format_est(f0_alpha$lower, 1)}, {format_est(f0_alpha$upper, 1)}]). 
 
-The stress contrast (β₁) revealed a clear positive effect: F0 increased by {format_est(f0_b1$median, 2)} Hz (MAD = {format_est(f0_b1$mad, 2)}, 95% CI [{format_est(f0_b1$lower, 2)}, {format_est(f0_b1$upper, 2)}]) when comparing pre-exam to baseline recordings. This effect was highly consistent across posterior samples, with P(β₁ > 0) = {format_prob(f0_b1$prob_pos)}. This finding indicates that acute academic stress reliably elevates vocal pitch, consistent with increased laryngeal tension and autonomic arousal.
+The stress contrast (β₁) revealed a clear positive effect: F0 increased by {format_est(f0_b1$median, 2)} Hz (MAD = {format_est(f0_b1$mad, 2)}, 89% CrI [{format_est(f0_b1$lower, 2)}, {format_est(f0_b1$upper, 2)}]) when comparing pre-exam to baseline recordings. This effect was highly consistent across posterior samples, with P(β₁ > 0) = {format_prob(f0_b1$prob_pos)}. This finding indicates that acute academic stress reliably elevates vocal pitch, consistent with increased laryngeal tension and autonomic arousal.
 
-The recovery contrast (β₂) was {b2_direction_f0}, with a median estimate of {format_est(f0_b2$median, 2)} Hz (MAD = {format_est(f0_b2$mad, 2)}, 95% CI [{format_est(f0_b2$lower, 2)}, {format_est(f0_b2$upper, 2)}], P(β₂ > 0) = {format_prob(f0_b2$prob_pos)}). {b2_f0_interp}
+The recovery contrast (β₂) was {b2_direction_f0}, with a median estimate of {format_est(f0_b2$median, 2)} Hz (MAD = {format_est(f0_b2$mad, 2)}, 89% CrI [{format_est(f0_b2$lower, 2)}, {format_est(f0_b2$upper, 2)}], P(β₂ > 0) = {format_prob(f0_b2$prob_pos)}). {b2_f0_interp}
 
-Between-person variability was substantial, as evidenced by the standard deviation of random intercepts (τ₁ = {format_est(f0_tau1$median, 2)}, 95% CI [{format_est(f0_tau1$lower, 2)}, {format_est(f0_tau1$upper, 2)}]) and random slopes for the stress contrast (τ₂ = {format_est(f0_tau2$median, 2)}, 95% CI [{format_est(f0_tau2$lower, 2)}, {format_est(f0_tau2$upper, 2)}]). The residual standard deviation was σ = {format_est(f0_sigma$median, 2)} Hz (95% CI [{format_est(f0_sigma$lower, 2)}, {format_est(f0_sigma$upper, 2)}]), reflecting within-person measurement variability.
+Between-person variability was substantial, as evidenced by the standard deviation of random intercepts (τ₁ = {format_est(f0_tau1$median, 2)}, 89% CrI [{format_est(f0_tau1$lower, 2)}, {format_est(f0_tau1$upper, 2)}]) and random slopes for the stress contrast (τ₂ = {format_est(f0_tau2$median, 2)}, 89% CrI [{format_est(f0_tau2$lower, 2)}, {format_est(f0_tau2$upper, 2)}]). The residual standard deviation was σ = {format_est(f0_sigma$median, 2)} Hz (89% CrI [{format_est(f0_sigma$lower, 2)}, {format_est(f0_sigma$upper, 2)}]), reflecting within-person measurement variability.
 
 ---
 
@@ -228,19 +228,19 @@ In contrast to F0, NNE exhibited a pattern consistent with reduced glottal noise
 
 ### Model Results
 
-The hierarchical model for NNE confirmed a systematic reduction in glottal noise under acute stress. The intercept parameter (α) had a posterior median of {format_est(nne_alpha$median, 2)} dB (MAD = {format_est(nne_alpha$mad, 2)}, 95% CI [{format_est(nne_alpha$lower, 2)}, {format_est(nne_alpha$upper, 2)}]).
+The hierarchical model for NNE confirmed a systematic reduction in glottal noise under acute stress. The intercept parameter (α) had a posterior median of {format_est(nne_alpha$median, 2)} dB (MAD = {format_est(nne_alpha$mad, 2)}, 89% CrI [{format_est(nne_alpha$lower, 2)}, {format_est(nne_alpha$upper, 2)}]).
 
-Critically, the stress contrast (β₁) showed a robust negative effect: NNE decreased by {format_est(abs(nne_b1$median), 2)} dB (MAD = {format_est(nne_b1$mad, 2)}, 95% CI [{format_est(nne_b1$lower, 2)}, {format_est(nne_b1$upper, 2)}]) when comparing pre-exam to baseline recordings. The posterior probability that this effect was negative was P(β₁ < 0) = {format_prob(nne_b1$prob_neg)}, providing strong evidence for stress-induced reduction in glottal noise. More negative NNE values indicate a more periodic, harmonically stable signal, suggesting that acute stress does not destabilize phonation but instead promotes a 'cleaner,' albeit potentially more effortful, vocal quality.
+Critically, the stress contrast (β₁) showed a robust negative effect: NNE decreased by {format_est(abs(nne_b1$median), 2)} dB (MAD = {format_est(nne_b1$mad, 2)}, 89% CrI [{format_est(nne_b1$lower, 2)}, {format_est(nne_b1$upper, 2)}]) when comparing pre-exam to baseline recordings. The posterior probability that this effect was negative was P(β₁ < 0) = {format_prob(nne_b1$prob_neg)}, providing strong evidence for stress-induced reduction in glottal noise. More negative NNE values indicate a more periodic, harmonically stable signal, suggesting that acute stress does not destabilize phonation but instead promotes a 'cleaner,' albeit potentially more effortful, vocal quality.
 
-The recovery contrast (β₂) had a median estimate of {format_est(nne_b2$median, 2)} dB (MAD = {format_est(nne_b2$mad, 2)}, 95% CI [{format_est(nne_b2$lower, 2)}, {format_est(nne_b2$upper, 2)}], P(β₂ > 0) = {format_prob(nne_b2$prob_pos)}). {b2_nne_interp}
+The recovery contrast (β₂) had a median estimate of {format_est(nne_b2$median, 2)} dB (MAD = {format_est(nne_b2$mad, 2)}, 89% CrI [{format_est(nne_b2$lower, 2)}, {format_est(nne_b2$upper, 2)}], P(β₂ > 0) = {format_prob(nne_b2$prob_pos)}). {b2_nne_interp}
 
-Random effects estimates revealed considerable between-person heterogeneity in baseline NNE (τ₁ = {format_est(nne_tau1$median, 2)}, 95% CI [{format_est(nne_tau1$lower, 2)}, {format_est(nne_tau1$upper, 2)}]) and in stress-related change (τ₂ = {format_est(nne_tau2$median, 2)}, 95% CI [{format_est(nne_tau2$lower, 2)}, {format_est(nne_tau2$upper, 2)}]). Residual variability was σ = {format_est(nne_sigma$median, 2)} dB (95% CI [{format_est(nne_sigma$lower, 2)}, {format_est(nne_sigma$upper, 2)}]).
+Random effects estimates revealed considerable between-person heterogeneity in baseline NNE (τ₁ = {format_est(nne_tau1$median, 2)}, 89% CrI [{format_est(nne_tau1$lower, 2)}, {format_est(nne_tau1$upper, 2)}]) and in stress-related change (τ₂ = {format_est(nne_tau2$median, 2)}, 89% CrI [{format_est(nne_tau2$lower, 2)}, {format_est(nne_tau2$upper, 2)}]). Residual variability was σ = {format_est(nne_sigma$median, 2)} dB (89% CrI [{format_est(nne_sigma$lower, 2)}, {format_est(nne_sigma$upper, 2)}]).
 
 ---
 
 ## Summary of Main Effects
 
-Exam-related stress produced dissociable changes in vocal production. Fundamental frequency increased robustly under stress, reflecting heightened autonomic arousal and laryngeal tension. In contrast, NNE decreased, indicating reduced glottal noise and a more controlled, periodic phonatory signal. These patterns suggest that acute stress does not simply destabilize the voice but instead induces simultaneous increases in physiological arousal (indexed by F0) and compensatory control (indexed by reduced noise). The consistent directionality and large effect sizes for both parameters underscore the reliability of these vocal signatures of stress, which were observed across individuals despite substantial between-person variability in baseline vocal characteristics and stress reactivity.
+Exam-related stress produced dissociable changes in vocal production. Fundamental frequency increased robustly under stress, reflecting heightened autonomic arousal and laryngeal tension. In contrast, NNE decreased, indicating reduced glottal noise and a more controlled, periodic phonatory signal. These patterns suggest that acute stress does not simply destabilize the voice but instead induces simultaneous increases in physiological arousal (indexed by F0) and compensatory control (indexed by reduced noise). The consistent directionality and strong directional evidence (pd) for both parameters underscore the reliability of these vocal signatures of stress, which were observed across individuals despite substantial between-person variability in baseline vocal characteristics and stress reactivity.
 "
 )
 
@@ -249,6 +249,7 @@ Exam-related stress produced dissociable changes in vocal production. Fundamenta
 # ==============================================================================
 
 write_file(results_text, here("manuscript", "results_main_effects_complete.md"))
+
 
 cat("\n=== Complete Results section generated ===\n")
 cat("File saved to: manuscript/results_main_effects_complete.md\n")
@@ -278,7 +279,7 @@ summary_table <- tibble(
     format_est(nne_b2$median, 2),
     format_est(nne_sigma$median, 2)
   ),
-  CI_95 = c(
+  CrI_89 = c(
     glue("[{format_est(f0_alpha$lower, 2)}, {format_est(f0_alpha$upper, 2)}]"),
     glue("[{format_est(f0_b1$lower, 2)}, {format_est(f0_b1$upper, 2)}]"),
     glue("[{format_est(f0_b2$lower, 2)}, {format_est(f0_b2$upper, 2)}]"),
@@ -321,16 +322,16 @@ f0_cv_baseline <- (f0_tau1$median / abs(f0_alpha$median)) * 100
 # F0 - Stress reactivity heterogeneity
 f0_tau2_beta1_ratio <- f0_tau2$median / abs(f0_b1$median)
 
-# Individual prediction intervals (95%) for stress effect
-f0_stress_pi_lower <- f0_b1$median - 1.96 * f0_tau2$median
-f0_stress_pi_upper <- f0_b1$median + 1.96 * f0_tau2$median
+# Individual prediction intervals (89%) for stress effect
+f0_stress_pi_lower <- f0_b1$median - 1.6449 * f0_tau2$median
+f0_stress_pi_upper <- f0_b1$median + 1.6449 * f0_tau2$median
 
 cat("\n=== F0 BETWEEN-PERSON VARIABILITY ===\n")
 cat("ICC (baseline):", format_est(f0_icc_baseline * 100, 1), "%\n")
 cat("CV (baseline):", format_est(f0_cv_baseline, 1), "%\n")
 cat("τ₂/β₁ ratio:", format_est(f0_tau2_beta1_ratio, 2), "\n")
 cat(
-  "Individual stress effect 95% PI: [",
+  "Individual stress effect 89% PI: [",
   format_est(f0_stress_pi_lower, 1),
   ",",
   format_est(f0_stress_pi_upper, 1),
@@ -344,16 +345,16 @@ nne_cv_baseline <- (nne_tau1$median / abs(nne_alpha$median)) * 100
 # NNE - Stress reactivity heterogeneity
 nne_tau2_beta1_ratio <- nne_tau2$median / abs(nne_b1$median)
 
-# Individual prediction intervals (95%) for stress effect
-nne_stress_pi_lower <- nne_b1$median - 1.96 * nne_tau2$median
-nne_stress_pi_upper <- nne_b1$median + 1.96 * nne_tau2$median
+# Individual prediction intervals (89%) for stress effect
+nne_stress_pi_lower <- nne_b1$median - 1.6449 * nne_tau2$median
+nne_stress_pi_upper <- nne_b1$median + 1.6449 * nne_tau2$median
 
 cat("\n=== NNE BETWEEN-PERSON VARIABILITY ===\n")
 cat("ICC (baseline):", format_est(nne_icc_baseline * 100, 1), "%\n")
 cat("CV (baseline):", format_est(nne_cv_baseline, 1), "%\n")
 cat("τ₂/β₁ ratio:", format_est(nne_tau2_beta1_ratio, 2), "\n")
 cat(
-  "Individual stress effect 95% PI: [",
+  "Individual stress effect 89% PI: [",
   format_est(nne_stress_pi_lower, 2),
   ",",
   format_est(nne_stress_pi_upper, 2),
