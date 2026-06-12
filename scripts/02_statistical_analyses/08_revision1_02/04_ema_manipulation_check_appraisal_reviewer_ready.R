@@ -393,18 +393,18 @@ run_outcome <- function(outcome) {
   cs <- tibble(
     outcome = outcome,
     pre_minus_baseline_median = median(post$pre_minus_baseline),
-    pre_minus_baseline_lo = quantile(post$pre_minus_baseline, .025),
-    pre_minus_baseline_hi = quantile(post$pre_minus_baseline, .975),
+    pre_minus_baseline_lo = quantile(post$pre_minus_baseline, .055),
+    pre_minus_baseline_hi = quantile(post$pre_minus_baseline, .945),
     pre_minus_baseline_pgt0 = mean(post$pre_minus_baseline > 0),
     pre_minus_baseline_plt0 = mean(post$pre_minus_baseline < 0),
     post_minus_pre_median = median(post$post_minus_pre),
-    post_minus_pre_lo = quantile(post$post_minus_pre, .025),
-    post_minus_pre_hi = quantile(post$post_minus_pre, .975),
+    post_minus_pre_lo = quantile(post$post_minus_pre, .055),
+    post_minus_pre_hi = quantile(post$post_minus_pre, .945),
     post_minus_pre_pgt0 = mean(post$post_minus_pre > 0),
     post_minus_pre_plt0 = mean(post$post_minus_pre < 0),
     post_minus_baseline_median = median(post$post_minus_baseline),
-    post_minus_baseline_lo = quantile(post$post_minus_baseline, .025),
-    post_minus_baseline_hi = quantile(post$post_minus_baseline, .975),
+    post_minus_baseline_lo = quantile(post$post_minus_baseline, .055),
+    post_minus_baseline_hi = quantile(post$post_minus_baseline, .945),
     post_minus_baseline_pgt0 = mean(post$post_minus_baseline > 0),
     post_minus_baseline_plt0 = mean(post$post_minus_baseline < 0)
   )
@@ -416,14 +416,14 @@ run_outcome <- function(outcome) {
     outcome = outcome,
     timepoint = factor(c("baseline", "pre", "post"), levels = c("baseline", "pre", "post")),
     median = c(median(post$mu_baseline), median(post$mu_pre), median(post$mu_post)),
-    lower  = c(quantile(post$mu_baseline, .025), quantile(post$mu_pre, .025), quantile(post$mu_post, .025)),
-    upper  = c(quantile(post$mu_baseline, .975), quantile(post$mu_pre, .975), quantile(post$mu_post, .975))
+    lower  = c(quantile(post$mu_baseline, .055), quantile(post$mu_pre, .055), quantile(post$mu_post, .055)),
+    upper  = c(quantile(post$mu_baseline, .945), quantile(post$mu_pre, .945), quantile(post$mu_post, .945))
   )
   write_csv(marg, file.path(od, "tables", "marginal_means.csv"))
 
   # 6.7 figure
   ggsave(file.path(od, "figures", "posterior_contrasts.png"),
-         mcmc_areas(fit$draws(c("pre_minus_baseline", "post_minus_pre")), prob = .95, prob_outer = .99) +
+         mcmc_areas(fit$draws(c("pre_minus_baseline", "post_minus_pre")), prob = .89, prob_outer = .89) +
            geom_vline(xintercept = 0, linetype = "dashed") +
            labs(title = paste0("Manipulation check: ", outcome),
                 subtitle = "pre-baseline (anticipatory) and post-pre (recovery) contrasts",

@@ -26,7 +26,7 @@ print(cri_probs)
 
 # Carica il modello fitted
 fit <- readRDS("stan/F0/f0mean_pid5_moderation.RDS")
-bundle <- readRDS("results/stan_bundle_f0mean_pid5.rds")
+bundle <- readRDS("results/F0/data/stan_bundle_f0mean_pid5.rds")
 
 stan_data <- bundle$stan_data
 pid5_vars <- bundle$pid5_vars
@@ -93,7 +93,8 @@ write.csv(
   moderation_data,
   file = here::here(
     "results",
-    "f0mean",
+    "F0",
+    "figures",
     "figure1_moderation_coefficients_data_89cri.csv"
   ),
   row.names = FALSE
@@ -137,7 +138,8 @@ print(fig1)
 ggsave(
   filename = here::here(
     "results",
-    "f0mean",
+    "F0",
+    "figures",
     "figure1_moderation_coefficients.png"
   ),
   plot = fig1,
@@ -149,7 +151,8 @@ ggsave(
 ggsave(
   filename = here::here(
     "results",
-    "f0mean",
+    "F0",
+    "figures",
     "figure1_moderation_coefficients.pdf"
   ),
   plot = fig1,
@@ -252,7 +255,8 @@ write.csv(
     ),
   file = here::here(
     "results",
-    "f0mean",
+    "F0",
+    "figures",
     "figure2_predicted_trajectories_data_89cri.csv"
   ),
   row.names = FALSE
@@ -305,7 +309,8 @@ print(fig2)
 ggsave(
   filename = here::here(
     "results",
-    "f0mean",
+    "F0",
+    "figures",
     "figure2_predicted_trajectories.png"
   ),
   plot = fig2,
@@ -317,7 +322,8 @@ ggsave(
 ggsave(
   filename = here::here(
     "results",
-    "f0mean",
+    "F0",
+    "figures",
     "figure2_predicted_trajectories.pdf"
   ),
   plot = fig2,
@@ -383,7 +389,8 @@ print(fig3)
 ggsave(
   filename = here::here(
     "results",
-    "f0mean",
+    "F0",
+    "figures",
     "figureS1_posterior_distributions.png"
   ),
   plot = fig3,
@@ -395,7 +402,8 @@ ggsave(
 ggsave(
   filename = here::here(
     "results",
-    "f0mean",
+    "F0",
+    "figures",
     "figureS1_posterior_distributions.pdf"
   ),
   plot = fig3,
@@ -427,7 +435,8 @@ print(fig4)
 ggsave(
   filename = here::here(
     "results",
-    "f0mean",
+    "F0",
+    "figures",
     "figureS2_trace_plots.png"
   ),
   plot = fig4,
@@ -439,7 +448,8 @@ ggsave(
 ggsave(
   filename = here::here(
     "results",
-    "f0mean",
+    "F0",
+    "figures",
     "figureS2_trace_plots.pdf"
   ),
   plot = fig4,

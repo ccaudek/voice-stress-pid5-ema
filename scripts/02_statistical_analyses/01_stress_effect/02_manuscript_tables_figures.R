@@ -404,3 +404,4 @@ ggsave(
 )
 
 cat("\n=== Manuscript tables and figures created successfully ===\n")
+

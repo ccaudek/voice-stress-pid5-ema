@@ -28,7 +28,7 @@ cri_label <- paste0(round(cri_level * 100), "%")
 print(cri_probs)
 
 fit <- readRDS("stan/F0/f0mean_pid5_moderation.RDS")
-bundle <- readRDS("results/stan_bundle_f0mean_pid5.rds")
+bundle <- readRDS("results/F0/data/stan_bundle_f0mean_pid5.rds")
 
 stan_data <- bundle$stan_data
 pid5_vars <- bundle$pid5_vars
@@ -42,14 +42,16 @@ pid5_labels <- c(
 )
 
 draws <- fit$draws()
-sigma_y <- median(as.numeric(draws[, , "sigma_y"]))
+sigma_y <- median(as.numeric(draws[,, "sigma_y"]))
 
 # Output directory
-out_dir <- here("results", "f0mean")
+out_dir <- here("results", "F0")
 dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
 
 cat("\n=== DIFFERENTIAL MODERATION EFFECTS ANALYSIS ===\n")
-cat("Focus: descriptive posterior summaries, pairwise contrasts, and theory alignment\n")
+cat(
+  "Focus: descriptive posterior summaries, pairwise contrasts, and theory alignment\n"
+)
 cat("Credible intervals:", cri_label, "central intervals\n")
 cat("Residual SD (sigma_y) =", round(sigma_y, 2), "Hz\n\n")
 
@@ -82,7 +84,7 @@ direction_table <- tibble()
 
 for (d in seq_along(pid5_labels)) {
   # Stress moderation
-  g1 <- as.numeric(draws[, , paste0("g1[", d, "]")])
+  g1 <- as.numeric(draws[,, paste0("g1[", d, "]")])
   metrics_g1 <- extract_metrics(g1)
 
   direction_table <- bind_rows(
@@ -95,7 +97,7 @@ for (d in seq_along(pid5_labels)) {
   )
 
   # Recovery moderation
-  g2 <- as.numeric(draws[, , paste0("g2[", d, "]")])
+  g2 <- as.numeric(draws[,, paste0("g2[", d, "]")])
   metrics_g2 <- extract_metrics(g2)
 
   direction_table <- bind_rows(
@@ -158,23 +160,34 @@ print(
   top_directional_effects %>%
     select(domain, parameter, median, ci_lower, ci_upper, pd)
 )
+# domain               parameter         median ci_lower ci_upper    pd
+# <chr>                <chr>              <dbl>    <dbl>    <dbl> <dbl>
+# 1 Antagonism           Recovery (gamma2)  3.16     0.614    5.76  0.976
+# 2 Negative Affectivity Stress (gamma1)    3.14     0.453    5.84  0.971
+# 3 Detachment           Recovery (gamma2) -2.04    -4.76     0.727 0.880
+# 4 Psychoticism         Recovery (gamma2) -1.42    -4.15     1.33  0.796
+# 5 Negative Affectivity Recovery (gamma2) -0.452   -3.11     2.25  0.608
 
 cat("\n--- Pairwise Contrasts (Stress moderation) ---\n")
 
 # Example: P(NA > each other domain)
-g1_na <- as.numeric(draws[, , "g1[1]"])
+g1_na <- as.numeric(draws[,, "g1[1]"])
 for (d in 2:5) {
-  g1_other <- as.numeric(draws[, , paste0("g1[", d, "]")])
+  g1_other <- as.numeric(draws[,, paste0("g1[", d, "]")])
   p_greater <- mean(g1_na > g1_other)
   cat(sprintf("  P(NA > %s) = %.1f%%\n", pid5_labels[d], p_greater * 100))
 }
+# P(NA > Detachment) = 91.6%
+# P(NA > Antagonism) = 93.2%
+# P(NA > Disinhibition) = 88.5%
+# P(NA > Psychoticism) = 89.7%
 
 cat("\n--- Pairwise Contrasts (Recovery moderation) ---\n")
 
 # P(Antagonism > each other domain) for recovery
-g2_ant <- as.numeric(draws[, , "g2[3]"])
+g2_ant <- as.numeric(draws[,, "g2[3]"])
 for (d in c(1, 2, 4, 5)) {
-  g2_other <- as.numeric(draws[, , paste0("g2[", d, "]")])
+  g2_other <- as.numeric(draws[,, paste0("g2[", d, "]")])
   p_greater <- mean(g2_ant > g2_other)
   cat(sprintf(
     "  P(Antagonism > %s) = %.1f%%\n",
@@ -182,6 +195,10 @@ for (d in c(1, 2, 4, 5)) {
     p_greater * 100
   ))
 }
+# P(Antagonism > Negative Affectivity) = 95.1%
+# P(Antagonism > Detachment) = 97.6%
+# P(Antagonism > Disinhibition) = 90.0%
+# P(Antagonism > Psychoticism) = 96.1%
 
 # ==============================================================================
 # PART 3: MAGNITUDE UNCERTAINTY AND DIRECTIONAL PROBABILITY
@@ -216,11 +233,11 @@ for (i in seq_len(nrow(key_effects))) {
 
   # Magnitude probabilities are descriptive
   if (key_effects$domain[i] == "Negative Affectivity") {
-    g <- as.numeric(draws[, , "g1[1]"])
+    g <- as.numeric(draws[,, "g1[1]"])
   } else if (key_effects$domain[i] == "Antagonism") {
-    g <- as.numeric(draws[, , "g2[3]"])
+    g <- as.numeric(draws[,, "g2[3]"])
   } else {
-    g <- as.numeric(draws[, , "g2[2]"])
+    g <- as.numeric(draws[,, "g2[2]"])
   }
 
   cat("  Magnitude probabilities:\n")
@@ -228,6 +245,32 @@ for (i in seq_len(nrow(key_effects))) {
   cat(sprintf("    P(|effect| > 2 Hz) = %.1f%%\n", mean(abs(g) > 2) * 100))
   cat(sprintf("    P(|effect| > 3 Hz) = %.1f%%\n", mean(abs(g) > 3) * 100))
 }
+# Negative Affectivity - Stress (gamma1):
+# Median effect: 3.14 Hz [89% CrI: 0.45, 5.84]
+# Probability of direction: 97.1% (PD = 0.971)
+# Signal-to-noise ratio: 1.85
+# Magnitude probabilities:
+# P(|effect| > 1 Hz) = 90.6%
+# P(|effect| > 2 Hz) = 75.0%
+# P(|effect| > 3 Hz) = 53.4%
+#
+# Detachment - Recovery (gamma2):
+#   Median effect: -2.04 Hz [89% CrI: -4.76, 0.73]
+# Probability of direction: 88.0% (PD = 0.880)
+# Signal-to-noise ratio: 1.19
+# Magnitude probabilities:
+# P(|effect| > 1 Hz) = 76.6%
+# P(|effect| > 2 Hz) = 51.9%
+# P(|effect| > 3 Hz) = 28.6%
+#
+# Antagonism - Recovery (gamma2):
+# Median effect: 3.16 Hz [89% CrI: 0.61, 5.76]
+# Probability of direction: 97.6% (PD = 0.976)
+# Signal-to-noise ratio: 1.95
+# Magnitude probabilities:
+# P(|effect| > 1 Hz) = 91.6%
+# P(|effect| > 2 Hz) = 76.7%
+# P(|effect| > 3 Hz) = 54.0%
 
 # ==============================================================================
 # VISUALIZATION 1: Directional posterior summaries
@@ -275,7 +318,11 @@ fig_direction <- ggplot(
     x = "Moderation Effect (Hz per SD)",
     y = NULL,
     title = "Directional Posterior Summaries of Moderation Effects",
-    subtitle = paste0("Posterior medians with ", cri_label, " credible intervals; PD is descriptive")
+    subtitle = paste0(
+      "Posterior medians with ",
+      cri_label,
+      " credible intervals; PD is descriptive"
+    )
   ) +
   theme_minimal(base_size = 12) +
   theme(
@@ -286,7 +333,11 @@ fig_direction <- ggplot(
 print(fig_direction)
 
 ggsave(
-  filename = here(out_dir, "figure_direction_posterior_summary_89cri.png"),
+  filename = here(
+    out_dir,
+    "figures",
+    "figure_direction_posterior_summary_89cri.png"
+  ),
   plot = fig_direction,
   width = 12,
   height = 6,
@@ -294,7 +345,11 @@ ggsave(
 )
 
 ggsave(
-  filename = here(out_dir, "figure_direction_posterior_summary_89cri.pdf"),
+  filename = here(
+    out_dir,
+    "figures",
+    "figure_direction_posterior_summary_89cri.pdf"
+  ),
   plot = fig_direction,
   width = 12,
   height = 6
@@ -309,7 +364,7 @@ contrast_data <- tibble()
 # Stress moderation: Negative Affectivity versus each other domain
 g1_list <- list()
 for (d in seq_along(pid5_labels)) {
-  g1_list[[d]] <- as.numeric(draws[, , paste0("g1[", d, "]")])
+  g1_list[[d]] <- as.numeric(draws[,, paste0("g1[", d, "]")])
 }
 
 for (d in 2:5) {
@@ -328,7 +383,7 @@ for (d in 2:5) {
 # Recovery moderation: Antagonism versus each other domain
 g2_list <- list()
 for (d in seq_along(pid5_labels)) {
-  g2_list[[d]] <- as.numeric(draws[, , paste0("g2[", d, "]")])
+  g2_list[[d]] <- as.numeric(draws[,, paste0("g2[", d, "]")])
 }
 
 for (d in c(1, 2, 4, 5)) {
@@ -356,7 +411,7 @@ contrast_summary <- contrast_data %>%
 
 write_csv(
   contrast_summary,
-  here(out_dir, "pairwise_contrasts_summary_89cri.csv")
+  here(out_dir, "tables", "pairwise_contrasts_summary_89cri.csv")
 )
 
 fig_contrasts <- contrast_data %>%
@@ -392,7 +447,11 @@ fig_contrasts <- contrast_data %>%
     x = "Difference in moderation effect (Hz)",
     y = NULL,
     title = "Pairwise Posterior Contrasts for Selected Domain Comparisons",
-    subtitle = paste0("Distributions show posterior differences; intervals are ", cri_label, " credible intervals")
+    subtitle = paste0(
+      "Distributions show posterior differences; intervals are ",
+      cri_label,
+      " credible intervals"
+    )
   ) +
   theme_minimal(base_size = 12) +
   theme(
@@ -403,7 +462,7 @@ fig_contrasts <- contrast_data %>%
 print(fig_contrasts)
 
 ggsave(
-  filename = here(out_dir, "figure_pairwise_contrasts_89cri.png"),
+  filename = here(out_dir, "figures", "figure_pairwise_contrasts_89cri.png"),
   plot = fig_contrasts,
   width = 12,
   height = 8,
@@ -411,7 +470,7 @@ ggsave(
 )
 
 ggsave(
-  filename = here(out_dir, "figure_pairwise_contrasts_89cri.pdf"),
+  filename = here(out_dir, "figures", "figure_pairwise_contrasts_89cri.pdf"),
   plot = fig_contrasts,
   width = 12,
   height = 8
@@ -454,7 +513,7 @@ fig_snr <- ggplot(
 print(fig_snr)
 
 ggsave(
-  filename = here(out_dir, "figure_snr_descriptive.png"),
+  filename = here(out_dir, "figures", "figure_snr_descriptive.png"),
   plot = fig_snr,
   width = 12,
   height = 6,
@@ -462,7 +521,7 @@ ggsave(
 )
 
 ggsave(
-  filename = here(out_dir, "figure_snr_descriptive.pdf"),
+  filename = here(out_dir, "figures", "figure_snr_descriptive.pdf"),
   plot = fig_snr,
   width = 12,
   height = 6
@@ -529,8 +588,10 @@ alignment_table <- direction_summary %>%
     observed_direction = ifelse(median > 0, "positive", "negative"),
     alignment = case_when(
       predicted_direction == "ambiguous" ~ "No clear prediction",
-      observed_direction == predicted_direction ~ "Same direction as prediction",
-      observed_direction != predicted_direction ~ "Opposite direction from prediction",
+      observed_direction == predicted_direction ~
+        "Same direction as prediction",
+      observed_direction != predicted_direction ~
+        "Opposite direction from prediction",
       TRUE ~ "Unclear"
     )
   ) %>%
@@ -552,7 +613,7 @@ print(alignment_table, n = Inf)
 
 write_csv(
   alignment_table,
-  here(out_dir, "theoretical_alignment_table_descriptive_89cri.csv")
+  here(out_dir, "tables", "theoretical_alignment_table_descriptive_89cri.csv")
 )
 
 alignment_counts <- alignment_table %>%
@@ -561,6 +622,11 @@ alignment_counts <- alignment_table %>%
 
 cat("\nAlignment summary:\n")
 print(alignment_counts)
+#   alignment                              n
+#   <chr>                              <int>
+# 1 Same direction as prediction           6
+# 2 No clear prediction                    2
+# 3 Opposite direction from prediction     2
 
 # ==============================================================================
 # PART 5: INDIVIDUAL-LEVEL HETEROGENEITY
@@ -574,9 +640,9 @@ theta_df <- as_draws_df(theta_array)
 u_array <- as_draws_array(fit$draws(variables = "u"))
 u_df <- as_draws_df(u_array)
 
-alpha <- as.numeric(draws[, , "alpha"])
-b1 <- as.numeric(draws[, , "b1"])
-g1_na <- as.numeric(draws[, , "g1[1]"])
+alpha <- as.numeric(draws[,, "alpha"])
+b1 <- as.numeric(draws[,, "b1"])
+g1_na <- as.numeric(draws[,, "g1[1]"])
 
 individual_responses <- tibble()
 
@@ -608,15 +674,18 @@ cat(sprintf(
   "  Correlation (theta_NA, stress_response): r = %.3f\n",
   cor_theta_stress
 ))
+# Correlation (theta_NA, stress_response): r = 0.996
 cat(sprintf("  Explained variance: r^2 = %.1f%%\n", cor_theta_stress^2 * 100))
+# Explained variance: r^2 = 99.2%
 cat(sprintf(
   "  Unexplained variance: %.1f%% (random effects + other factors)\n",
   (1 - cor_theta_stress^2) * 100
 ))
+# Unexplained variance: 0.8% (random effects + other factors)
 
 write_csv(
   individual_responses,
-  here(out_dir, "individual_predicted_stress_responses.csv")
+  here(out_dir, "tables", "individual_predicted_stress_responses.csv")
 )
 
 fig_individual <- ggplot(
@@ -654,7 +723,11 @@ fig_individual <- ggplot(
 print(fig_individual)
 
 ggsave(
-  filename = here(out_dir, "figure_individual_heterogeneity_descriptive.png"),
+  filename = here(
+    out_dir,
+    "figures",
+    "figure_individual_heterogeneity_descriptive.png"
+  ),
   plot = fig_individual,
   width = 8,
   height = 6,
@@ -662,7 +735,11 @@ ggsave(
 )
 
 ggsave(
-  filename = here(out_dir, "figure_individual_heterogeneity_descriptive.pdf"),
+  filename = here(
+    out_dir,
+    "figures",
+    "figure_individual_heterogeneity_descriptive.pdf"
+  ),
   plot = fig_individual,
   width = 8,
   height = 6
@@ -699,15 +776,24 @@ for (i in seq_len(nrow(top_directional_effects))) {
     top_directional_effects$pd[i]
   ))
 }
+# Antagonism - Recovery (gamma2): median = 3.16 Hz [89% CrI 0.61, 5.76], PD = 0.976
+# Negative Affectivity - Stress (gamma1): median = 3.14 Hz [89% CrI 0.45, 5.84], PD = 0.971
+# Detachment - Recovery (gamma2): median = -2.04 Hz [89% CrI -4.76, 0.73], PD = 0.880
+# Psychoticism - Recovery (gamma2): median = -1.42 Hz [89% CrI -4.15, 1.33], PD = 0.796
+# Negative Affectivity - Recovery (gamma2): median = -0.45 Hz [89% CrI -3.11, 2.25], PD = 0.608
 
-cat("\nPairwise contrast summaries are posterior probabilities, not binary tests.\n")
+cat(
+  "\nPairwise contrast summaries are posterior probabilities, not binary tests.\n"
+)
 cat("The plots use 89% credible intervals throughout.\n")
 cat("PD, SNR, and P(contrast > 0) are reported descriptively.\n")
 cat("No color coding or labels are based on PD > .95 or similar thresholds.\n")
 
 cat("\n=== INTERPRETATION GUIDANCE ===\n\n")
 cat("These analyses describe differential posterior patterns of moderation.\n")
-cat("Focus on posterior direction, magnitude, uncertainty, and pairwise probabilities.\n")
+cat(
+  "Focus on posterior direction, magnitude, uncertainty, and pairwise probabilities.\n"
+)
 cat("Avoid interpreting PD values as hard decision thresholds.\n")
 cat("Use the 89% credible intervals as the reported uncertainty intervals.\n")
 

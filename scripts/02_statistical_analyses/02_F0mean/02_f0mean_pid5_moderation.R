@@ -10,7 +10,7 @@ suppressPackageStartupMessages({
   library(bayesplot)
 })
 
-bundle <- readRDS("results/stan_bundle_f0mean_pid5.rds")
+bundle <- readRDS("results/F0/data/stan_bundle_f0mean_pid5.rds")
 stan_data <- bundle$stan_data
 pid5_vars <- bundle$pid5_vars
 
@@ -54,7 +54,7 @@ print(ppc_plot)
 
 # Salva il plot PPC
 ggsave(
-  filename = here::here("results", "f0mean", "ppc_f0mean_moderation.png"),
+  filename = here::here("results", "F0", "ppc_f0mean_moderation.png"),
   plot = ppc_plot,
   width = 8,
   height = 6,
@@ -91,7 +91,7 @@ write.csv(
   as.data.frame(summary_results),
   file = here::here(
     "results",
-    "f0mean",
+    "F0",
     "model_summary_f0mean_moderation.csv"
   ),
   row.names = FALSE
@@ -132,11 +132,11 @@ pd_results[, -1] <- round(pd_results[, -1], 3)
 
 # Stampa a schermo (opzionale)
 print(pd_results)
-# trait g1_pd g1_p_gt0 g2_pd g2_p_gt0
-# 1 pid5_negative_affectivity 0.970    0.970 0.602    0.398
-# 2           pid5_detachment 0.585    0.415 0.880    0.120
-# 3           pid5_antagonism 0.525    0.475 0.974    0.974
-# 4        pid5_disinhibition 0.546    0.454 0.536    0.464
+#                       trait g1_pd g1_p_gt0 g2_pd g2_p_gt0
+# 1 pid5_negative_affectivity 0.971    0.971 0.608    0.392
+# 2           pid5_detachment 0.582    0.418 0.880    0.120
+# 3           pid5_antagonism 0.525    0.475 0.976    0.976
+# 4        pid5_disinhibition 0.543    0.457 0.536    0.464
 # 5         pid5_psychoticism 0.559    0.441 0.796    0.204
 
 # ---- Salvataggio ----
@@ -144,7 +144,7 @@ write.csv(
   pd_results,
   file = here::here(
     "results",
-    "f0mean",
+    "F0",
     "pd_f0mean_moderation.csv"
   ),
   row.names = FALSE
@@ -154,7 +154,7 @@ saveRDS(
   pd_results,
   file = here::here(
     "results",
-    "f0mean",
+    "F0",
     "pd_f0mean_moderation.rds"
   )
 )

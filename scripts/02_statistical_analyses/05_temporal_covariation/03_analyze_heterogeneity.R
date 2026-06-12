@@ -85,12 +85,12 @@ for (d in 1:D) {
         mean_slope = mean(slope_draws),
         median_slope = median(slope_draws),
         sd_slope = sd(slope_draws),
-        q025 = quantile(slope_draws, 0.025),
-        q975 = quantile(slope_draws, 0.975),
+        q025 = quantile(slope_draws, 0.055),
+        q975 = quantile(slope_draws, 0.945),
         prob_positive = mean(slope_draws > 0),
         prob_negative = mean(slope_draws < 0),
         # Width del CI come misura di incertezza
-        ci_width = quantile(slope_draws, 0.975) - quantile(slope_draws, 0.025)
+        ci_width = quantile(slope_draws, 0.945) - quantile(slope_draws, 0.055)
       ))
   }
 }
@@ -103,20 +103,20 @@ cat(sprintf("  ✓ %d individual slopes estratti\n\n", nrow(individual_slopes)))
 
 cat("Analisi incertezza slopes individuali...\n")
 
-# Classifica basato su 95% CI
+# Classifica basato su 89% CrI
 individual_slopes <- individual_slopes %>%
   mutate(
     classification = case_when(
-      q025 > 0 ~ "Positive (CI excludes 0)",
-      q975 < 0 ~ "Negative (CI excludes 0)",
-      TRUE ~ "Uncertain (CI includes 0)"
+      q025 > 0 ~ "Positive (direction determined)",
+      q975 < 0 ~ "Negative (direction determined)",
+      TRUE ~ "Direction not determined"
     ),
     classification = factor(
       classification,
       levels = c(
-        "Positive (CI excludes 0)",
-        "Uncertain (CI includes 0)",
-        "Negative (CI excludes 0)"
+        "Positive (direction determined)",
+        "Direction not determined",
+        "Negative (direction determined)"
       )
     )
   )
@@ -143,7 +143,7 @@ ci_width_summary <- individual_slopes %>%
     .groups = "drop"
   )
 
-cat("\nLarghezza media 95% CI per dominio:\n")
+cat("\nLarghezza media 89% CrI per dominio:\n")
 print(ci_width_summary)
 
 cat("\n⚠️  INTERPRETAZIONE:\n")
@@ -172,8 +172,8 @@ sigma_beta_summary <- tibble(
   domain = domain_labels,
   mean = colMeans(sigma_beta_draws),
   median = apply(sigma_beta_draws, 2, median),
-  q025 = apply(sigma_beta_draws, 2, quantile, 0.025),
-  q975 = apply(sigma_beta_draws, 2, quantile, 0.975)
+  q025 = apply(sigma_beta_draws, 2, quantile, 0.055),
+  q975 = apply(sigma_beta_draws, 2, quantile, 0.945)
 )
 
 cat("\nSD degli slopes (sigma_beta) per dominio:\n")
@@ -259,19 +259,19 @@ p2 <- ggplot(
   ) +
   scale_color_manual(
     values = c(
-      "Positive (CI excludes 0)" = "#2166ac",
-      "Uncertain (CI includes 0)" = "gray60",
-      "Negative (CI excludes 0)" = "#b2182b"
+      "Positive (direction determined)" = "#2166ac",
+      "Direction not determined" = "gray60",
+      "Negative (direction determined)" = "#b2182b"
     ),
     name = "Classification"
   ) +
   labs(
     title = "Individual Within-Person Slopes: Negative Affectivity",
     subtitle = sprintf(
-      "N = %d participants | Note: Nearly all 95%% CIs include zero",
+      "N = %d participants | individual 89%% intervals are wide and almost all include zero",
       N_subj
     ),
-    x = "Slope (Hz per unit NA change) - 95% CI",
+    x = "Slope (Hz per unit NA change) - 89% CrI",
     y = "Participant"
   ) +
   theme_minimal(base_size = 10) +
@@ -294,7 +294,7 @@ ggsave(
 # PLOT 3: Proportion with CI excluding zero
 # -------------------------------
 
-cat("  3. Bar chart: proportion with reliable effects...\n")
+cat("  3. Bar chart: share whose 89% interval includes zero (imprecision)...\n")
 
 p3 <- ggplot(
   uncertainty_summary,
@@ -303,15 +303,15 @@ p3 <- ggplot(
   geom_col(position = "stack") +
   scale_fill_manual(
     values = c(
-      "Positive (CI excludes 0)" = "#2166ac",
-      "Uncertain (CI includes 0)" = "gray60",
-      "Negative (CI excludes 0)" = "#b2182b"
+      "Positive (direction determined)" = "#2166ac",
+      "Direction not determined" = "gray60",
+      "Negative (direction determined)" = "#b2182b"
     ),
     name = "Classification"
   ) +
   labs(
     title = "Uncertainty in Individual Within-Person Associations",
-    subtitle = "Proportion with 95% CI excluding vs including zero",
+    subtitle = "Share whose 89% interval includes vs excludes zero (estimation imprecision)",
     x = "PID-5 Domain",
     y = "Percentage of Participants"
   ) +
@@ -342,7 +342,7 @@ p4 <- ggplot(individual_slopes, aes(x = ci_width, fill = domain)) +
   scale_fill_brewer(palette = "Set2") +
   labs(
     title = "Uncertainty in Individual Slope Estimates",
-    subtitle = "Width of 95% Credible Intervals",
+    subtitle = "Width of 89% Credible Intervals",
     x = "CI Width (Hz)",
     y = "Density"
   ) +
@@ -371,8 +371,8 @@ beta_wp_draws <- fit_rs$draws("beta_wp", format = "matrix")
 beta_wp_summary <- tibble(
   domain = domain_labels,
   beta_mean = colMeans(beta_wp_draws),
-  beta_q025 = apply(beta_wp_draws, 2, quantile, 0.025),
-  beta_q975 = apply(beta_wp_draws, 2, quantile, 0.975)
+  beta_q025 = apply(beta_wp_draws, 2, quantile, 0.055),
+  beta_q975 = apply(beta_wp_draws, 2, quantile, 0.945)
 )
 
 combined_summary <- beta_wp_summary %>%
@@ -437,12 +437,12 @@ cat(
 
 cat("UNCERTAINTY ANALYSIS:\n")
 total_uncertain <- uncertainty_summary %>%
-  filter(classification == "Uncertain (CI includes 0)") %>%
+  filter(classification == "Direction not determined") %>%
   summarise(total = sum(n)) %>%
   pull(total)
 
 total_reliable <- uncertainty_summary %>%
-  filter(classification != "Uncertain (CI includes 0)") %>%
+  filter(classification != "Direction not determined") %>%
   summarise(total = sum(n)) %>%
   pull(total)
 
@@ -497,7 +497,7 @@ cat("   - Nearly all slopes indistinguishable from zero\n\n")
 cat("2. WEAK/ABSENT EFFECTS:\n")
 cat("   - Population-level effects centered near zero\n")
 cat("   - Individual deviations small relative to uncertainty\n")
-cat("   - Only ~1-2% of participants show reliable effects\n\n")
+cat("   - For only ~1-2% does the 89% interval exclude zero (not a reliability claim)\n\n")
 
 cat("3. IMPLICATIONS:\n")
 cat("   - Dense sampling (10-20+ obs) needed to characterize individuals\n")

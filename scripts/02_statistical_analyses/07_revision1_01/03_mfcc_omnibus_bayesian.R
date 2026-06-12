@@ -30,16 +30,16 @@ suppressPackageStartupMessages({
 })
 
 K <- 13L
-contrasts_par <- c(stress = "beta1", recovery = "beta2")   # contrasto -> parametro Stan
+contrasts_par <- c(stress = "beta1", recovery = "beta2") # contrasto -> parametro Stan
 
 # ----------------------------
 # 1) CARICA IL FIT GIA' STIMATO (nessun refit)
 # ----------------------------
-fit_path    <- here("results", "stress", "models", "fit_mfcc_main_effects.rds")
-bundle_path <- here("results", "stress", "mfcc_analysis_bundle.rds")
+fit_path <- here("results", "mfcc", "models", "fit_mfcc_main_effects.rds")
+bundle_path <- here("results", "mfcc", "mfcc_analysis_bundle.rds")
 
 if (file.exists(fit_path)) {
-  fit_full <- readRDS(fit_path)                 # CmdStanMCMC salvato con $save_object()
+  fit_full <- readRDS(fit_path) # CmdStanMCMC salvato con $save_object()
 } else if (file.exists(bundle_path)) {
   fit_full <- readRDS(bundle_path)$fit_full
 } else {
@@ -50,16 +50,16 @@ if (file.exists(fit_path)) {
 # 2) FUNZIONE: omnibus di Wald a posteriori
 # ----------------------------
 bayes_wald_omnibus <- function(fit, par, K) {
-  vars     <- sprintf("%s[%d]", par, seq_len(K))
-  B        <- posterior::as_draws_matrix(fit$draws(variables = vars))  # ndraws x K
+  vars <- sprintf("%s[%d]", par, seq_len(K))
+  B <- posterior::as_draws_matrix(fit$draws(variables = vars)) # ndraws x K
   beta_bar <- colMeans(B)
-  V        <- cov(B)                                  # covarianza a posteriori (K x K)
-  M        <- as.numeric(crossprod(beta_bar, solve(V, beta_bar)))      # beta' V^{-1} beta
+  V <- cov(B) # covarianza a posteriori (K x K)
+  M <- as.numeric(crossprod(beta_bar, solve(V, beta_bar))) # beta' V^{-1} beta
   tibble(
-    M_wald    = M,
-    df        = K,
+    M_wald = M,
+    df = K,
     p_omnibus = pchisq(M, df = K, lower.tail = FALSE),
-    cond_V    = kappa(V)                               # condizionamento di V (diagnostica)
+    cond_V = kappa(V) # condizionamento di V (diagnostica)
   )
 }
 
@@ -73,14 +73,35 @@ omnibus_bayes <- imap_dfr(contrasts_par, function(par, label) {
 
 cat("\n=== OMNIBUS BAYESIANO (Wald a posteriori, riferimento chi^2_13) ===\n")
 print(as.data.frame(omnibus_bayes), digits = 4)
-cat("\n[riferimento frequentista del primo passo, Hotelling]:",
-    "stress p ~ .024 ; recovery p ~ .11\n")
+#   contrast M_wald df p_omnibus cond_V
+# 1   stress  22.33 13   0.05044  9.236
+# 2 recovery  10.47 13   0.65493  9.554
+
+cat(
+  "\n[riferimento frequentista del primo passo, Hotelling]:",
+  "stress p ~ .024 ; recovery p ~ .11\n"
+)
+cat(
+  "\nNOTA: M_wald e p_omnibus sono una CALIBRAZIONE FREQUENTISTA descrittiva del\n",
+  "profilo multivariato, da riportare come riferimento e NON come test a soglia\n",
+  "(nessun verdetto a .05). L'omnibus bayesiano di riferimento e' la distanza di\n",
+  "Mahalanobis a posteriori (mediana + CrI 89%) calcolata in 02_mfcc_main_effects;\n",
+  "l'inferenza sostantiva resta per-coefficiente (mediana, CrI 89%, pd).\n",
+  sep = ""
+)
 
 # ----------------------------
 # 4) SALVA
 # ----------------------------
-dir.create(here("results", "stress", "tables"), recursive = TRUE, showWarnings = FALSE)
-write_csv(omnibus_bayes, here("results", "stress", "tables", "mfcc_omnibus_bayes_wald.csv"))
-cat("\nSalvato: results/stress/tables/mfcc_omnibus_bayes_wald.csv\n")
+dir.create(
+  here("results", "mfcc", "tables"),
+  recursive = TRUE,
+  showWarnings = FALSE
+)
+write_csv(
+  omnibus_bayes,
+  here("results", "mfcc", "tables", "mfcc_omnibus_bayes_wald.csv")
+)
+cat("\nSalvato: results/mfcc/tables/mfcc_omnibus_bayes_wald.csv\n")
 
 # eof ---

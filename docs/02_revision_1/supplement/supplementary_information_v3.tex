@@ -60,6 +60,57 @@
   \newcommand{\xxxSubParagraphNoStar}[1]{\oldsubparagraph{#1}\mbox{}}
 \fi
 \makeatother
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{longtable,booktabs,array}
+\newcounter{none} % for unnumbered tables
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
 \usepackage{graphicx}
 \makeatletter
 \newsavebox\pandoc@box
@@ -485,14 +536,13 @@ We summarize each parameter with three complementary quantities.
   model and the data.
 \item
   \textbf{Probability of direction (pd)} --- the posterior probability that the parameter takes
-  its more probable sign, pd = max{[}P(θ \textgreater{} 0), P(θ \textless{} 0){]} (Makowski et al., 2019). The pd is
-  our primary index of evidence. It ranges from .50 (the sign is completely uncertain) to
-  1.00 (the sign is effectively certain) and has a direct verbal reading: a pd of .97
+  its more probable sign, \(pd = max[P(\theta > 0), P(\theta < 0)]\) (Makowski, Ben-Shachar, Chen, \& Lüdecke, 2019). The \(pd\) is our primary index of evidence. It ranges from .50 (the sign is completely uncertain) to
+  1.00 (the sign is effectively certain) and has a direct verbal reading: a \(pd\) of .97
   means that, given the model and data, there is a 97\% posterior probability that the
   effect lies in the stated direction. This is a probability statement \emph{about the
   parameter}, which is available only in the Bayesian framework; under the frequentist
   framework the parameter is a fixed unknown and no probability can be attached to it. We
-  treat the pd as a \emph{continuous} index of directional evidence and deliberately impose no
+  treat the \(pd\) as a \emph{continuous} index of directional evidence and deliberately impose no
   threshold above which an effect is declared ``present''; we report it for every parameter
   and interpret the gradient of values.
 \item
@@ -500,10 +550,10 @@ We summarize each parameter with three complementary quantities.
   as a summary of the \emph{magnitude uncertainty} of the estimate. This interval is \textbf{not} a
   significance test: whether or not it includes zero carries no special inferential
   status, and we do not interpret it that way. The 89\% width (rather than 95\%) is chosen
-  deliberately and follows McElreath (2020): any interval width is arbitrary, and using a
+  deliberately and follows McElreath (2018): Any interval width is arbitrary, and using a
   value other than 95\% signals that the number is a descriptive convenience rather than a
   decision boundary, discouraging the reflexive mapping of ``the 95\% interval excludes
-  zero'' onto ``p \textless{} .05.'' A 50\% interval, or any other width, would serve the same
+  zero'' onto ``\(p\) \textless{} .05.'' A 50\% interval, or any other width, would serve the same
   descriptive purpose; what matters is the location and spread of the posterior mass, not
   a cutoff.
 \end{enumerate}
@@ -517,7 +567,7 @@ threshold. Second, \textbf{direction is better identified than magnitude.} As sh
 prior-sensitivity analysis (Supplement, \emph{Prior-Sensitivity Analysis}), the sign and
 directional probability of the moderation effects are robust across prior specifications,
 whereas their point magnitudes are only weakly constrained by the present sample. We
-therefore foreground direction and directional evidence (pd) and treat all reported
+therefore foreground direction and directional evidence (\(pd\)) and treat all reported
 magnitudes --- and the widths of their credible intervals --- as estimates carrying
 substantial uncertainty (Gelman \& Carlin, 2014).
 
@@ -617,6 +667,304 @@ The key parameters of interest are \(\beta_1\) (stress effect) and \(\beta_2\) (
 The random effect standard deviations (\(\tau_1\), \(\tau_2\), \(\tau_3\)) quantify the degree of individual differences in baseline levels, stress reactivity, and recovery patterns. Large values of \(\tau_2\) or \(\tau_3\) would indicate substantial heterogeneity in how participants respond to stress---heterogeneity that might be explained by personality traits, motivating the moderation analyses presented in the next section.
 
 The \texttt{generated\ quantities} block produces posterior predictive samples for model checking and pointwise log-likelihoods for model comparison via LOO-CV.
+
+\subsection{Supplementary Sensitivity Analysis for Main Effects: Robust Student-t Models}\label{supplementary-sensitivity-analysis-for-main-effects-robust-student-t-models}
+
+To assess whether the main findings were sensitive to the Gaussian residual assumption and to the influence of potentially outlying observations, we fitted robust versions of the main-effects models for both acoustic outcomes: mean fundamental frequency, F0, and normalized noise energy, NNE. The robust models retained the same fixed-effect structure as the primary models, with two planned contrasts: stress, comparing PRE with BASELINE, and recovery, comparing POST with PRE. The hierarchical structure was also retained, but the subject-level random intercepts and random slopes were modeled as correlated random effects. The residual likelihood was changed from Gaussian to Student-t with fixed degrees of freedom, ν = 4, providing heavier tails and therefore reduced sensitivity to influential observations.
+
+The robust models were fitted as sensitivity analyses rather than as entirely separate substantive models. Thus, the key question was whether the direction, magnitude, and uncertainty of the stress and recovery effects remained consistent with the original Gaussian models, and whether the robust specification improved predictive diagnostics.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{// ========================================================================}
+\CommentTok{// f0\_main\_effects\_student\_t\_corr.stan}
+\CommentTok{// Hierarchical Bayesian model for F0 mean}
+\CommentTok{// Main effects of stress (PRE vs BASELINE) and recovery (POST vs PRE)}
+\CommentTok{// Robust Student{-}t likelihood + correlated random effects}
+\CommentTok{// ========================================================================}
+
+\KeywordTok{data}\NormalTok{ \{}
+  \DataTypeTok{int}\NormalTok{\textless{}}\KeywordTok{lower}\NormalTok{=}\DecValTok{1}\NormalTok{\textgreater{} N\_subj;                              }
+  \DataTypeTok{int}\NormalTok{\textless{}}\KeywordTok{lower}\NormalTok{=}\DecValTok{1}\NormalTok{\textgreater{} N\_obs;                              }
+  \DataTypeTok{array}\NormalTok{[N\_obs] }\DataTypeTok{int}\NormalTok{\textless{}}\KeywordTok{lower}\NormalTok{=}\DecValTok{1}\NormalTok{, }\KeywordTok{upper}\NormalTok{=N\_subj\textgreater{} subj\_id;  }
+  \DataTypeTok{vector}\NormalTok{[N\_obs] y;                                  }
+  \DataTypeTok{vector}\NormalTok{[N\_obs] c1;                                }
+  \DataTypeTok{vector}\NormalTok{[N\_obs] c2;                                 }
+\NormalTok{\}}
+\KeywordTok{transformed data}\NormalTok{ \{}
+  \DataTypeTok{real}\NormalTok{\textless{}}\KeywordTok{lower}\NormalTok{=}\DecValTok{2}\NormalTok{\textgreater{} nu = }\DecValTok{4}\NormalTok{;                             }
+\NormalTok{\}}
+\KeywordTok{parameters}\NormalTok{ \{}
+  \DataTypeTok{real}\NormalTok{ alpha;                                       }
+  \DataTypeTok{real}\NormalTok{ b1;                                          }
+  \DataTypeTok{real}\NormalTok{ b2;                                          }
+  \CommentTok{// Correlated random effects, non{-}centered parameterization}
+  \DataTypeTok{matrix}\NormalTok{[}\DecValTok{3}\NormalTok{, N\_subj] z\_u;                            }
+  \DataTypeTok{vector}\NormalTok{\textless{}}\KeywordTok{lower}\NormalTok{=}\DecValTok{0}\NormalTok{\textgreater{}[}\DecValTok{3}\NormalTok{] tau;                           }
+  \DataTypeTok{cholesky\_factor\_corr}\NormalTok{[}\DecValTok{3}\NormalTok{] L\_Omega;                  }
+  \DataTypeTok{real}\NormalTok{\textless{}}\KeywordTok{lower}\NormalTok{=}\DecValTok{0}\NormalTok{\textgreater{} sigma\_y;                            }
+\NormalTok{\}}
+\KeywordTok{transformed parameters}\NormalTok{ \{}
+  \CommentTok{// u[s, 1] = random intercept for subject s}
+  \CommentTok{// u[s, 2] = random slope for c1 for subject s}
+  \CommentTok{// u[s, 3] = random slope for c2 for subject s}
+  \DataTypeTok{matrix}\NormalTok{[N\_subj, }\DecValTok{3}\NormalTok{] u;}
+\NormalTok{  u = (diag\_pre\_multiply(tau, L\_Omega) * z\_u)\textquotesingle{};}
+\NormalTok{\}}
+\KeywordTok{model}\NormalTok{ \{}
+\NormalTok{  alpha \textasciitilde{} normal(}\DecValTok{220}\NormalTok{, }\DecValTok{30}\NormalTok{);  }\CommentTok{// typical F0 scale, weakly informative}
+\NormalTok{  b1 \textasciitilde{} normal(}\DecValTok{0}\NormalTok{, }\DecValTok{10}\NormalTok{);       }\CommentTok{// stress effect}
+\NormalTok{  b2 \textasciitilde{} normal(}\DecValTok{0}\NormalTok{, }\DecValTok{10}\NormalTok{);       }\CommentTok{// recovery effect}
+\NormalTok{  tau \textasciitilde{} exponential(}\FloatTok{0.5}\NormalTok{);}
+\NormalTok{  L\_Omega \textasciitilde{} lkj\_corr\_cholesky(}\DecValTok{2}\NormalTok{);}
+\NormalTok{  to\_vector(z\_u) \textasciitilde{} std\_normal();}
+\NormalTok{  sigma\_y \textasciitilde{} exponential(}\FloatTok{0.1}\NormalTok{);}
+  \ControlFlowTok{for}\NormalTok{ (n }\ControlFlowTok{in} \DecValTok{1}\NormalTok{:N\_obs) \{}
+    \DataTypeTok{int}\NormalTok{ s = subj\_id[n];}
+    \DataTypeTok{real}\NormalTok{ mu = alpha + u[s, }\DecValTok{1}\NormalTok{]}
+\NormalTok{            + (b1 + u[s, }\DecValTok{2}\NormalTok{]) * c1[n]}
+\NormalTok{            + (b2 + u[s, }\DecValTok{3}\NormalTok{]) * c2[n];}
+\NormalTok{    y[n] \textasciitilde{} student\_t(nu, mu, sigma\_y);}
+\NormalTok{  \}}
+\NormalTok{\}}
+\KeywordTok{generated quantities}\NormalTok{ \{}
+  \DataTypeTok{corr\_matrix}\NormalTok{[}\DecValTok{3}\NormalTok{] Omega;}
+  \DataTypeTok{vector}\NormalTok{[N\_obs] y\_rep;}
+  \DataTypeTok{vector}\NormalTok{[N\_obs] log\_lik;}
+  \DataTypeTok{vector}\NormalTok{[N\_subj] log\_lik\_subj;}
+\NormalTok{  Omega = multiply\_lower\_tri\_self\_transpose(L\_Omega);}
+\NormalTok{  log\_lik\_subj = rep\_vector(}\DecValTok{0}\NormalTok{, N\_subj);}
+  \ControlFlowTok{for}\NormalTok{ (n }\ControlFlowTok{in} \DecValTok{1}\NormalTok{:N\_obs) \{}
+    \DataTypeTok{int}\NormalTok{ s = subj\_id[n];}
+    \DataTypeTok{real}\NormalTok{ mu = alpha + u[s, }\DecValTok{1}\NormalTok{]}
+\NormalTok{            + (b1 + u[s, }\DecValTok{2}\NormalTok{]) * c1[n]}
+\NormalTok{            + (b2 + u[s, }\DecValTok{3}\NormalTok{]) * c2[n];}
+
+\NormalTok{    y\_rep[n] = student\_t\_rng(nu, mu, sigma\_y);}
+\NormalTok{    log\_lik[n] = student\_t\_lpdf(y[n] | nu, mu, sigma\_y);}
+\NormalTok{    log\_lik\_subj[s] += student\_t\_lpdf(y[n] | nu, mu, sigma\_y);}
+\NormalTok{  \}}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{// ========================================================================}
+\CommentTok{// nne\_main\_effects\_student\_t\_corr.stan}
+\CommentTok{// Hierarchical Bayesian model for Normalized Noise Energy (NNE)}
+\CommentTok{// Main effects of stress (PRE vs BASELINE) and recovery (POST vs PRE)}
+\CommentTok{// Robust Student{-}t likelihood + correlated random effects}
+\CommentTok{// ========================================================================}
+
+\KeywordTok{data}\NormalTok{ \{}
+  \DataTypeTok{int}\NormalTok{\textless{}}\KeywordTok{lower}\NormalTok{=}\DecValTok{1}\NormalTok{\textgreater{} N\_subj;                              }
+  \DataTypeTok{int}\NormalTok{\textless{}}\KeywordTok{lower}\NormalTok{=}\DecValTok{1}\NormalTok{\textgreater{} N\_obs;                              }
+  \DataTypeTok{array}\NormalTok{[N\_obs] }\DataTypeTok{int}\NormalTok{\textless{}}\KeywordTok{lower}\NormalTok{=}\DecValTok{1}\NormalTok{, }\KeywordTok{upper}\NormalTok{=N\_subj\textgreater{} subj\_id;  }
+  \DataTypeTok{vector}\NormalTok{[N\_obs] y;                                  }
+  \DataTypeTok{vector}\NormalTok{[N\_obs] c1;                                 }
+  \DataTypeTok{vector}\NormalTok{[N\_obs] c2;                                }
+\NormalTok{\}}
+\KeywordTok{transformed data}\NormalTok{ \{}
+  \DataTypeTok{real}\NormalTok{\textless{}}\KeywordTok{lower}\NormalTok{=}\DecValTok{2}\NormalTok{\textgreater{} nu = }\DecValTok{4}\NormalTok{;                            }
+\NormalTok{\}}
+\KeywordTok{parameters}\NormalTok{ \{}
+  \DataTypeTok{real}\NormalTok{ alpha;                                      }
+  \DataTypeTok{real}\NormalTok{ b1;                                         }
+  \DataTypeTok{real}\NormalTok{ b2;                                         }
+  \CommentTok{// Correlated random effects, non{-}centered parameterization}
+  \DataTypeTok{matrix}\NormalTok{[}\DecValTok{3}\NormalTok{, N\_subj] z\_u;                           }
+  \DataTypeTok{vector}\NormalTok{\textless{}}\KeywordTok{lower}\NormalTok{=}\DecValTok{0}\NormalTok{\textgreater{}[}\DecValTok{3}\NormalTok{] tau;                          }
+  \DataTypeTok{cholesky\_factor\_corr}\NormalTok{[}\DecValTok{3}\NormalTok{] L\_Omega;                 }
+  \DataTypeTok{real}\NormalTok{\textless{}}\KeywordTok{lower}\NormalTok{=}\DecValTok{0}\NormalTok{\textgreater{} sigma\_y;                           }
+\NormalTok{\}}
+\KeywordTok{transformed parameters}\NormalTok{ \{}
+  \CommentTok{// u[s, 1] = random intercept for subject s}
+  \CommentTok{// u[s, 2] = random slope for c1 for subject s}
+  \CommentTok{// u[s, 3] = random slope for c2 for subject s}
+  \DataTypeTok{matrix}\NormalTok{[N\_subj, }\DecValTok{3}\NormalTok{] u;}
+\NormalTok{  u = (diag\_pre\_multiply(tau, L\_Omega) * z\_u)\textquotesingle{};}
+\NormalTok{\}}
+\KeywordTok{model}\NormalTok{ \{}
+  \CommentTok{// Priors for fixed effects}
+\NormalTok{  alpha \textasciitilde{} normal({-}}\DecValTok{28}\NormalTok{, }\DecValTok{5}\NormalTok{);  }\CommentTok{// typical NNE values around {-}20 to {-}30 dB}
+\NormalTok{  b1 \textasciitilde{} normal(}\DecValTok{0}\NormalTok{, }\DecValTok{5}\NormalTok{);       }\CommentTok{// stress effect}
+\NormalTok{  b2 \textasciitilde{} normal(}\DecValTok{0}\NormalTok{, }\DecValTok{5}\NormalTok{);       }\CommentTok{// recovery effect}
+\NormalTok{  tau \textasciitilde{} exponential(}\FloatTok{0.2}\NormalTok{);}
+\NormalTok{  L\_Omega \textasciitilde{} lkj\_corr\_cholesky(}\DecValTok{2}\NormalTok{);}
+\NormalTok{  to\_vector(z\_u) \textasciitilde{} std\_normal();}
+\NormalTok{  sigma\_y \textasciitilde{} exponential(}\FloatTok{0.2}\NormalTok{);}
+  \ControlFlowTok{for}\NormalTok{ (n }\ControlFlowTok{in} \DecValTok{1}\NormalTok{:N\_obs) \{}
+    \DataTypeTok{int}\NormalTok{ s = subj\_id[n];}
+    \DataTypeTok{real}\NormalTok{ mu = alpha + u[s, }\DecValTok{1}\NormalTok{]}
+\NormalTok{            + (b1 + u[s, }\DecValTok{2}\NormalTok{]) * c1[n]}
+\NormalTok{            + (b2 + u[s, }\DecValTok{3}\NormalTok{]) * c2[n];}
+\NormalTok{    y[n] \textasciitilde{} student\_t(nu, mu, sigma\_y);}
+\NormalTok{  \}}
+\NormalTok{\}}
+\KeywordTok{generated quantities}\NormalTok{ \{}
+  \DataTypeTok{corr\_matrix}\NormalTok{[}\DecValTok{3}\NormalTok{] Omega;}
+  \DataTypeTok{vector}\NormalTok{[N\_obs] y\_rep;}
+  \DataTypeTok{vector}\NormalTok{[N\_obs] log\_lik;}
+  \DataTypeTok{vector}\NormalTok{[N\_subj] log\_lik\_subj;}
+\NormalTok{  Omega = multiply\_lower\_tri\_self\_transpose(L\_Omega);}
+\NormalTok{  log\_lik\_subj = rep\_vector(}\DecValTok{0}\NormalTok{, N\_subj);}
+  \ControlFlowTok{for}\NormalTok{ (n }\ControlFlowTok{in} \DecValTok{1}\NormalTok{:N\_obs) \{}
+    \DataTypeTok{int}\NormalTok{ s = subj\_id[n];}
+    \DataTypeTok{real}\NormalTok{ mu = alpha + u[s, }\DecValTok{1}\NormalTok{]}
+\NormalTok{            + (b1 + u[s, }\DecValTok{2}\NormalTok{]) * c1[n]}
+\NormalTok{            + (b2 + u[s, }\DecValTok{3}\NormalTok{]) * c2[n];}
+\NormalTok{    y\_rep[n] = student\_t\_rng(nu, mu, sigma\_y);}
+\NormalTok{    log\_lik[n] = student\_t\_lpdf(y[n] | nu, mu, sigma\_y);}
+\NormalTok{    log\_lik\_subj[s] += student\_t\_lpdf(y[n] | nu, mu, sigma\_y);}
+\NormalTok{  \}}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+We report posterior medians, MADs, and central 89\% credible intervals, computed as the 5.5th and 94.5th posterior percentiles.
+
+\subsubsection{F0 model}\label{f0-model}
+
+For F0, the original Gaussian model estimated a positive stress effect, with a median effect of 3.27 Hz, MAD = 1.25, and an 89\% credible interval from 1.25 to 5.27 Hz. The posterior probability that the stress effect was positive was 0.995. In the robust Student-t model, the estimated stress effect was smaller, with a median of 2.30 Hz, MAD = 1.14, and an 89\% credible interval from 0.47 to 4.16 Hz. The posterior probability that the stress effect was positive remained high, pd = 0.979.
+
+Thus, the robust model attenuated the estimated F0 stress effect by approximately 0.97 Hz, but the effect remained positive and credibly different from zero under the 89\% credible interval.
+
+For the recovery contrast, the original Gaussian model showed essentially no clear effect, median = 0.14 Hz, MAD = 1.24, 89\% CI {[}-1.89, 2.11{]}, with P(b2 \textgreater{} 0) = 0.542. The robust model estimated a slightly negative recovery effect, median = -0.39 Hz, MAD = 1.14, 89\% CI {[}-2.21, 1.41{]}, with P(b2 \textgreater{} 0) = 0.368. This result remains compatible with no reliable recovery effect.
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.0864}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1975}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1481}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.0741}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.0494}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1605}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.2840}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Outcome
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+Model
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Parameter
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+Median
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+MAD
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+89\% CI
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+Directional probability
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+F0 & Gaussian & Stress, b1 & 3.27 & 1.25 & {[}1.25, 5.27{]} & P(b1 \textgreater{} 0) = 0.995 \\
+F0 & Robust Student-t & Stress, b1 & 2.30 & 1.14 & {[}0.47, 4.16{]} & P(b1 \textgreater{} 0) = 0.979 \\
+F0 & Gaussian & Recovery, b2 & 0.14 & 1.24 & {[}-1.89, 2.11{]} & P(b2 \textgreater{} 0) = 0.542 \\
+F0 & Robust Student-t & Recovery, b2 & -0.39 & 1.14 & {[}-2.21, 1.41{]} & P(b2 \textgreater{} 0) = 0.368 \\
+\end{longtable}
+}
+
+The residual scale parameter was lower in the robust model, median σ = 6.52, 89\% CI {[}5.93, 7.16{]}. Because this is the scale parameter of a Student-t likelihood rather than a Gaussian residual standard deviation, it should not be interpreted as directly equivalent to the Gaussian residual standard deviation.
+
+\subsubsection{NNE model}\label{nne-model}
+
+For NNE, the original Gaussian model estimated a negative stress effect, median = -0.65 dB, MAD = 0.28, 89\% CI {[}-1.10, -0.21{]}, with P(b1 \textless{} 0) = 0.990. The robust Student-t model produced a somewhat larger negative estimate, median = -0.79 dB, MAD = 0.27, 89\% CI {[}-1.21, -0.36{]}, with P(b1 \textless{} 0) = 0.998.
+
+Thus, the NNE stress effect was not weakened by the robust specification. Instead, the robust model slightly strengthened the estimated negative stress-related change in NNE.
+
+For the recovery contrast, the original Gaussian model estimated a small negative effect, median = -0.22 dB, MAD = 0.28, 89\% CI {[}-0.67, 0.23{]}, with P(b2 \textgreater{} 0) = 0.219. The robust model estimated a somewhat more negative effect, median = -0.32 dB, MAD = 0.25, 89\% CI {[}-0.73, 0.09{]}, with P(b2 \textgreater{} 0) = 0.105. Although the interval still included zero, the robust model shifted the recovery estimate in a more negative direction.
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.0854}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1951}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1463}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.0732}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.0488}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1707}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.2805}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Outcome
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+Model
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Parameter
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+Median
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+MAD
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+89\% CI
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+Directional probability
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+NNE & Gaussian & Stress, b1 & -0.65 & 0.28 & {[}-1.10, -0.21{]} & P(b1 \textless{} 0) = 0.990 \\
+NNE & Robust Student-t & Stress, b1 & -0.79 & 0.27 & {[}-1.21, -0.36{]} & P(b1 \textless{} 0) = 0.998 \\
+NNE & Gaussian & Recovery, b2 & -0.22 & 0.28 & {[}-0.67, 0.23{]} & P(b2 \textgreater{} 0) = 0.219 \\
+NNE & Robust Student-t & Recovery, b2 & -0.32 & 0.25 & {[}-0.73, 0.09{]} & P(b2 \textgreater{} 0) = 0.105 \\
+\end{longtable}
+}
+
+The Student-t residual scale for NNE was median σ = 1.44, 89\% CI {[}1.28, 1.60{]}. As for F0, this parameter indexes the scale of the Student-t residual distribution and is not directly comparable to the Gaussian residual standard deviation.
+
+\subsubsection{Predictive comparison using PSIS-LOO}\label{predictive-comparison-using-psis-loo}
+
+The robust models improved the approximate leave-one-observation-out cross-validation diagnostics. In the original Gaussian models, some observations had problematic Pareto-k values, indicating sensitivity to influential observations. In contrast, both robust Student-t models had all Pareto-k estimates below 0.7, indicating reliable PSIS-LOO estimates.
+
+For F0, the robust model had better expected log predictive density than the Gaussian model. The LOO comparison favored the robust model by 16.3 elpd units, SE = 5.9. This suggests a clear improvement in expected out-of-sample predictive performance.
+
+For NNE, the robust model was also preferred, with an elpd improvement of 12.9 units, SE = 6.9. This provides weaker but still meaningful evidence in favor of the robust specification.
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.0654}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1495}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.3551}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1215}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.3084}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Outcome
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Preferred model
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+elpd difference for Gaussian vs robust
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+SE difference
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Interpretation
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+F0 & Robust Student-t & -16.3 & 5.9 & Robust model clearly preferred \\
+NNE & Robust Student-t & -12.9 & 6.9 & Robust model moderately preferred \\
+\end{longtable}
+}
+
+Here, negative elpd differences indicate worse expected predictive accuracy for the Gaussian model relative to the robust Student-t model.
+
+\subsubsection{Interpretation}\label{interpretation-1}
+
+Overall, the sensitivity analysis supports the robustness of the main inferential conclusions. The stress effect remained positive for F0 and negative for NNE under the robust Student-t specification. The F0 stress effect was attenuated but remained directionally strong and credibly positive. The NNE stress effect was slightly strengthened, with very high posterior probability for a negative effect.
+
+The recovery effects were less stable and remained uncertain in both outcomes. For F0, the recovery effect was close to zero in the Gaussian model and slightly negative in the robust model, with credible intervals spanning zero in both cases. For NNE, the recovery effect became more negative in the robust model, but uncertainty remained sufficient that this effect should be interpreted cautiously.
+
+The robust models also improved predictive diagnostics. The elimination of problematic Pareto-k values suggests that the Student-t likelihood successfully reduced the influence of observations that were poorly handled by the Gaussian residual model. Because the substantive conclusions for the stress contrast were preserved while predictive diagnostics improved, the robust Student-t models provide a useful confirmation of the primary findings and may be preferred for sensitivity reporting.
+
+\subsubsection{Summary}\label{summary}
+
+As a sensitivity analysis, we refitted the main-effects models using a robust Student-t residual likelihood with \(\nu\) = 4 and correlated subject-level random effects. This specification was intended to assess whether the Gaussian models were sensitive to influential observations. For F0, the robust model estimated a positive stress effect, median = 2.30 Hz, MAD = 1.14, 89\% CI {[}0.47, 4.16{]}, P(b1 \textgreater{} 0) = 0.979, compared with median = 3.27 Hz, MAD = 1.25, 89\% CI {[}1.25, 5.27{]}, P(b1 \textgreater{} 0) = 0.995 in the Gaussian model. For NNE, the robust model estimated a negative stress effect, median = -0.79 dB, MAD = 0.27, 89\% CI {[}-1.21, -0.36{]}, P(b1 \textless{} 0) = 0.998, compared with median = -0.65 dB, MAD = 0.28, 89\% CI {[}-1.10, -0.21{]}, P(b1 \textless{} 0) = 0.990 in the Gaussian model. Recovery effects remained uncertain in both outcomes. PSIS-LOO comparisons favored the robust models over the Gaussian models for both F0, elpd difference = 16.3, SE = 5.9, and NNE, elpd difference = 12.9, SE = 6.9. Moreover, all Pareto-k estimates were below 0.7 in the robust models, indicating reliable LOO estimates. These results suggest that the main stress effects are robust to a heavy-tailed residual specification and that the Student-t models provide improved predictive diagnostics.
 
 \subsection{Personality Moderation of Vocal Stress Responses}\label{personality-moderation-of-vocal-stress-responses}
 
@@ -831,19 +1179,11 @@ Random recovery slope SD ($\tau_3$) & 1.65 & 1.43 & 1.000 & 10546 & 13300\\
 
 Trace plots for all key parameters showed excellent mixing across chains, with no visible trends or differences between chains. Representative trace plots are shown in Figure S1.
 
-\begin{figure}
-\includegraphics[width=1\linewidth]{../../../results/diagnostics/trace_main_effects} \caption{Trace plots for main fixed effects parameters showing good mixing across four chains.}\label{fig:trace-figure}
-\end{figure}
-
 Autocorrelation plots indicated low autocorrelation at lag 1 and negligible autocorrelation beyond lag 10 for all parameters, consistent with the high effective sample sizes reported above.
 
 \subsection{Posterior Predictive Checks}\label{posterior-predictive-checks-1}
 
 Model adequacy was assessed using posterior predictive checks (Gelman et al., 2013). Figure S2 shows the posterior predictive density overlaid on the observed F0 distribution. The model accurately captured the location, spread, and shape of the observed data.
-
-\begin{figure}
-\includegraphics[width=0.8\linewidth]{../../../results/diagnostics/ppc_density_overlay} \caption{Posterior predictive check showing 100 draws from the posterior predictive distribution (light blue) overlaid on the observed F0 distribution (dark blue).}\label{fig:ppc-figure}
-\end{figure}
 
 Additional posterior predictive checks confirmed that the model adequately recovered:
 
@@ -857,7 +1197,7 @@ Additional posterior predictive checks confirmed that the model adequately recov
   The pattern of means across assessment periods (Baseline \textless{} Post-exam \textless{} Pre-exam)
 \end{itemize}
 
-\subsection{Summary}\label{summary}
+\subsection{Summary}\label{summary-1}
 
 All convergence diagnostics indicated that the MCMC sampler successfully explored the posterior distribution. The absence of divergent transitions, combined with \(\hat{R}\) values below 1.01 and effective sample sizes exceeding 4,000, provides strong evidence that the posterior summaries reported in the main text are reliable. Posterior predictive checks confirmed that the model adequately captured the key features of the observed data.
 
@@ -883,10 +1223,6 @@ NNE & 0 & 0 & 1.0013 & 0 & 3775 & 4659\\
 
 The NNE model showed equally good convergence properties: no divergent transitions, no iterations exceeding maximum treedepth, all \(\hat{R}\) values below 1.01, and minimum effective sample sizes well above recommended thresholds. Posterior predictive checks for the NNE model (Figure S3) confirmed adequate model fit.
 
-\begin{figure}
-\includegraphics[width=0.8\linewidth]{../../../results/diagnostics/ppc_density_overlay_nne} \caption{Posterior predictive check for the NNE moderation model.}\label{fig:ppc-nne-figure}
-\end{figure}
-
 \newpage
 
 \section{Posterior Predictive Assurance of Moderation Effects}\label{posterior-predictive-assurance-of-moderation-effects}
@@ -907,7 +1243,7 @@ For each simulated dataset, the moderation effect of interest---specifically, th
 
 Across posterior predictive replications, the moderation effect was positive in 92.1\% of simulated datasets. The estimated posterior predictive probability of replication success was therefore 0.92, with a 95\% credible interval of {[}0.90, 0.94{]}, reflecting Monte Carlo uncertainty in the simulation-based estimate.
 
-\subsection{Interpretation}\label{interpretation-1}
+\subsection{Interpretation}\label{interpretation-2}
 
 These results indicate a high probability that the direction of the moderation effect would replicate in a new sample drawn under the same design assumptions. In other words, given the fitted model and the uncertainty in its parameters, the interaction between Negative Affectivity and stress is expected to be positive in the large majority of replications.
 
@@ -931,8 +1267,14 @@ Vehtari, A., Gelman, A., Simpson, D., Carpenter, B., \& Bürkner, P.-C. (2021). 
 
 \protect\phantomsection\label{refs}
 \begin{CSLReferences}{1}{0}
+\bibitem[\citeproctext]{ref-gelman2014beyond}
+Gelman, A., \& Carlin, J. (2014). Beyond power calculations: Assessing type s (sign) and type m (magnitude) errors. \emph{Perspectives on Psychological Science}, \emph{9}(6), 641--651.
+
 \bibitem[\citeproctext]{ref-kruschke2018bayesian}
 Kruschke, J. K., \& Liddell, T. M. (2018). The bayesian new statistics: Hypothesis testing, estimation, meta-analysis, and power analysis from a bayesian perspective. \emph{Psychonomic Bulletin \& Review}, \emph{25}(1), 178--206.
+
+\bibitem[\citeproctext]{ref-makowski2019indices}
+Makowski, D., Ben-Shachar, M. S., Chen, S. A., \& Lüdecke, D. (2019). Indices of effect existence and significance in the bayesian framework. \emph{Frontiers in Psychology}, \emph{10}, 2767.
 
 \bibitem[\citeproctext]{ref-mcelreath2018statistical}
 McElreath, R. (2018). \emph{Statistical rethinking: A bayesian course with examples in r and stan}. Chapman; Hall/CRC.

@@ -86,7 +86,7 @@ table1 <- tibble(
 
 table1 <- table1 %>%
   mutate(
-    `Baseline β (90% CI)` = sprintf(
+    `Baseline β (89% CrI)` = sprintf(
       "%.2f [%.2f, %.2f]",
       beta_baseline$mean,
       beta_baseline$q5,
@@ -96,7 +96,7 @@ table1 <- table1 %>%
 
 table1 <- table1 %>%
   mutate(
-    `Random Slopes β (90% CI)` = sprintf(
+    `Random Slopes β (89% CrI)` = sprintf(
       "%.2f [%.2f, %.2f]",
       beta_rs$mean,
       beta_rs$q5,
@@ -109,7 +109,7 @@ table1 <- table1 %>%
     sigma_beta_summary %>%
       transmute(
         Domain = domain,
-        `σ_β (90% CI)` = sprintf("%.2f [%.2f, %.2f]", mean, q025, q975)
+        `σ_β (89% CrI)` = sprintf("%.2f [%.2f, %.2f]", mean, q025, q975)
       ),
     by = "Domain"
   )
@@ -118,7 +118,7 @@ r2_baseline <- diag_baseline$mean[diag_baseline$variable == "r2_within"]
 r2_rs <- diag_rs$mean[diag_rs$variable == "r2_within"]
 
 table1_footer <- sprintf(
-  "Note: R² Baseline = %.3f, Random Slopes = %.3f. ELPD LOO: Baseline = %.1f, Random Slopes = %.1f (Δ = %.1f). All fixed effects (β) have 90%% CIs spanning zero, indicating weak/absent population-average effects.",
+  "Note: R² Baseline = %.3f, Random Slopes = %.3f. ELPD LOO: Baseline = %.1f, Random Slopes = %.1f (Δ = %.1f). Fixed effects (β) are near zero with wide 89%% credible intervals (pd near .5), indicating weak/uncertain population-average effects.",
   r2_baseline,
   r2_rs,
   comparison$elpd[1],
@@ -153,7 +153,7 @@ cat("\nCreazione Results text...\n")
 
 # Calcola statistiche chiave
 n_uncertain <- uncertainty_summary %>%
-  filter(classification == "Uncertain (CI includes 0)") %>%
+  filter(classification == "Direction not determined") %>%
   summarise(n = sum(n)) %>%
   pull(n)
 
@@ -169,45 +169,37 @@ F0 within individuals by comparing two multilevel models: (1) a baseline model
 with fixed within-person slopes (assuming homogeneous associations), and (2) a 
 random slopes model allowing between-subject variability in slopes.
 
-**Model Comparison.** The random slopes model substantially outperformed the 
-baseline model (ELPD difference = %.1f, SE = %.1f; R² = %.1f%% vs %.1f%%), 
-suggesting that accounting for between-subject variability improves model fit. 
-However, this improvement in fit **does not indicate clear individual-level 
-effects**, as detailed below.
+**Model Comparison.** The random slopes model had higher predictive accuracy than 
+the baseline model (ELPD difference = %.1f, SE = %.1f; R² = %.1f%% vs %.1f%%), 
+indicating that allowing between-subject variability improves fit. By itself, 
+however, this improvement **does not establish clear individual-level effects**, 
+as detailed below.
 
-**Population-Level Effects.** Fixed effects were small and uncertain, with all 
-90%% credible intervals spanning zero (Table 1). This indicates minimal 
-population-average within-person associations between PID-5 domains and F0.
+**Population-Level Effects.** Fixed effects were small and uncertain: their 89%% 
+credible intervals were wide and centered near zero, with probabilities of 
+direction near .5 (Table 1). This indicates weak, weakly-determined population-
+average within-person associations between PID-5 domains and F0.
 
-**Individual-Level Uncertainty.** Despite the improved fit of random slopes, 
-**individual slope estimates showed very high uncertainty**. With only 3 
-timepoints per person, 95%% credible intervals for individual slopes were wide 
-(mean width ≈ 10-13 Hz). Consequently, **%.1f%% of individual slopes (n = %d/%d) 
-had credible intervals including zero**, indicating that effects cannot be 
-reliably distinguished from null for the vast majority of participants (Table 2, 
-Figure 2).
-
-Only 2 of %d participants (1.7%%) across all domains showed slopes with 95%% CIs 
-excluding zero—a proportion consistent with chance given multiple comparisons. 
-This pattern suggests that **within-person personality-voice associations are 
-either absent or too weak to be detected reliably** with sparse temporal sampling.
+**Individual-Level Uncertainty.** With only 3 timepoints per person, individual 
+slopes were estimated very imprecisely: their 89%% credible intervals were wide 
+(mean width approximately 10-13 Hz) and almost always included zero. We therefore 
+do not interpret individual slopes one at a time; the sparse design constrains 
+them too weakly for the sign or magnitude of individual slopes to be identifiable 
+(Table 2, Figure 2). This pattern is consistent with within-person personality-
+voice associations that are **weak or absent, or too small to be resolved with 
+sparse temporal sampling**.
 
 **Between-Subject Variability.** Standard deviations of random slopes (σ_β) 
-ranged from 2.6 to 4.3 Hz across domains (Table 1). While these suggest some 
-between-subject variability exists, the high individual-level uncertainty 
-prevents reliable characterization of which participants, if any, exhibit 
-meaningful effects.
+ranged from 2.6 to 4.3 Hz across domains (Table 1). These are non-negligible and 
+suggest some between-subject variability, but they are themselves weakly 
+identified, so the data do not support characterizing which participants, if any, 
+exhibit meaningful effects.
 ',
   # Model comparison
   comparison$elpd[2] - comparison$elpd[1],
   abs(comparison$elpd[2] - comparison$elpd[1]) / 5, # Approximate SE
   r2_rs * 100,
-  r2_baseline * 100,
-  # Uncertainty
-  pct_uncertain,
-  n_uncertain,
-  n_total,
-  individual_slopes %>% filter(domain_id == 1) %>% nrow()
+  r2_baseline * 100
 )
 
 writeLines(results_text, file.path(output_dir, "results_text.txt"))
@@ -227,9 +219,9 @@ Our findings reveal that **within-person associations between momentary PID-5
 fluctuations and F0 are weak and difficult to detect reliably**. While random 
 slopes models outperformed fixed-effects specifications (14× improvement in R²), 
 the sparse temporal design (3 timepoints per person) resulted in very high 
-uncertainty for individual slope estimates. Nearly all individual credible 
-intervals (99.7%) included zero, indicating that effects cannot be reliably 
-distinguished from null at the individual level.
+uncertainty for individual slope estimates. Almost all individual 89% credible 
+intervals were wide and included zero, so individual slopes are not identifiable 
+and we do not interpret them one by one.
 
 **Interpreting Model Fit vs Individual Effects.** The improved fit of random 
 slopes models appears to reflect **flexibility in modeling residual variability** 
@@ -262,7 +254,7 @@ rather than reflecting dynamic state-dependent coupling.
 considerations for within-person research. **Sparse temporal sampling fundamentally 
 limits the precision of individual parameter estimates**, regardless of model 
 complexity. Researchers should carefully distinguish between (1) population-level 
-heterogeneity (e.g., significant σ_β), (2) model fit improvements, and (3) 
+heterogeneity (e.g., non-negligible σ_β), (2) model fit improvements, and (3) 
 reliable individual-level effects. The first two can exist without the third when 
 data are sparse.
 
@@ -299,11 +291,11 @@ To examine within-person personality-voice relationships, we decomposed variance
 into between-person and within-person components using Bayesian multilevel models. 
 While random slopes models substantially outperformed fixed-effects models (R² = 
 35% vs 2.5%, ELPD improvement = 40 points), **individual-level effects were 
-difficult to detect reliably**. With only 3 timepoints per person, 99.7% of 
-individual slope estimates had 95% credible intervals including zero, indicating 
-high uncertainty. Population-level fixed effects were small and uncertain (all 
-CIs spanning zero), and only 2 of 119 participants (1.7%) showed reliable non-zero 
-slopes across all domains. These findings suggest that **within-person associations 
+difficult to detect reliably**. With only 3 timepoints per person, individual 
+slope estimates had wide 89% credible intervals that almost always included zero, 
+so individual slopes are not identifiable. Population-level fixed effects were 
+small and uncertain (wide intervals centered near zero, probabilities of direction 
+near .5). These findings suggest that **within-person associations 
 between momentary PID-5 fluctuations and F0 are weak or absent**, at least in 
 controlled reading contexts with sparse temporal sampling. Dense longitudinal 
 designs (10-20+ observations per person) with concurrent affect-voice measurement 
@@ -323,11 +315,11 @@ cat("Creazione Figure captions...\n")
 captions <- list(
   figure1 = "Figure 1. Distribution of individual within-person slopes across five PID-5 domains. Density plots show variation in slope estimates, but individual uncertainty is high (see Figure 2). Dashed red line indicates zero (no effect).",
 
-  figure2 = "Figure 2. Individual within-person slopes for Negative Affectivity with 95% credible intervals (N = 119 participants). Nearly all intervals span zero (gray), indicating high uncertainty due to sparse sampling (3 timepoints per person). Only 1 participant (0.8%) has a CI excluding zero. Forest plot demonstrates that improved model fit does not imply reliable individual-level effects.",
+  figure2 = "Figure 2. Individual within-person slopes for Negative Affectivity with 89% credible intervals (N = 119 participants). Intervals are wide and almost all include zero, reflecting high posterior uncertainty due to sparse sampling (3 timepoints per person). The forest plot shows that improved model fit does not imply identifiable individual-level effects.",
 
-  figure3 = "Figure 3. Proportion of participants with credible intervals excluding vs including zero across PID-5 domains. Gray bars (uncertain slopes) dominate all domains, with only ~1-2% showing reliable effects (colored bars). This pattern indicates that individual within-person effects cannot be distinguished from null with sparse temporal sampling.",
+  figure3 = "Figure 3. For each PID-5 domain, the share of participants whose 89% credible interval includes zero (gray) versus excludes zero (colored). Gray dominates all domains, illustrating that individual slopes are estimated too imprecisely to determine their direction with sparse temporal sampling.",
 
-  figure4 = "Figure 4. Width of 95% credible intervals for individual slopes by domain. Wide CIs (mean ≈ 10-13 Hz) reflect high uncertainty in individual estimates with 3 timepoints per person. Denser sampling would be needed to reduce uncertainty.",
+  figure4 = "Figure 4. Width of 89% credible intervals for individual slopes by domain. Wide CIs (mean ≈ 10-13 Hz) reflect high uncertainty in individual estimates with 3 timepoints per person. Denser sampling would be needed to reduce uncertainty.",
 
   figure5 = "Figure 5. Population-level fixed effects (x-axis) versus between-subject standard deviations (y-axis). Fixed effects centered near zero indicate weak population-average associations. Nonzero σ_β suggests some between-subject variability, but individual slopes remain uncertain (see Figure 2)."
 )
@@ -362,14 +354,14 @@ MAIN FINDINGS:
    → Random slopes fit better BUT this doesn\'t mean clear individual effects
 
 2. INDIVIDUAL-LEVEL UNCERTAINTY:
-   - %.1f%% of slopes have 95%% CI including zero (n = %d/%d)
-   - Only ~1.7%% show "reliable" non-zero effects (2/119 participants)
+   - %.1f%% of individual 89%% intervals include zero (n = %d/%d): wide, direction not determined
+   - Individual slopes are not identifiable one by one (not a per-subject test)
    - Mean CI width: ~10-13 Hz (very wide relative to effect sizes)
    → Cannot distinguish individual effects from noise with 3 timepoints
 
 3. POPULATION-LEVEL EFFECTS:
-   - All fixed effects (β) have CIs spanning zero
-   - σ_β = 2.6-4.3 Hz (suggests some variability, but uncertain at individual level)
+   - Fixed effects (β) near zero with wide intervals (pd near .5)
+   - σ_β = 2.6-4.3 Hz (suggests some variability, but weakly identified)
    → Weak/absent population-average effects
 
 INTERPRETATION:
@@ -406,7 +398,7 @@ MANUSCRIPT STRUCTURE:
 Results:
   - Report model comparison (random slopes better)
   - Emphasize individual uncertainty (Table 2, Figure 2)
-  - Report %.1f%% uncertain, only 1.7%% reliable
+  - Report individual slopes as imprecise (%.1f%% of 89%% intervals include zero)
 
 Discussion:
   - Weak effects vs sparse sampling limitation
@@ -475,8 +467,8 @@ cat(rep("=", 80), "\n\n")
 
 cat("INTERPRETAZIONE CORRETTA:\n")
 cat("Gli effetti within-person sono DEBOLI/ASSENTI, NON idiografici.\n")
-cat("Solo ~1.7%% dei partecipanti mostrano effetti affidabili.\n")
-cat("99.7%% degli slopes hanno CI che include zero.\n\n")
+cat("Le pendenze individuali non sono identificabili con 3 timepoint.\n")
+cat("Quasi tutti gli 89%% intervalli individuali sono ampi e includono zero.\n\n")
 
 cat("Il miglior fit del random slopes riflette flessibilità del modello,\n")
 cat("non pattern individuali chiari. Con 3 timepoint, l\'incertezza è troppo\n")

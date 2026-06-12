@@ -10,153 +10,197 @@ library(bayesplot)
 library(loo)
 library(posterior)
 library(here)
+library(cmdstanr)
 
 # Load fitted models
-fit_f0 <- readRDS(here("models", "fit_f0_main_effects.rds"))
-fit_nne <- readRDS(here("models", "fit_nne_main_effects.rds"))
+fit_f0 <- readRDS(here(
+  "results",
+  "stress",
+  "models",
+  "fit_f0_main_effects.rds"
+))
+fit_nne <- readRDS(here(
+  "results",
+  "stress",
+  "models",
+  "fit_nne_main_effects.rds"
+))
 
 # ==============================================================================
 # DIAGNOSTIC REPORT FUNCTIONS
 # ==============================================================================
 
-#' Generate comprehensive diagnostic report for a Stan fit
-diagnostic_report <- function(fit, model_name) {
-  
+# Quantile helpers for posterior::summarise_draws()
+q025 <- function(x) quantile(x, 0.025, na.rm = TRUE)
+q975 <- function(x) quantile(x, 0.975, na.rm = TRUE)
+
+diagnostic_report <- function(
+  fit,
+  model_name,
+  y_obs = NULL,
+  yrep_var = "y_rep"
+) {
   cat("\n", strrep("=", 80), "\n", sep = "")
   cat("DIAGNOSTIC REPORT:", model_name, "\n")
   cat(strrep("=", 80), "\n\n")
-  
-  # 1. Convergence Diagnostics
+
+  # 1. Convergence diagnostics
   cat("1. CONVERGENCE DIAGNOSTICS\n")
   cat(strrep("-", 80), "\n")
-  
-  summary_all <- summary(fit)$summary
-  
-  # Check R-hat
-  max_rhat <- max(summary_all[, "Rhat"], na.rm = TRUE)
-  problematic_rhat <- sum(summary_all[, "Rhat"] > 1.01, na.rm = TRUE)
-  
+
+  summary_all <- fit$summary()
+
+  max_rhat <- max(summary_all$rhat, na.rm = TRUE)
+  problematic_rhat <- sum(summary_all$rhat > 1.01, na.rm = TRUE)
+
   cat(sprintf("   Max R-hat: %.4f\n", max_rhat))
   cat(sprintf("   Parameters with R-hat > 1.01: %d\n", problematic_rhat))
-  
+
   if (max_rhat < 1.01) {
     cat("   ✓ PASS: All chains converged successfully\n")
   } else {
     cat("   ✗ WARNING: Some chains may not have converged\n")
   }
-  
-  # Check effective sample size
-  min_neff <- min(summary_all[, "n_eff"], na.rm = TRUE)
-  low_neff <- sum(summary_all[, "n_eff"] < 400, na.rm = TRUE)
-  
-  cat(sprintf("\n   Min effective sample size: %.0f\n", min_neff))
-  cat(sprintf("   Parameters with n_eff < 400: %d\n", low_neff))
-  
-  if (min_neff > 400) {
+
+  min_ess <- min(summary_all$ess_bulk, na.rm = TRUE)
+  low_ess <- sum(summary_all$ess_bulk < 400, na.rm = TRUE)
+
+  cat(sprintf("\n   Min bulk ESS: %.0f\n", min_ess))
+  cat(sprintf("   Parameters with bulk ESS < 400: %d\n", low_ess))
+
+  if (min_ess > 400) {
     cat("   ✓ PASS: Adequate effective sample sizes\n")
   } else {
     cat("   ✗ WARNING: Some parameters have low effective sample size\n")
   }
-  
-  # 2. HMC Diagnostics
+
+  # 2. HMC diagnostics
   cat("\n2. HMC-SPECIFIC DIAGNOSTICS\n")
   cat(strrep("-", 80), "\n")
-  
-  sampler_params <- get_sampler_params(fit, inc_warmup = FALSE)
-  
-  # Divergent transitions
-  divergent <- sapply(sampler_params, function(x) sum(x[, "divergent__"]))
-  total_divergent <- sum(divergent)
-  
+
+  sampler_diag <- as_draws_df(fit$sampler_diagnostics(inc_warmup = FALSE))
+
+  total_divergent <- sum(sampler_diag$divergent__, na.rm = TRUE)
+
   cat(sprintf("   Divergent transitions: %d\n", total_divergent))
-  
+
   if (total_divergent == 0) {
     cat("   ✓ PASS: No divergent transitions\n")
   } else {
     cat("   ✗ WARNING: Model may be misspecified or poorly identified\n")
   }
-  
-  # Max treedepth
-  max_treedepth <- sapply(sampler_params, function(x) sum(x[, "treedepth__"] >= 10))
-  total_max_treedepth <- sum(max_treedepth)
-  
-  cat(sprintf("\n   Iterations hitting max treedepth: %d\n", total_max_treedepth))
-  
+
+  total_max_treedepth <- sum(sampler_diag$treedepth__ >= 10, na.rm = TRUE)
+
+  cat(sprintf(
+    "\n   Iterations hitting max treedepth: %d\n",
+    total_max_treedepth
+  ))
+
   if (total_max_treedepth == 0) {
     cat("   ✓ PASS: No iterations hit max treedepth\n")
   } else {
     cat("   ⚠ NOTE: Consider increasing max_treedepth if this is excessive\n")
   }
-  
-  # 3. Parameter Summary
+
+  # 3. Key parameter estimates
   cat("\n3. KEY PARAMETER ESTIMATES\n")
   cat(strrep("-", 80), "\n")
-  
+
   key_params <- c("alpha", "b1", "b2", "sigma_y")
-  key_summary <- summary_all[key_params, c("mean", "sd", "2.5%", "97.5%", "Rhat", "n_eff")]
-  
-  print(round(key_summary, 3))
-  
-  # 4. Posterior Predictive Checks
+  key_params <- key_params[key_params %in% fit$metadata()$model_params]
+
+  key_summary <- summarise_draws(
+    fit$draws(variables = key_params),
+    mean,
+    sd,
+    q025,
+    q975,
+    rhat,
+    ess_bulk
+  )
+
+  print(key_summary, digits = 3)
+
+  # 4. Posterior predictive checks
   cat("\n4. POSTERIOR PREDICTIVE CHECK SUMMARY\n")
   cat(strrep("-", 80), "\n")
-  
-  y_rep <- extract(fit, "y_rep")$y_rep
-  y_obs <- as.vector(extract(fit, "y")$y[1,])  # Observed data from first iteration
-  
-  # Test statistics
-  test_stats <- tibble(
-    Statistic = c("Mean", "SD", "Min", "Max", "Median"),
-    Observed = c(mean(y_obs, na.rm = TRUE), 
-                 sd(y_obs, na.rm = TRUE),
-                 min(y_obs, na.rm = TRUE),
-                 max(y_obs, na.rm = TRUE),
-                 median(y_obs, na.rm = TRUE)),
-    Predicted_Mean = c(mean(apply(y_rep, 1, mean)),
-                       mean(apply(y_rep, 1, sd)),
-                       mean(apply(y_rep, 1, min)),
-                       mean(apply(y_rep, 1, max)),
-                       mean(apply(y_rep, 1, median))),
-    Predicted_SD = c(sd(apply(y_rep, 1, mean)),
-                     sd(apply(y_rep, 1, sd)),
-                     sd(apply(y_rep, 1, min)),
-                     sd(apply(y_rep, 1, max)),
-                     sd(apply(y_rep, 1, median)))
-  )
-  
-  print(test_stats, digits = 2)
-  
-  # 5. LOO Cross-Validation
+
+  available_vars <- fit$metadata()$model_params
+
+  if (
+    !is.null(y_obs) && any(grepl(paste0("^", yrep_var, "\\["), available_vars))
+  ) {
+    y_rep <- as_draws_matrix(fit$draws(variables = yrep_var))
+
+    test_stats <- tibble(
+      Statistic = c("Mean", "SD", "Min", "Max", "Median"),
+      Observed = c(
+        mean(y_obs, na.rm = TRUE),
+        sd(y_obs, na.rm = TRUE),
+        min(y_obs, na.rm = TRUE),
+        max(y_obs, na.rm = TRUE),
+        median(y_obs, na.rm = TRUE)
+      ),
+      Predicted_Mean = c(
+        mean(apply(y_rep, 1, mean, na.rm = TRUE)),
+        mean(apply(y_rep, 1, sd, na.rm = TRUE)),
+        mean(apply(y_rep, 1, min, na.rm = TRUE)),
+        mean(apply(y_rep, 1, max, na.rm = TRUE)),
+        mean(apply(y_rep, 1, median, na.rm = TRUE))
+      ),
+      Predicted_SD = c(
+        sd(apply(y_rep, 1, mean, na.rm = TRUE)),
+        sd(apply(y_rep, 1, sd, na.rm = TRUE)),
+        sd(apply(y_rep, 1, min, na.rm = TRUE)),
+        sd(apply(y_rep, 1, max, na.rm = TRUE)),
+        sd(apply(y_rep, 1, median, na.rm = TRUE))
+      )
+    )
+
+    print(test_stats, digits = 2)
+  } else {
+    cat(
+      "   Skipped: provide y_obs and ensure y_rep is in generated quantities.\n"
+    )
+  }
+
+  # 5. LOO cross-validation
   cat("\n5. LOO CROSS-VALIDATION\n")
   cat(strrep("-", 80), "\n")
-  
-  tryCatch({
-    log_lik <- extract_log_lik(fit, merge_chains = FALSE)
-    r_eff <- relative_eff(log_lik)
-    loo_result <- loo(log_lik, r_eff = r_eff)
-    
-    print(loo_result)
-    
-    # Check for problematic observations
-    n_high_pareto <- sum(loo_result$diagnostics$pareto_k > 0.7)
-    
-    cat(sprintf("\n   Observations with Pareto k > 0.7: %d\n", n_high_pareto))
-    
-    if (n_high_pareto == 0) {
-      cat("   ✓ PASS: LOO estimates are reliable\n")
-    } else {
-      cat("   ⚠ WARNING: Some observations have high Pareto k values\n")
-      cat("   Consider using k-fold CV or reloo() for these observations\n")
+
+  tryCatch(
+    {
+      if (!any(grepl("^log_lik\\[", available_vars))) {
+        stop("No log_lik variable found in generated quantities.")
+      }
+
+      log_lik <- as.array(fit$draws(variables = "log_lik"))
+      r_eff <- relative_eff(exp(log_lik))
+      loo_result <- loo(log_lik, r_eff = r_eff)
+
+      print(loo_result)
+
+      n_high_pareto <- sum(loo_result$diagnostics$pareto_k > 0.7)
+
+      cat(sprintf("\n   Observations with Pareto k > 0.7: %d\n", n_high_pareto))
+
+      if (n_high_pareto == 0) {
+        cat("   ✓ PASS: LOO estimates are reliable\n")
+      } else {
+        cat("   ⚠ WARNING: Some observations have high Pareto k values\n")
+        cat("   Consider k-fold CV or moment_match/reloo alternatives.\n")
+      }
+    },
+    error = function(e) {
+      cat("   ✗ ERROR: Could not compute LOO\n")
+      cat("   ", e$message, "\n")
     }
-    
-  }, error = function(e) {
-    cat("   ✗ ERROR: Could not compute LOO\n")
-    cat("   ", e$message, "\n")
-  })
-  
+  )
+
   cat("\n", strrep("=", 80), "\n\n")
-  
-  return(invisible(NULL))
+
+  invisible(NULL)
 }
 
 # ==============================================================================
@@ -168,6 +212,20 @@ diagnostic_report(fit_f0, "F0 MEAN MODEL")
 
 # NNE Model Report
 diagnostic_report(fit_nne, "NNE MODEL")
+
+yrep_f0 <- posterior::as_draws_matrix(fit_f0$draws("y_rep"))
+
+bayesplot::ppc_dens_overlay(
+  y = stan_data_f0$y,
+  yrep = yrep_f0[1:100, ]
+)
+
+yrep_nne <- posterior::as_draws_matrix(fit_nne$draws("y_rep"))
+
+bayesplot::ppc_dens_overlay(
+  y = stan_data_nne$y,
+  yrep = yrep_nne[1:100, ]
+)
 
 # ==============================================================================
 # COMPARATIVE SUMMARY
@@ -182,8 +240,7 @@ post_f0 <- as_draws_df(fit_f0)
 post_nne <- as_draws_df(fit_nne)
 
 comparison <- tibble(
-  Model = c("F0 Mean", "F0 Mean", "F0 Mean", 
-            "NNE", "NNE", "NNE"),
+  Model = c("F0 Mean", "F0 Mean", "F0 Mean", "NNE", "NNE", "NNE"),
   Parameter = rep(c("Intercept (α)", "Stress (β₁)", "Recovery (β₂)"), 2),
   Median = c(
     median(post_f0$alpha),
@@ -281,30 +338,69 @@ cat(sprintf(
 cat("\n\nRECOMMENDATIONS\n")
 cat(strrep("-", 80), "\n\n")
 
-# Check for issues and provide recommendations
+get_diagnostics <- function(fit) {
+  s <- fit$summary()
+  d <- posterior::as_draws_df(
+    fit$sampler_diagnostics(inc_warmup = FALSE)
+  )
+
+  list(
+    max_rhat = max(s$rhat, na.rm = TRUE),
+    min_ess_bulk = min(s$ess_bulk, na.rm = TRUE),
+    low_ess_bulk = sum(s$ess_bulk < 400, na.rm = TRUE),
+    n_divergent = sum(d$divergent__, na.rm = TRUE),
+    n_treedepth = sum(d$treedepth__ >= 10, na.rm = TRUE)
+  )
+}
+
+diag_f0 <- get_diagnostics(fit_f0)
+diag_nne <- get_diagnostics(fit_nne)
+
 issues <- c()
 recommendations <- c()
 
 # R-hat issues
-if (max(summary(fit_f0)$summary[, "Rhat"], na.rm = TRUE) > 1.01 ||
-    max(summary(fit_nne)$summary[, "Rhat"], na.rm = TRUE) > 1.01) {
+if (diag_f0$max_rhat > 1.01 || diag_nne$max_rhat > 1.01) {
   issues <- c(issues, "High R-hat values detected")
-  recommendations <- c(recommendations, 
-                      "- Increase adapt_delta to 0.99",
-                      "- Run more iterations (e.g., 6000 with 3000 warmup)",
-                      "- Check for data issues (outliers, coding errors)")
+  recommendations <- c(
+    recommendations,
+    "- Increase adapt_delta to 0.99",
+    "- Run more iterations, e.g. 6000 with 3000 warmup",
+    "- Check for data issues, outliers, or coding errors"
+  )
+}
+
+# ESS issues
+if (diag_f0$min_ess_bulk < 400 || diag_nne$min_ess_bulk < 400) {
+  issues <- c(issues, "Low effective sample size detected")
+  recommendations <- c(
+    recommendations,
+    "- Run more sampling iterations",
+    "- Inspect trace plots and autocorrelation",
+    "- Check whether some parameters are weakly identified"
+  )
 }
 
 # Divergent transitions
-if (sum(sapply(get_sampler_params(fit_f0, inc_warmup = FALSE), 
-               function(x) sum(x[, "divergent__"]))) > 0 ||
-    sum(sapply(get_sampler_params(fit_nne, inc_warmup = FALSE), 
-               function(x) sum(x[, "divergent__"]))) > 0) {
+if (diag_f0$n_divergent > 0 || diag_nne$n_divergent > 0) {
   issues <- c(issues, "Divergent transitions detected")
-  recommendations <- c(recommendations,
-                      "- Increase adapt_delta",
-                      "- Reparameterize model (e.g., use non-centered parameterization)",
-                      "- Add stronger priors on problematic parameters")
+  recommendations <- c(
+    recommendations,
+    "- Increase adapt_delta",
+    "- Reparameterize the model, e.g. non-centered parameterization",
+    "- Add stronger priors on weakly identified parameters"
+  )
+}
+
+# Max treedepth
+if (diag_f0$n_treedepth > 0 || diag_nne$n_treedepth > 0) {
+  issues <- c(issues, "Some iterations reached maximum treedepth")
+  recommendations <- c(
+    recommendations,
+    "- Consider increasing max_treedepth",
+    "- Check whether the posterior geometry is difficult",
+    "- Inspect pairs plots for problematic parameters"
+  )
 }
 
 if (length(issues) == 0) {
@@ -312,11 +408,14 @@ if (length(issues) == 0) {
   cat("✓ Models are ready for inference and reporting\n")
 } else {
   cat("⚠ Issues detected:\n")
-  for (issue in issues) {
+
+  for (issue in unique(issues)) {
     cat("   -", issue, "\n")
   }
+
   cat("\nRecommendations:\n")
-  for (rec in recommendations) {
+
+  for (rec in unique(recommendations)) {
     cat(rec, "\n")
   }
 }
@@ -328,7 +427,7 @@ cat("\n", strrep("=", 80), "\n")
 # ==============================================================================
 
 # Redirect output to file
-sink(here("results", "diagnostic_report.txt"))
+sink(here("results", "stress", "diagnostics", "diagnostic_report.txt"))
 
 cat("COMPREHENSIVE DIAGNOSTIC REPORT\n")
 cat("Generated:", Sys.time(), "\n")
@@ -351,36 +450,76 @@ cat("\nDiagnostic report saved to: results/diagnostic_report.txt\n")
 # ==============================================================================
 
 # Trace plots for paper supplement
-p_trace_f0 <- mcmc_trace(fit_f0, pars = c("alpha", "b1", "b2", "sigma_y"), 
-                         facet_args = list(ncol = 2)) +
+params <- c("alpha", "b1", "b2", "sigma_y")
+
+p_trace_f0 <- mcmc_trace(
+  as.array(fit_f0$draws(variables = params)),
+  facet_args = list(ncol = 2)
+) +
   labs(title = "F0 Model: MCMC Trace Plots") +
   theme_minimal()
 
-ggsave(here("figures", "diagnostic_trace_f0.png"), p_trace_f0, 
-       width = 10, height = 8, dpi = 300)
+ggsave(
+  here("results", "stress", "figures", "diagnostic_trace_f0.png"),
+  p_trace_f0,
+  width = 10,
+  height = 8,
+  dpi = 300
+)
 
-p_trace_nne <- mcmc_trace(fit_nne, pars = c("alpha", "b1", "b2", "sigma_y"),
-                          facet_args = list(ncol = 2)) +
+ggsave(
+  here("results", "stress", "figures", "diagnostic_trace_f0.png"),
+  p_trace_f0,
+  width = 10,
+  height = 8,
+  dpi = 300
+)
+
+p_trace_nne <- mcmc_trace(
+  as.array(fit_nne$draws(variables = params)),
+  facet_args = list(ncol = 2)
+) +
   labs(title = "NNE Model: MCMC Trace Plots") +
   theme_minimal()
 
-ggsave(here("figures", "diagnostic_trace_nne.png"), p_trace_nne, 
-       width = 10, height = 8, dpi = 300)
+ggsave(
+  here("results", "stress", "figures", "diagnostic_trace_nne.png"),
+  p_trace_nne,
+  width = 10,
+  height = 8,
+  dpi = 300
+)
 
 # Autocorrelation plots
-p_acf_f0 <- mcmc_acf(fit_f0, pars = c("alpha", "b1", "b2", "sigma_y")) +
+params <- c("alpha", "b1", "b2", "sigma_y")
+
+p_acf_f0 <- mcmc_acf(
+  as.array(fit_f0$draws(variables = params))
+) +
   labs(title = "F0 Model: Autocorrelation") +
   theme_minimal()
 
-ggsave(here("figures", "diagnostic_acf_f0.png"), p_acf_f0, 
-       width = 10, height = 8, dpi = 300)
+ggsave(
+  here("results", "stress", "figures", "diagnostic_acf_f0.png"),
+  p_acf_f0,
+  width = 10,
+  height = 8,
+  dpi = 300
+)
 
-p_acf_nne <- mcmc_acf(fit_nne, pars = c("alpha", "b1", "b2", "sigma_y")) +
+p_acf_nne <- mcmc_acf(
+  as.array(fit_nne$draws(variables = params))
+) +
   labs(title = "NNE Model: Autocorrelation") +
   theme_minimal()
 
-ggsave(here("figures", "diagnostic_acf_nne.png"), p_acf_nne, 
-       width = 10, height = 8, dpi = 300)
+ggsave(
+  here("results", "stress", "figures", "diagnostic_acf_nne.png"),
+  p_acf_nne,
+  width = 10,
+  height = 8,
+  dpi = 300
+)
 
-cat("\nDiagnostic figures saved to figures/\n")
+cat("\nDiagnostic figures saved to results/stress/figures/\n")
 cat("\n=== Quality control complete ===\n")

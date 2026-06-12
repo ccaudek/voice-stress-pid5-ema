@@ -52,7 +52,7 @@ if (!file.exists(fit_path)) {
     adapt_delta = 0.99,
     max_treedepth = 15,
     seed = 123,
-    refresh = 500
+    refresh = 100
   )
 
   # Salva
@@ -96,7 +96,7 @@ print(summary_results, n = Inf)
 # Salva summary
 write_csv(
   summary_results,
-  here("results", "NNE", "model_summary_nne_moderation.csv")
+  here("results", "NNE", "tables", "model_summary_nne_moderation.csv")
 )
 cat("\nSaved: results/NNE/model_summary_nne_moderation.csv\n")
 
@@ -107,18 +107,21 @@ min_ess_tail <- min(summary_results$ess_tail, na.rm = TRUE)
 
 cat("\nConvergence checks:\n")
 cat("  Max Rhat:", round(max_rhat, 4), ifelse(max_rhat < 1.01, "✓", "⚠"), "\n")
+# Max Rhat: 1.0039 ✓
 cat(
   "  Min ESS bulk:",
   round(min_ess_bulk),
   ifelse(min_ess_bulk > 1000, "✓", "⚠"),
   "\n"
 )
+# Min ESS bulk: 3578 ✓
 cat(
   "  Min ESS tail:",
   round(min_ess_tail),
   ifelse(min_ess_tail > 1000, "✓", "⚠"),
   "\n"
 )
+# Min ESS tail: 4466 ✓
 
 # ==============================================================================
 # POSTERIOR PREDICTIVE CHECK
@@ -140,14 +143,14 @@ ppc_plot <- ppc_dens_overlay(
 print(ppc_plot)
 
 ggsave(
-  filename = here("results", "NNE", "ppc_nne_moderation.png"),
+  filename = here("results", "NNE", "figures", "ppc_nne_moderation.png"),
   plot = ppc_plot,
   width = 8,
   height = 6,
   dpi = 300
 )
 
-cat("Saved: results/NNE/ppc_nne_moderation.png\n")
+cat("Saved: results/NNE/figures/ppc_nne_moderation.png\n")
 
 # ==============================================================================
 # EXTRACT KEY RESULTS
@@ -171,12 +174,14 @@ cat(sprintf(
   pd(b1),
   mean(b1 > 0)
 ))
+# b1 (stress):   median=-0.792, PD=0.995, P(>0)=0.005
 cat(sprintf(
   "  b2 (recovery): median=%.3f, PD=%.3f, P(>0)=%.3f\n",
   median(b2),
   pd(b2),
   mean(b2 > 0)
 ))
+# b2 (recovery): median=-0.192, PD=0.734, P(>0)=0.266
 
 # Moderation effects
 cat("\nModeration Effects (PD):\n")
@@ -196,6 +201,21 @@ for (d in 1:5) {
     mean(g2d > 0)
   ))
 }
+# pid5_negative_affectivity:
+# Stress (g1):   PD=0.822, P(>0)=0.178
+# Recovery (g2): PD=0.783, P(>0)=0.217
+# pid5_detachment:
+# Stress (g1):   PD=0.720, P(>0)=0.720
+# Recovery (g2): PD=0.664, P(>0)=0.664
+# pid5_antagonism:
+# Stress (g1):   PD=0.513, P(>0)=0.487
+# Recovery (g2): PD=0.819, P(>0)=0.181
+# pid5_disinhibition:
+# Stress (g1):   PD=0.705, P(>0)=0.705
+# Recovery (g2): PD=0.750, P(>0)=0.250
+# pid5_psychoticism:
+# Stress (g1):   PD=0.520, P(>0)=0.480
+# Recovery (g2): PD=0.959, P(>0)=0.959
 
 cat("\n=== FITTING COMPLETE ===\n")
 cat("Next steps:\n")

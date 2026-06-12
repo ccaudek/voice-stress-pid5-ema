@@ -539,6 +539,9 @@ if (file.exists(fit_f0_rds)) {
 
 write_csv(combined_summary, file.path(out_dir, "convergence_summary_both_models.csv"))
 print(combined_summary)
+# Model Divergences Max_treedepth_exceeded Rhat_max Rhat_above_1.01 ESS_bulk_min ESS_tail_min
+# 1    F0           0                      0   1.0009               0         4413         8211
+# 2   NNE           0                      0   1.0039               0         3578         4466
 
 cat("\n=== ALL DIAGNOSTICS COMPLETE ===\n")
 

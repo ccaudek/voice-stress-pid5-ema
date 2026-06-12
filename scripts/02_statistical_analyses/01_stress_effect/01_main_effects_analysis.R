@@ -517,32 +517,63 @@ ggsave(
 # ----------------------------
 # 12) SAVE RESULTS
 # ----------------------------
+
 cat("\n=== SAVING RESULTS ===\n")
+
+# Ensure output directories exist
+dir.create(here("results", "stress"), recursive = TRUE, showWarnings = FALSE)
+dir.create(
+  here("results", "stress", "models"),
+  recursive = TRUE,
+  showWarnings = FALSE
+)
+dir.create(
+  here("results", "stress", "tables"),
+  recursive = TRUE,
+  showWarnings = FALSE
+)
+dir.create(
+  here("results", "stress", "figures"),
+  recursive = TRUE,
+  showWarnings = FALSE
+)
 
 # Models (cmdstan objects)
 fit_f0$save_object(
   file = here("results", "stress", "models", "fit_f0_main_effects.rds")
 )
+
 fit_nne$save_object(
   file = here("results", "stress", "models", "fit_nne_main_effects.rds")
 )
 
 # Summaries
-write_csv(f0_summary, here("results", "f0_main_effects_summary.csv"))
-write_csv(nne_summary, here("results", "nne_main_effects_summary.csv"))
+write_csv(
+  f0_summary,
+  here("results", "stress", "tables", "f0_main_effects_summary.csv")
+)
+
+write_csv(
+  nne_summary,
+  here("results", "stress", "tables", "nne_main_effects_summary.csv")
+)
 
 # Posterior samples
 write_csv(
   post_f0,
   here("results", "stress", "models", "f0_posterior_samples.csv")
 )
+
 write_csv(
   post_nne,
   here("results", "stress", "models", "nne_posterior_samples.csv")
 )
 
 # Descriptive stats
-write_csv(desc_stats, here("results", "stress", "descriptive_statistics.csv"))
+write_csv(
+  desc_stats,
+  here("results", "stress", "tables", "descriptive_statistics.csv")
+)
 
 # Bundle for downstream analyses
 saveRDS(
@@ -555,16 +586,22 @@ saveRDS(
     fit_f0 = fit_f0,
     fit_nne = fit_nne,
     post_f0 = post_f0,
-    post_nne = post_nne
+    post_nne = post_nne,
+    f0_summary = f0_summary,
+    nne_summary = nne_summary
   ),
   file = here("results", "stress", "analysis_bundle.rds")
 )
 
 cat("\n=== ANALYSIS COMPLETE ===\n")
 cat("Saved:\n")
-cat(" - models/fit_f0_main_effects.rds\n")
-cat(" - models/fit_nne_main_effects.rds\n")
-cat(" - results/*.csv\n")
-cat(" - figures/*.png\n")
+cat(" - results/stress/models/fit_f0_main_effects.rds\n")
+cat(" - results/stress/models/fit_nne_main_effects.rds\n")
+cat(" - results/stress/models/f0_posterior_samples.csv\n")
+cat(" - results/stress/models/nne_posterior_samples.csv\n")
+cat(" - results/stress/tables/f0_main_effects_summary.csv\n")
+cat(" - results/stress/tables/nne_main_effects_summary.csv\n")
+cat(" - results/stress/tables/descriptive_statistics.csv\n")
+cat(" - results/stress/analysis_bundle.rds\n")
 
 # eof ---

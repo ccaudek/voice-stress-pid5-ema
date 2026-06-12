@@ -23,7 +23,9 @@ loo_ema <- readRDS("results/followup/loo_f0_ema_improved.rds")
 loo_baseline <- readRDS("results/followup/loo_f0_baseline_improved.rds")
 loo_combined <- readRDS("results/followup/loo_f0_combined_improved.rds")
 
-moderation_comparison <- read_csv("results/followup/moderation_comparison_improved.csv")
+moderation_comparison <- read_csv(
+  "results/followup/moderation_comparison_improved.csv"
+)
 
 # ==============================================================================
 # FIGURE 1: LOO Comparison - Model Performance
@@ -132,7 +134,7 @@ ggsave(
 precision_data <- moderation_comparison %>%
   filter(contrast == "Stress") %>%
   mutate(
-    cri_width = q95 - q05,
+    cri_width = q945 - q055,
     model_type = case_when(
       model == "EMA" ~ "EMA",
       model == "Baseline" ~ "Baseline",
@@ -140,7 +142,7 @@ precision_data <- moderation_comparison %>%
       TRUE ~ model
     )
   ) %>%
-  select(domain, domain_name, model_type, mean, q05, q95, cri_width, pd) %>%
+  select(domain, domain_name, model_type, mean, q055, q945, cri_width, pd) %>%
   filter(model_type %in% c("EMA", "Baseline")) # Focus on main comparison
 
 # Width comparison plot
@@ -161,9 +163,9 @@ fig2a <- ggplot(
   ) +
   labs(
     x = NULL,
-    y = "90% Credible Interval Width (Hz)",
-    title = "Inferential Precision: EMA vs Baseline Estimates",
-    subtitle = "Narrower intervals indicate more precise parameter estimates"
+    y = "89% Credible Interval Width (Hz)",
+    title = "Credible-Interval Width by PID-5 Measurement Method",
+    subtitle = "89% CrI widths for the stress-moderation effects (EMA vs baseline PID-5)"
   ) +
   theme_minimal(base_size = 11) +
   theme(
@@ -180,7 +182,7 @@ fig2b <- ggplot(
 ) +
   geom_vline(xintercept = 0, linetype = "dashed", color = "gray50") +
   geom_linerange(
-    aes(xmin = q05, xmax = q95),
+    aes(xmin = q055, xmax = q945),
     position = position_dodge(0.5),
     size = 1
   ) +
@@ -195,7 +197,7 @@ fig2b <- ggplot(
   labs(
     x = "Stress Moderation Effect γ₁ (Hz per SD)",
     y = NULL,
-    title = "Parameter Estimates with 90% Credible Intervals"
+    title = "Stress-Moderation Estimates: EMA vs Baseline PID-5 (89% CrIs)"
   ) +
   theme_minimal(base_size = 11) +
   theme(
@@ -249,7 +251,7 @@ fig3 <- ggplot(na_posteriors, aes(x = value, fill = model)) +
   geom_vline(xintercept = 0, linetype = "dashed", color = "gray50") +
   stat_halfeye(
     alpha = 0.7,
-    .width = c(0.90, 0.50),
+    .width = c(0.89, 0.50),
     point_interval = "median_qi",
     position = position_dodge(width = 0.4)
   ) +
@@ -261,7 +263,7 @@ fig3 <- ggplot(na_posteriors, aes(x = value, fill = model)) +
     x = "Negative Affectivity × Stress Interaction γ₁ (Hz per SD)",
     y = "Posterior Density",
     title = "Posterior Distributions: Negative Affectivity Stress Moderation",
-    subtitle = "Thick bar = 50% CrI, thin bar = 90% CrI; dot = posterior median"
+    subtitle = "EMA vs baseline PID-5; thick bar = 50% CrI, thin bar = 89% CrI; dot = posterior median"
   ) +
   theme_minimal(base_size = 12) +
   theme(
@@ -383,32 +385,47 @@ ggsave(
 )
 
 # ==============================================================================
-# SUMMARY TABLE: Precision Gains
+# SUMMARY TABLE: Interval width and directional convergence (EMA vs baseline)
 # ==============================================================================
 
-# Calculate precision improvement
-precision_summary <- precision_data %>%
-  select(domain_name, model_type, cri_width) %>%
-  pivot_wider(names_from = model_type, values_from = cri_width) %>%
-  mutate(
-    improvement = (Baseline - EMA) / Baseline * 100,
-    narrower = EMA < Baseline
+# Descriptive comparison of 89% CrI widths between the two PID-5 measurement
+# methods, together with whether they agree in SIGN and directional evidence
+# (pd) for each effect. The width difference is reported descriptively only;
+# the substantive point is the convergence of directional evidence across two
+# independent ways of measuring personality (a replication across methods),
+# not that one method is "more precise".
+width_comparison <- precision_data %>%
+  select(domain_name, model_type, mean, cri_width, pd) %>%
+  pivot_wider(
+    names_from = model_type,
+    values_from = c(mean, cri_width, pd)
   ) %>%
-  arrange(desc(improvement))
+  mutate(
+    same_sign = sign(mean_EMA) == sign(mean_Baseline),
+    width_diff_pct = (cri_width_Baseline - cri_width_EMA) /
+      cri_width_Baseline *
+      100
+  ) %>%
+  arrange(desc(pd_EMA))
 
+# NB: filename kept for workflow compatibility; consider renaming to
+# 'interval_width_comparison_improved.csv' to match the reframed content.
 write_csv(
-  precision_summary,
+  width_comparison,
   "results/followup/precision_improvement_summary_improved.csv"
 )
 
-cat("\n=== PRECISION IMPROVEMENT SUMMARY ===\n")
-print(precision_summary)
-cat("\nMean improvement:", round(mean(precision_summary$improvement), 1), "%\n")
 cat(
-  "Median improvement:",
-  round(median(precision_summary$improvement), 1),
-  "%\n"
+  "\n=== INTERVAL WIDTH & DIRECTIONAL CONVERGENCE (EMA vs baseline PID-5) ===\n"
 )
+print(width_comparison)
+cat(
+  "\nNote: 89% CrI width differences are descriptive only. The key result is\n"
+)
+cat(
+  "whether the two measurement methods agree in sign and directional evidence\n"
+)
+cat("(pd) for each effect (replication across methods).\n")
 
 # ==============================================================================
 # Summary Statistics for Manuscript
@@ -447,30 +464,44 @@ if (all(file.exists(orig_loo_files))) {
   loo_ema_orig <- readRDS(orig_loo_files[1])
   loo_baseline_orig <- readRDS(orig_loo_files[2])
   loo_combined_orig <- readRDS(orig_loo_files[3])
-  
+
   # Compare Pareto k diagnostics
   compare_pareto <- function(loo_orig, loo_new, name) {
     k_orig <- loo_orig$diagnostics$pareto_k
     k_new <- loo_new$diagnostics$pareto_k
-    
+
     cat(name, ":\n")
-    cat("  Original: Good =", sum(k_orig < 0.5), 
-        sprintf("(%.1f%%), Bad+ = %d (%.1f%%)\n",
-                sum(k_orig < 0.5) / length(k_orig) * 100,
-                sum(k_orig >= 0.7),
-                sum(k_orig >= 0.7) / length(k_orig) * 100))
-    cat("  Improved: Good =", sum(k_new < 0.5),
-        sprintf("(%.1f%%), Bad+ = %d (%.1f%%)\n",
-                sum(k_new < 0.5) / length(k_new) * 100,
-                sum(k_new >= 0.7),
-                sum(k_new >= 0.7) / length(k_new) * 100))
-    cat("  Change: Good +",
-        sum(k_new < 0.5) - sum(k_orig < 0.5),
-        sprintf("(%.1f%% → %.1f%%)\n\n",
-                sum(k_orig < 0.5) / length(k_orig) * 100,
-                sum(k_new < 0.5) / length(k_new) * 100))
+    cat(
+      "  Original: Good =",
+      sum(k_orig < 0.5),
+      sprintf(
+        "(%.1f%%), Bad+ = %d (%.1f%%)\n",
+        sum(k_orig < 0.5) / length(k_orig) * 100,
+        sum(k_orig >= 0.7),
+        sum(k_orig >= 0.7) / length(k_orig) * 100
+      )
+    )
+    cat(
+      "  Improved: Good =",
+      sum(k_new < 0.5),
+      sprintf(
+        "(%.1f%%), Bad+ = %d (%.1f%%)\n",
+        sum(k_new < 0.5) / length(k_new) * 100,
+        sum(k_new >= 0.7),
+        sum(k_new >= 0.7) / length(k_new) * 100
+      )
+    )
+    cat(
+      "  Change: Good +",
+      sum(k_new < 0.5) - sum(k_orig < 0.5),
+      sprintf(
+        "(%.1f%% → %.1f%%)\n\n",
+        sum(k_orig < 0.5) / length(k_orig) * 100,
+        sum(k_new < 0.5) / length(k_new) * 100
+      )
+    )
   }
-  
+
   compare_pareto(loo_ema_orig, loo_ema, "EMA")
   compare_pareto(loo_baseline_orig, loo_baseline, "Baseline")
   compare_pareto(loo_combined_orig, loo_combined, "Combined")
@@ -482,7 +513,7 @@ if (all(file.exists(orig_loo_files))) {
 cat("\n=== FIGURE GENERATION COMPLETE ===\n")
 cat("Created (with '_improved' suffix):\n")
 cat("  - Figure 1: LOO comparison (ELPD)\n")
-cat("  - Figure 2: Precision comparison (CrI widths + estimates)\n")
+cat("  - Figure 2: Credible-interval width comparison (EMA vs baseline)\n")
 cat("  - Figure 3: NA posterior distributions\n")
 cat("  - Figure 4: Pareto k diagnostics\n")
 cat("  - Summary tables saved as CSV\n\n")

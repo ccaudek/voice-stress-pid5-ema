@@ -54,6 +54,7 @@ cat("\n=== DIFFERENTIAL MODERATION EFFECTS ANALYSIS (NNE) ===\n")
 cat("Credible intervals:", cri_label, "central (equal-tailed) intervals\n")
 cat("pd and SNR are reported descriptively, without decision thresholds\n")
 cat("Residual SD (sigma_y) =", round(sigma_y, 2), "dB\n\n")
+# Residual SD (sigma_y) = 1.98 dB
 
 # ==============================================================================
 # PART 1: DIRECTIONAL POSTERIOR SUMMARIES
@@ -127,7 +128,7 @@ print(direction_summary, n = Inf)
 
 write_csv(
   direction_summary,
-  here(out_dir, "direction_posterior_summary_89cri.csv")
+  here(out_dir, "tables", "direction_posterior_summary_89cri.csv")
 )
 
 # ==============================================================================
@@ -144,6 +145,17 @@ print(
     select(domain, parameter, median, ci_lower, ci_upper, pd),
   n = Inf
 )
+# domain               parameter          median ci_lower ci_upper    pd
+# 1 Psychoticism         Recovery (gamma2)  0.883    0.0667    1.68  0.959
+# 2 Antagonism           Recovery (gamma2) -0.432   -1.18      0.329 0.819
+# 3 Negative Affectivity Recovery (gamma2) -0.393   -1.19      0.415 0.783
+# 4 Disinhibition        Recovery (gamma2) -0.399   -1.34      0.564 0.75 
+# 5 Detachment           Recovery (gamma2)  0.217   -0.606     1.04  0.664
+# 6 Negative Affectivity Stress (gamma1)   -0.465   -1.27      0.344 0.822
+# 7 Detachment           Stress (gamma1)    0.304   -0.518     1.12  0.720
+# 8 Disinhibition        Stress (gamma1)    0.322   -0.644     1.27  0.705
+# 9 Psychoticism         Stress (gamma1)   -0.0248  -0.828     0.789 0.520
+# 10 Antagonism           Stress (gamma1)   -0.0163  -0.757     0.740 0.513
 
 g1_list <- lapply(1:5, function(d) as.numeric(draws[, , paste0("g1[", d, "]")]))
 g2_list <- lapply(1:5, function(d) as.numeric(draws[, , paste0("g2[", d, "]")]))
@@ -188,6 +200,10 @@ for (d in setdiff(1:5, ref_idx)) {
     )
   )
 }
+# P(Negative Affectivity > Detachment) = 15.3%
+# P(Negative Affectivity > Antagonism) = 22.8%
+# P(Negative Affectivity > Disinhibition) = 19.1%
+# P(Negative Affectivity > Psychoticism) = 29.9%
 
 cat(sprintf(
   "\n--- Recovery contrasts: P(%s > each other domain) ---\n",
@@ -212,6 +228,10 @@ for (d in setdiff(1:5, ref_idx)) {
     )
   )
 }
+# P(Psychoticism > Negative Affectivity) = 93.9%
+# P(Psychoticism > Detachment) = 80.9%
+# P(Psychoticism > Antagonism) = 95.4%
+# P(Psychoticism > Disinhibition) = 93.5%
 
 # ==============================================================================
 # PART 3: MAGNITUDE UNCERTAINTY (descriptive magnitude probabilities)
@@ -242,6 +262,19 @@ for (t in mag_targets) {
   cat(sprintf("    P(|effect| > 1.0 dB) = %.1f%%\n", mean(abs(t$draws) > 1.0) * 100))
   cat(sprintf("    P(|effect| > 1.5 dB) = %.1f%%\n", mean(abs(t$draws) > 1.5) * 100))
 }
+# Negative Affectivity - Stress moderation:
+#   median = -0.46 dB, 89% CrI [-1.27, 0.34], pd = 0.822
+# Magnitude probabilities:
+#   P(|effect| > 0.5 dB) = 49.9%
+# P(|effect| > 1.0 dB) = 14.8%
+# P(|effect| > 1.5 dB) = 2.0%
+# 
+# Psychoticism - Recovery moderation:
+#   median = 0.88 dB, 89% CrI [0.07, 1.68], pd = 0.959
+# Magnitude probabilities:
+#   P(|effect| > 0.5 dB) = 77.7%
+# P(|effect| > 1.0 dB) = 40.8%
+# P(|effect| > 1.5 dB) = 10.8%
 
 # ==============================================================================
 # PART 4: THEORETICAL ALIGNMENT (direction only, no pd threshold)
@@ -332,7 +365,7 @@ print(alignment_table, n = Inf)
 
 write_csv(
   alignment_table,
-  here(out_dir, "theoretical_alignment_table_descriptive_89cri.csv")
+  here(out_dir, "tables", "theoretical_alignment_table_descriptive_89cri.csv")
 )
 
 # ==============================================================================
@@ -388,7 +421,7 @@ fig_direction <- ggplot(
 print(fig_direction)
 
 ggsave(
-  filename = here(out_dir, "figure_moderation_effects.png"),
+  filename = here(out_dir, "figures", "figure_moderation_effects.png"),
   plot = fig_direction,
   width = 12,
   height = 6,
@@ -430,7 +463,7 @@ fig_snr <- ggplot(
 print(fig_snr)
 
 ggsave(
-  filename = here(out_dir, "figure_snr_descriptive.png"),
+  filename = here(out_dir, "figures", "figure_snr_descriptive.png"),
   plot = fig_snr,
   width = 12,
   height = 6,
@@ -489,7 +522,7 @@ if (nrow(contrast_data) > 0) {
   print(fig_contrasts)
 
   ggsave(
-    filename = here(out_dir, "figure_pairwise_contrasts.png"),
+    filename = here(out_dir, "figures", "figure_pairwise_contrasts.png"),
     plot = fig_contrasts,
     width = 12,
     height = max(4, nrow(contrast_summary) * 0.5),
@@ -504,12 +537,12 @@ if (nrow(contrast_data) > 0) {
 cat("\n=== ANALYSIS COMPLETE (NNE) ===\n\n")
 
 cat("Files created:\n")
-cat("  1. results/NNE/direction_posterior_summary_89cri.csv\n")
-cat("  2. results/NNE/theoretical_alignment_table_descriptive_89cri.csv\n")
-cat("  3. results/NNE/figure_moderation_effects.png\n")
-cat("  4. results/NNE/figure_snr_descriptive.png\n")
+cat("  1. results/NNE/tables/direction_posterior_summary_89cri.csv\n")
+cat("  2. results/NNE/tables/theoretical_alignment_table_descriptive_89cri.csv\n")
+cat("  3. results/NNE/figures/figure_moderation_effects.png\n")
+cat("  4. results/NNE/figures/figure_snr_descriptive.png\n")
 if (nrow(contrast_data) > 0) {
-  cat("  5. results/NNE/figure_pairwise_contrasts.png\n")
+  cat("  5. results/NNE/figures/figure_pairwise_contrasts.png\n")
 }
 
 cat("\n=== KEY FINDINGS (NNE) ===\n\n")
@@ -530,6 +563,11 @@ for (i in seq_len(nrow(top_dir))) {
     top_dir$pd[i]
   ))
 }
+# Psychoticism - Recovery (gamma2): 0.88 dB [89% CrI 0.07, 1.68], pd = 0.959
+# Negative Affectivity - Stress (gamma1): -0.46 dB [89% CrI -1.27, 0.34], pd = 0.822
+# Antagonism - Recovery (gamma2): -0.43 dB [89% CrI -1.18, 0.33], pd = 0.819
+# Negative Affectivity - Recovery (gamma2): -0.39 dB [89% CrI -1.19, 0.41], pd = 0.783
+# Disinhibition - Recovery (gamma2): -0.40 dB [89% CrI -1.34, 0.56], pd = 0.750
 
 cat("\n2. THEORETICAL ALIGNMENT (by direction):\n")
 aligned <- alignment_table %>%
@@ -544,6 +582,10 @@ if (nrow(aligned) > 0) {
     ))
   }
 }
+# Same direction: Negative Affectivity - Stress (gamma1) (pd = 0.82)
+# Same direction: Detachment - Recovery (gamma2) (pd = 0.66)
+# Same direction: Disinhibition - Stress (gamma1) (pd = 0.70)
+# Same direction: Psychoticism - Recovery (gamma2) (pd = 0.96)
 contrary <- alignment_table %>%
   filter(alignment == "Opposite direction from prediction")
 if (nrow(contrary) > 0) {
@@ -558,6 +600,9 @@ if (nrow(contrary) > 0) {
     ))
   }
 }
+# Opposite direction: Negative Affectivity - Recovery (gamma2) (predicted positive, observed negative, pd = 0.78)
+# Opposite direction: Antagonism - Recovery (gamma2) (predicted positive, observed negative, pd = 0.82)
+# Opposite direction: Disinhibition - Recovery (gamma2) (predicted positive, observed negative, pd = 0.75)
 
 cat("\n3. INTERPRETATION:\n")
 cat("   NNE (Normalized Noise Energy):\n")

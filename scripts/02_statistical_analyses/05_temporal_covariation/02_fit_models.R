@@ -142,7 +142,6 @@ mod_rs <- cmdstan_model(file.path(model_dir, "random_slopes_noncentered.stan"))
 
 cat("Fitting...\n")
 cat("(Questo richiederà ~4 minuti...)\n")
-cat("☕ Vai a prendere un caffè (o due)!\n\n")
 
 fit_rs <- mod_rs$sample(
   data = stan_data,
@@ -219,14 +218,10 @@ se_diff <- loo_comp[2, "se_diff"]
 
 cat(sprintf("\nRandom Slopes vs Baseline:\n"))
 cat(sprintf("  ΔELPD: %.2f (SE: %.2f)\n", abs(delta_elpd), se_diff))
-
-if (abs(delta_elpd) > 4) {
-  cat("  → DIFFERENZA SOSTANZIALE (ΔELPD > 4)\n")
-} else if (abs(delta_elpd) > 2 * se_diff) {
-  cat("  → Differenza significativa (ΔELPD > 2 SE)\n")
-} else {
-  cat("  → Differenza non significativa\n")
-}
+cat(sprintf(
+  "  ΔELPD / SE = %.1f (predictive-accuracy difference; reported descriptively, not thresholded)\n",
+  ifelse(se_diff > 0, abs(delta_elpd) / se_diff, NA_real_)
+))
 
 # R² comparison
 r2_baseline <- diag_baseline$mean[diag_baseline$variable == "r2_within"]
@@ -275,13 +270,12 @@ cat("  - diagnostics_*.csv\n")
 cat("  - model_comparison.csv\n\n")
 
 cat("RISULTATO CHIAVE:\n")
-if (abs(delta_elpd) > 4 && r2_rs > r2_baseline * 2) {
-  cat("  ✓ Random slopes SOSTANZIALMENTE migliore!\n")
-  cat("  → Eterogeneità individuale confermata\n")
-  cat("  → Vocal-affective coupling è IDIOGRAFICO\n")
-} else {
-  cat("  → Risultati ambigui, verifica diagnostics\n")
-}
+cat(sprintf(
+  "  Random slopes: maggiore accuratezza predittiva (ΔELPD = %.1f, SE = %.1f).\n",
+  abs(delta_elpd), se_diff
+))
+cat("  NB: un fit migliore NON stabilisce di per se' effetti idiografici/individuali;\n")
+cat("  con 3 timepoint le pendenze individuali sono identificate debolmente (vedi 03).\n")
 
 cat("\n✓ Prossimo step: source('03_analyze_heterogeneity.R')\n\n")
 

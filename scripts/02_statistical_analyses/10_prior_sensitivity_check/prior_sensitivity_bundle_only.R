@@ -1,4 +1,4 @@
-# ============================================================================== 
+# ==============================================================================
 # 04_prior_sensitivity.R   (risposta a R2.11 -- sensibilita' alle prior)
 #
 # SCOPO
@@ -44,7 +44,7 @@
 #   results/prior_sensitivity/figures/prior_sensitivity_forest.png
 #   results/prior_sensitivity/prior_sensitivity_text.txt
 #   results/prior_sensitivity/models/prior_sensitivity_bundle.rds
-# ============================================================================== 
+# ==============================================================================
 
 suppressPackageStartupMessages({
   library(tidyverse)
@@ -57,7 +57,9 @@ set.seed(123)
 options(mc.cores = parallel::detectCores())
 
 cat("\n=== RUNNING BUNDLE-ONLY PRIOR SENSITIVITY SCRIPT ===\n")
-cat("This version reads results/stan_bundle_f0mean_pid5.rds and results/NNE/stan_bundle_nne_pid5.rds; it never uses the old environment-based loader.\n\n")
+cat(
+  "This version reads results/stan_bundle_f0mean_pid5.rds and results/NNE/stan_bundle_nne_pid5.rds; it never uses the old environment-based loader.\n\n"
+)
 
 # ----------------------------
 # 0) GRIGLIA DELLE PRIOR E SAMPLING
@@ -90,16 +92,28 @@ check_stan_file <- function(path, label) {
   code <- paste(readLines(path, warn = FALSE), collapse = "\n")
   if (!grepl("real<lower=0>\\s+prior_sd_gamma\\s*;", code)) {
     stop(
-      "Il file Stan per ", label, " non contiene `real<lower=0> prior_sd_gamma;` nel data block.\n",
+      "Il file Stan per ",
+      label,
+      " non contiene `real<lower=0> prior_sd_gamma;` nel data block.\n",
       "Applica l'edit minimo descritto in testa allo script: aggiungi prior_sd_gamma al data block ",
       "e sostituisci la prior su g1/g2 con prior_sd_gamma.",
       call. = FALSE
     )
   }
-  if (!grepl("g1\\s*~\\s*normal\\s*\\(\\s*0\\s*,\\s*prior_sd_gamma\\s*\\)", code) ||
-      !grepl("g2\\s*~\\s*normal\\s*\\(\\s*0\\s*,\\s*prior_sd_gamma\\s*\\)", code)) {
+  if (
+    !grepl(
+      "g1\\s*~\\s*normal\\s*\\(\\s*0\\s*,\\s*prior_sd_gamma\\s*\\)",
+      code
+    ) ||
+      !grepl(
+        "g2\\s*~\\s*normal\\s*\\(\\s*0\\s*,\\s*prior_sd_gamma\\s*\\)",
+        code
+      )
+  ) {
     stop(
-      "Il file Stan per ", label, " non sembra usare `prior_sd_gamma` nella prior su g1 e g2.\n",
+      "Il file Stan per ",
+      label,
+      " non sembra usare `prior_sd_gamma` nella prior su g1 e g2.\n",
       "La sensitivity deve variare solo la regolarizzazione delle gamma.",
       call. = FALSE
     )
@@ -123,14 +137,16 @@ mod_nne <- cmdstan_model(nne_stan_file)
 #   results/NNE/stan_bundle_nne_pid5.rds
 # Ogni refit modifica solo sd_data$prior_sd_gamma nello sweep.
 
-F0_BUNDLE_RDS  <- here("results", "stan_bundle_f0mean_pid5.rds")
+F0_BUNDLE_RDS <- here("results", "F0", "data", "stan_bundle_f0mean_pid5.rds")
 NNE_BUNDLE_RDS <- here("results", "NNE", "stan_bundle_nne_pid5.rds")
 
 first_existing <- function(paths, label) {
   hits <- paths[file.exists(paths)]
   if (length(hits) == 0) {
     stop(
-      "File non trovato per ", label, ":\n",
+      "File non trovato per ",
+      label,
+      ":\n",
       paste0(" - ", paths, collapse = "\n"),
       call. = FALSE
     )
@@ -169,7 +185,9 @@ run_prepare_if_needed <- function(bundle_path, kind) {
   if (file.exists(bundle_path)) return(invisible(TRUE))
 
   message("Bundle ", kind, " non trovato: ", bundle_path)
-  message("Provo a rigenerarlo eseguendo lo script originale di preparazione dati...")
+  message(
+    "Provo a rigenerarlo eseguendo lo script originale di preparazione dati..."
+  )
 
   dir.create(here("stan"), recursive = TRUE, showWarnings = FALSE)
   dir.create(here("stan", "NNE"), recursive = TRUE, showWarnings = FALSE)
@@ -189,7 +207,9 @@ run_prepare_if_needed <- function(bundle_path, kind) {
 
   if (!file.exists(bundle_path)) {
     stop(
-      "Lo script di preparazione ", kind, " e' stato eseguito, ma il bundle atteso non e' stato creato:\n",
+      "Lo script di preparazione ",
+      kind,
+      " e' stato eseguito, ma il bundle atteso non e' stato creato:\n",
       bundle_path,
       "\nControlla che lo script prepare salvi esattamente in quel path.",
       call. = FALSE
@@ -203,24 +223,50 @@ load_original_bundle <- function(bundle_path, kind) {
   bundle <- readRDS(bundle_path)
 
   if (!is.list(bundle) || is.null(bundle$stan_data)) {
-    stop("Il bundle ", kind, " non contiene `$stan_data`: ", bundle_path, call. = FALSE)
+    stop(
+      "Il bundle ",
+      kind,
+      " non contiene `$stan_data`: ",
+      bundle_path,
+      call. = FALSE
+    )
   }
   if (is.null(bundle$pid5_vars)) {
-    stop("Il bundle ", kind, " non contiene `$pid5_vars`: ", bundle_path, call. = FALSE)
+    stop(
+      "Il bundle ",
+      kind,
+      " non contiene `$pid5_vars`: ",
+      bundle_path,
+      call. = FALSE
+    )
   }
 
   bundle
 }
 
 required_data_names <- c(
-  "N_subj", "N_voice", "subj_voice", "y", "c1", "c2",
-  "N_ema", "subj_ema", "D", "X"
+  "N_subj",
+  "N_voice",
+  "subj_voice",
+  "y",
+  "c1",
+  "c2",
+  "N_ema",
+  "subj_ema",
+  "D",
+  "X"
 )
 
 check_stan_data <- function(sd, label) {
   missing <- setdiff(required_data_names, names(sd))
   if (length(missing) > 0) {
-    stop("stan_data ", label, " manca di: ", paste(missing, collapse = ", "), call. = FALSE)
+    stop(
+      "stan_data ",
+      label,
+      " manca di: ",
+      paste(missing, collapse = ", "),
+      call. = FALSE
+    )
   }
   if (!is.matrix(sd$X)) {
     # readRDS dovrebbe preservare la matrice, ma questo evita problemi se il bundle
@@ -240,31 +286,49 @@ check_stan_data <- function(sd, label) {
     stop("stan_data ", label, ": length(y) != N_voice.", call. = FALSE)
   }
   if ("prior_sd_gamma" %in% names(sd)) {
-    message("Nota: `prior_sd_gamma` era gia' in stan_data ", label, "; verra' sovrascritto nello sweep.")
+    message(
+      "Nota: `prior_sd_gamma` era gia' in stan_data ",
+      label,
+      "; verra' sovrascritto nello sweep."
+    )
   }
   sd
 }
 
-f0_bundle  <- load_original_bundle(F0_BUNDLE_RDS,  "F0")
+f0_bundle <- load_original_bundle(F0_BUNDLE_RDS, "F0")
 nne_bundle <- load_original_bundle(NNE_BUNDLE_RDS, "NNE")
 
-stan_data_f0  <- check_stan_data(f0_bundle$stan_data,  "F0")
+stan_data_f0 <- check_stan_data(f0_bundle$stan_data, "F0")
 stan_data_nne <- check_stan_data(nne_bundle$stan_data, "NNE")
 
-pid5_vars_f0  <- f0_bundle$pid5_vars
+pid5_vars_f0 <- f0_bundle$pid5_vars
 pid5_vars_nne <- nne_bundle$pid5_vars
 
 cat("\n=== BUNDLE ORIGINALI CARICATI ===\n")
-cat("F0 bundle:  ", F0_BUNDLE_RDS,  "\n", sep = "")
+cat("F0 bundle:  ", F0_BUNDLE_RDS, "\n", sep = "")
 cat("NNE bundle: ", NNE_BUNDLE_RDS, "\n", sep = "")
-cat("PID-5 order F0:  ", paste(seq_along(pid5_vars_f0), pid5_vars_f0, sep = "=", collapse = "; "), "\n", sep = "")
-cat("PID-5 order NNE: ", paste(seq_along(pid5_vars_nne), pid5_vars_nne, sep = "=", collapse = "; "), "\n", sep = "")
+cat(
+  "PID-5 order F0:  ",
+  paste(seq_along(pid5_vars_f0), pid5_vars_f0, sep = "=", collapse = "; "),
+  "\n",
+  sep = ""
+)
+cat(
+  "PID-5 order NNE: ",
+  paste(seq_along(pid5_vars_nne), pid5_vars_nne, sep = "=", collapse = "; "),
+  "\n",
+  sep = ""
+)
 
 if (!identical(pid5_vars_f0, pid5_vars_nne)) {
   stop(
     "L'ordine dei domini PID-5 differisce tra F0 e NNE.\n",
-    "F0:  ", paste(pid5_vars_f0, collapse = ", "), "\n",
-    "NNE: ", paste(pid5_vars_nne, collapse = ", "), "\n",
+    "F0:  ",
+    paste(pid5_vars_f0, collapse = ", "),
+    "\n",
+    "NNE: ",
+    paste(pid5_vars_nne, collapse = ", "),
+    "\n",
     "Correggi gli indici headline prima dello sweep.",
     call. = FALSE
   )
@@ -282,7 +346,8 @@ if (!identical(pid5_vars_f0, expected_pid5_vars)) {
   warning(
     "L'ordine PID-5 nel bundle non coincide con quello atteso nello script. ",
     "Controlla headline_specs prima di interpretare i risultati.\n",
-    "Ordine nel bundle: ", paste(pid5_vars_f0, collapse = ", ")
+    "Ordine nel bundle: ",
+    paste(pid5_vars_f0, collapse = ", ")
   )
 }
 
@@ -298,10 +363,26 @@ if (!identical(pid5_vars_f0, expected_pid5_vars)) {
 # Conferma che questo sia lo stesso ordinamento usato nello stan_data del paper.
 # Nei file Stan i parametri sono g1/g2; qui li riportiamo come gamma1/gamma2.
 headline_specs <- tribble(
-  ~outcome, ~stan_param, ~paper_param, ~label,                            ~published_median,
-  "F0",     "g1[1]",    "gamma1[1]", "NegAff x stress (F0)",             3.14,
-  "F0",     "g2[3]",    "gamma2[3]", "Antagonism x recovery (F0)",       3.16,
-  "NNE",    "g2[5]",    "gamma2[5]", "Psychoticism x recovery (NNE)",    0.88
+  ~outcome,
+  ~stan_param,
+  ~paper_param,
+  ~label,
+  ~published_median,
+  "F0",
+  "g1[1]",
+  "gamma1[1]",
+  "NegAff x stress (F0)",
+  3.14,
+  "F0",
+  "g2[3]",
+  "gamma2[3]",
+  "Antagonism x recovery (F0)",
+  3.16,
+  "NNE",
+  "g2[5]",
+  "gamma2[5]",
+  "Psychoticism x recovery (NNE)",
+  0.88
 )
 
 # ----------------------------
@@ -314,8 +395,8 @@ summ_param <- function(fit, par) {
   smry <- fit$summary(par)
   tibble(
     median = median(draws),
-    lo = unname(quantile(draws, .025)),
-    hi = unname(quantile(draws, .975)),
+    lo = unname(quantile(draws, .055)),
+    hi = unname(quantile(draws, .945)),
     PD = pd(draws),
     rhat = smry$rhat,
     ess_bulk = smry$ess_bulk,
@@ -331,12 +412,22 @@ get_divergences <- function(fit) {
 }
 
 save_fit_safely <- function(fit, outcome, prior_sd_gamma) {
-  tag <- paste0(tolower(outcome), "_prior_sd_gamma_", gsub("\\.", "p", as.character(prior_sd_gamma)))
+  tag <- paste0(
+    tolower(outcome),
+    "_prior_sd_gamma_",
+    gsub("\\.", "p", as.character(prior_sd_gamma))
+  )
   fit$save_object(file.path(out_dir, "models", paste0("fit_", tag, ".rds")))
   invisible(TRUE)
 }
 
-run_one_fit <- function(outcome, mod, stan_data, prior_sd_gamma, params_to_track) {
+run_one_fit <- function(
+  outcome,
+  mod,
+  stan_data,
+  prior_sd_gamma,
+  params_to_track
+) {
   cat("\n=== Outcome:", outcome, "| prior_sd_gamma =", prior_sd_gamma, "===\n")
   sd_data <- stan_data
   sd_data$prior_sd_gamma <- prior_sd_gamma
@@ -379,7 +470,9 @@ for (psd in PRIOR_SD_GAMMA_GRID) {
     mod = mod_f0,
     stan_data = stan_data_f0,
     prior_sd_gamma = psd,
-    params_to_track = headline_specs |> filter(outcome == "F0") |> pull(stan_param)
+    params_to_track = headline_specs |>
+      filter(outcome == "F0") |>
+      pull(stan_param)
   )
 
   results[[length(results) + 1]] <- run_one_fit(
@@ -387,15 +480,32 @@ for (psd in PRIOR_SD_GAMMA_GRID) {
     mod = mod_nne,
     stan_data = stan_data_nne,
     prior_sd_gamma = psd,
-    params_to_track = headline_specs |> filter(outcome == "NNE") |> pull(stan_param)
+    params_to_track = headline_specs |>
+      filter(outcome == "NNE") |>
+      pull(stan_param)
   )
 }
 
 sens <- bind_rows(results) |>
   left_join(headline_specs, by = c("outcome", "stan_param")) |>
   mutate(is_default = prior_sd_gamma == DEFAULT_SD) |>
-  select(outcome, label, paper_param, stan_param, prior_sd_gamma, is_default,
-         median, lo, hi, PD, rhat, ess_bulk, ess_tail, divergences, published_median)
+  select(
+    outcome,
+    label,
+    paper_param,
+    stan_param,
+    prior_sd_gamma,
+    is_default,
+    median,
+    lo,
+    hi,
+    PD,
+    rhat,
+    ess_bulk,
+    ess_tail,
+    divergences,
+    published_median
+  )
 
 write_csv(sens, file.path(out_dir, "tables", "prior_sensitivity_summary.csv"))
 cat("\n=== PRIOR SENSITIVITY SUMMARY ===\n")
@@ -407,8 +517,21 @@ print(as.data.frame(sens), digits = 3)
 check <- sens |>
   filter(is_default) |>
   mutate(abs_diff = abs(median - published_median)) |>
-  select(outcome, label, paper_param, stan_param, median, published_median, abs_diff,
-         PD, lo, hi, rhat, ess_bulk, divergences)
+  select(
+    outcome,
+    label,
+    paper_param,
+    stan_param,
+    median,
+    published_median,
+    abs_diff,
+    PD,
+    lo,
+    hi,
+    rhat,
+    ess_bulk,
+    divergences
+  )
 
 write_csv(check, file.path(out_dir, "tables", "default_vs_published_check.csv"))
 cat("\n=== CHECK: default SD = 3 vs valori pubblicati ===\n")
@@ -419,7 +542,8 @@ STOP_ON_DEFAULT_MISMATCH <- TRUE
 if (any(check$abs_diff > MAX_ACCEPTABLE_ABS_DIFF, na.rm = TRUE)) {
   msg <- paste0(
     "Almeno un effetto al default SD = 3 non riproduce il valore pubblicato entro ",
-    MAX_ACCEPTABLE_ABS_DIFF, ". Non interpretare la sensitivity prima di verificare dati, modello, ",
+    MAX_ACCEPTABLE_ABS_DIFF,
+    ". Non interpretare la sensitivity prima di verificare dati, modello, ",
     "ordinamento domini e seed/sampling."
   )
   if (STOP_ON_DEFAULT_MISMATCH) stop(msg, call. = FALSE) else warning(msg)
@@ -435,14 +559,19 @@ p <- ggplot(sens, aes(x = median, y = factor(prior_sd_gamma))) +
   facet_wrap(~label, scales = "free_x") +
   labs(
     title = "Prior sensitivity of headline moderation effects",
-    subtitle = "Posterior median and 95% CrI across prior SD on moderation coefficients (gamma)",
+    subtitle = "Posterior median and 89% CrI across prior SD on moderation coefficients (gamma)",
     x = "Moderation effect",
     y = "Prior SD on gamma"
   ) +
   theme_minimal(base_size = 12)
 
-ggsave(file.path(out_dir, "figures", "prior_sensitivity_forest.png"),
-       p, width = 10, height = 4.5, dpi = 300)
+ggsave(
+  file.path(out_dir, "figures", "prior_sensitivity_forest.png"),
+  p,
+  width = 10,
+  height = 4.5,
+  dpi = 300
+)
 
 # ----------------------------
 # 8) TESTO AUTO-COMPILATO PER RISPOSTA / MANOSCRITTO
@@ -463,18 +592,41 @@ rng <- sens |>
     .groups = "drop"
   )
 
-lines <- pmap_chr(rng, function(label, median_min, median_max, lo_min, hi_max,
-                                pd_min, max_rhat, min_ess, max_div) {
-  paste0(
-    "  - ", label, ": posterior median ranged from ", fmt(median_min),
-    " to ", fmt(median_max), ", 95% CrI envelope [", fmt(lo_min), ", ",
-    fmt(hi_max), "], PD >= ", fmt(pd_min), "."
-  )
-})
+lines <- pmap_chr(
+  rng,
+  function(
+    label,
+    median_min,
+    median_max,
+    lo_min,
+    hi_max,
+    pd_min,
+    max_rhat,
+    min_ess,
+    max_div
+  ) {
+    paste0(
+      "  - ",
+      label,
+      ": posterior median ranged from ",
+      fmt(median_min),
+      " to ",
+      fmt(median_max),
+      ", 89% CrI envelope [",
+      fmt(lo_min),
+      ", ",
+      fmt(hi_max),
+      "], PD >= ",
+      fmt(pd_min),
+      "."
+    )
+  }
+)
 
 all_no_div <- all(sens$divergences == 0, na.rm = TRUE)
 max_rhat <- max(sens$rhat, na.rm = TRUE)
 min_ess <- min(sens$ess_bulk, na.rm = TRUE)
+min_pd_overall <- min(sens$PD, na.rm = TRUE)
 
 manuscript_text <- paste0(
   "Prior sensitivity. To assess whether the headline moderation effects depended on the ",
@@ -483,16 +635,32 @@ manuscript_text <- paste0(
   "deviation on the gamma coefficients. Specifically, we used prior SDs of ",
   paste(PRIOR_SD_GAMMA_GRID, collapse = ", "),
   ", corresponding to halving, retaining, and doubling the value used in the main analysis. ",
-  "The substantive conclusions were stable across the three settings:\n",
+  "At the default prior SD = ",
+  DEFAULT_SD,
+  ", the models reproduced the published estimates (see the default-vs-published check table). ",
+  "The direction of all three effects was robust to the prior: the sign and the probability ",
+  "of direction favoured the same direction at every setting (per-effect summaries below).\n",
   paste(lines, collapse = "\n"),
-  "\nAs expected, the tighter prior produced slightly stronger shrinkage toward zero, whereas ",
-  "the wider prior produced slightly wider credible intervals. However, the sign and the ",
-  "probability of direction of the three headline effects were unchanged. ",
-  "Across all refits, max R-hat = ", fmt(max_rhat, 3),
-  ", minimum bulk ESS = ", fmt(min_ess, 0),
-  if (all_no_div) ", and no divergent transitions were observed. " else paste0(", with a maximum of ", max(sens$divergences, na.rm = TRUE), " divergent transitions. "),
-  "At the default prior SD = ", DEFAULT_SD,
-  ", the models reproduced the published estimates; see the default-vs-published check table.\n"
+  "\nThe magnitude of the two F0 effects, by contrast, was prior-dependent: the posterior ",
+  "median varied substantially across the prior range (see the ranges above), and the 89% ",
+  "credible-interval envelopes include or border zero. Correspondingly, the probability of ",
+  "direction for these effects declined under the more regularizing prior, reaching a minimum ",
+  "of ",
+  fmt(min_pd_overall),
+  " across all effects and settings. The NNE effect ",
+  "(Psychoticism x recovery) was more stable in magnitude. We therefore interpret the ",
+  "moderation effects in terms of direction and the strength of directional evidence (pd) ",
+  "rather than their precise magnitude, which the present sample constrains only loosely. ",
+  "Across all refits, max R-hat = ",
+  fmt(max_rhat, 3),
+  ", minimum bulk ESS = ",
+  fmt(min_ess, 0),
+  if (all_no_div) ", and no divergent transitions were observed.\n" else
+    paste0(
+      ", with a maximum of ",
+      max(sens$divergences, na.rm = TRUE),
+      " divergent transitions.\n"
+    )
 )
 
 writeLines(manuscript_text, file.path(out_dir, "prior_sensitivity_text.txt"))

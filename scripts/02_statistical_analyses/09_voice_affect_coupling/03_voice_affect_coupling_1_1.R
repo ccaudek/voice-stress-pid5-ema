@@ -148,7 +148,7 @@ run_coupling <- function(df, ycol, xcol, label) {
   ct <- suppressWarnings(cor.test(d[[ycol]], d[[xcol]]))
   res <- tibble(
     contrast = label, n = n,
-    r_median = median(rd), r_lo = quantile(rd, .025), r_hi = quantile(rd, .975),
+    r_median = median(rd), r_lo = quantile(rd, .055), r_hi = quantile(rd, .945),
     PD = max(mean(rd > 0), mean(rd < 0)),
     slope_Hz_per_SD_dNA = median(rd) * sd_y_raw,   # interpretazione in Hz
     r_pearson_freq = unname(ct$estimate), p_freq = ct$p.value
@@ -182,7 +182,7 @@ ggsave(file.path(out_dir,"figures","scatter_stress.png"),   mk_scatter(stress,  
 ggsave(file.path(out_dir,"figures","scatter_recovery.png"), mk_scatter(recovery, "Recovery-phase coupling (exploratory; misaligned timing)"), width = 6, height = 5, dpi = 300)
 
 ggsave(file.path(out_dir,"figures","posterior_r_stress.png"),
-       mcmc_areas(stress$fit$draws("r"), prob = .95, prob_outer = .99) +
+       mcmc_areas(stress$fit$draws("r"), prob = .89, prob_outer = .89) +
          geom_vline(xintercept = 0, linetype = "dashed") +
          labs(title = "Posterior of the stress-phase coupling (correlation r)", x = "r") + theme_minimal(),
        width = 7, height = 4, dpi = 300)
@@ -198,10 +198,9 @@ manuscript_text <- paste0(
   "in EMA negative affect (pre minus baseline) across participants (n = ", s$n, "). ",
   "We focused on the anticipatory phase because the pre-exam voice and EMA assessments are temporally aligned, ",
   "whereas the post-exam EMA prompt (evening of the exam day) and post-exam voice recording (the following day) are not. ",
-  "The between-person coupling was r = ", fmt(s$r_median), " [95% CrI ", fmt(s$r_lo), ", ", fmt(s$r_hi), "], ",
+  "The between-person coupling was r = ", fmt(s$r_median), " [89% CrI ", fmt(s$r_lo), ", ", fmt(s$r_hi), "], ",
   "Pr(r > 0) = ", fmt(s$PD), " (equivalently, ", fmt(s$slope_Hz_per_SD_dNA), " Hz per SD of negative-affect change). ",
-  "[INTERPRETARE secondo l'esito: se r e' positivo e CrI esclude 0 -> la risposta vocale traccia quella affettiva; ",
-  "se r e' debole/nullo -> coerente con la dissociazione soggettivo/fisiologico, e attenuato dall'inaffidabilita' dei change-score.] ",
+  "[INTERPRETARE per direzione e pd, non per esclusione dello zero: un pd vicino a .5 con un r di piccola entita' indica un accoppiamento debole o assente fra risposta vocale e affettiva, coerente con una dissociazione soggettivo/fisiologico e con l'attenuazione dovuta all'inaffidabilita' dei change-score; un pd elevato in direzione positiva indicherebbe invece che la risposta vocale traccia quella affettiva.] ",
   "This analysis is exploratory: change scores from three waves are measured with limited reliability, which attenuates the coupling.\n"
 )
 writeLines(manuscript_text, file.path(out_dir, "coupling_text.txt"))

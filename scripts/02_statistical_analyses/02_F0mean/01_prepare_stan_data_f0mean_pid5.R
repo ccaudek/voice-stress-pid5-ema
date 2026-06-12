@@ -31,8 +31,14 @@ ema_path <- here("data", "processed", "ema_plus_scales_cleaned.csv")
 stopifnot(file.exists(voice_path))
 stopifnot(file.exists(ema_path))
 
-dir.create("stan", showWarnings = FALSE)
-dir.create("results", showWarnings = FALSE)
+# Output directories
+stan_f0_dir <- here("stan", "F0")
+results_f0_dir <- here("results", "F0")
+results_f0_data_dir <- here("results", "F0", "data")
+
+dir.create(stan_f0_dir, recursive = TRUE, showWarnings = FALSE)
+dir.create(results_f0_dir, recursive = TRUE, showWarnings = FALSE)
+dir.create(results_f0_data_dir, recursive = TRUE, showWarnings = FALSE)
 
 # ----------------------------
 # 1) LOAD VOICE (3 timepoint)
@@ -245,9 +251,23 @@ stopifnot(!anyNA(stan_data$X))
 # ----------------------------
 # 6) EXPORT
 # ----------------------------
+
+stan_data_f0_json_path <- here(
+  "stan",
+  "F0",
+  "stan_data_f0mean_pid5.json"
+)
+
+stan_bundle_f0_rds_path <- here(
+  "results",
+  "F0",
+  "data",
+  "stan_bundle_f0mean_pid5.rds"
+)
+
 write_json(
   stan_data,
-  path = "stan/stan_data_f0mean_pid5.json",
+  path = stan_data_f0_json_path,
   digits = 16,
   auto_unbox = TRUE
 )
@@ -262,11 +282,11 @@ saveRDS(
     pid5_vars = pid5_ema_vars,
     na_report = na_report
   ),
-  file = "results/stan_bundle_f0mean_pid5.rds"
+  file = stan_bundle_f0_rds_path
 )
 
 cat("\nSaved:\n")
-cat(" - stan/stan_data_f0mean_pid5.json\n")
-cat(" - results/stan_bundle_f0mean_pid5.rds\n")
+cat(" - ", stan_data_f0_json_path, "\n", sep = "")
+cat(" - ", stan_bundle_f0_rds_path, "\n", sep = "")
 
 # eof ---

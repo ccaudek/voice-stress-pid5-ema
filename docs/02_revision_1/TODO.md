@@ -1,3 +1,4 @@
+
 Con l'albero completo posso darti un piano ordinato. Il principio è uno solo, da applicare ovunque si riportino **stime di effetti**: intervalli **89% a code uguali** (quantili 5.5/94.5), **pd come indice primario e descrittivo**, **nessuna soglia/classificazione** ("Strong/Moderate", "CrI esclude lo zero", PD>.95), **niente Bayes factor né ROPE**. Fanno eccezione le quantità che *non* sono inferenza sugli effetti (affidabilità, assurance Monte Carlo, descrittive): lì il 95% è difendibile, decidi tu.
 
 ## Già fatto

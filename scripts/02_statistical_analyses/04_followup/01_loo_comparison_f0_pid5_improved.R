@@ -586,11 +586,23 @@ cat(
   "\n\n"
 )
 
-if (abs(elpd_diff) > 2 * se_diff) {
-  cat("✓ Strong evidence for", best_model, "model\n")
-} else {
-  cat("⚠ Models have similar predictive performance (difference < 2 SE)\n")
-}
+cat(sprintf(
+  "ELPD difference relative to its SE: %.1f SE (best vs 2nd).\n",
+  ifelse(se_diff > 0, abs(elpd_diff) / se_diff, NA_real_)
+))
+cat("We report the elpd difference with its standard error and do not\n")
+cat(
+  "dichotomize model selection: differences within ~2 SE are interpreted as\n"
+)
+cat(
+  "comparable predictive performance. The substantive comparison of interest\n"
+)
+cat(
+  "is whether the EMA- and baseline-PID-5 models yield converging moderation\n"
+)
+cat(
+  "estimates (a replication across measurement methods), not which model 'wins'.\n"
+)
 
 cat("\nInterpretation guide:\n")
 cat("• elpd_diff > 0: Model performs better than reference\n")
@@ -624,8 +636,8 @@ extract_moderation <- function(fit, param_prefix = "g1") {
           domain = d,
           mean = mean(x),
           sd = sd(x),
-          q025 = quantile(x, 0.025),
-          q975 = quantile(x, 0.975),
+          q055 = quantile(x, 0.055),
+          q945 = quantile(x, 0.945),
           pd = pd(x),
           p_gt0 = mean(x > 0)
         )
@@ -697,7 +709,7 @@ cat("\nModeration effects by model:\n")
 print(
   moderation_comparison %>%
     filter(contrast == "Stress", domain == 1) %>%
-    select(model, mean, q025, q975, pd)
+    select(model, mean, q055, q945, pd)
 )
 
 cat("\nSaved: results/followup/moderation_comparison_improved.csv\n")

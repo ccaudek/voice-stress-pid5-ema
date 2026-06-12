@@ -19,6 +19,8 @@ D <- length(pid5_vars)
 
 cat("PID5 domains (order in Stan):\n")
 print(pid5_vars)
+# [1] "pid5_negative_affectivity" "pid5_detachment"           "pid5_antagonism"          
+# [4] "pid5_disinhibition"        "pid5_psychoticism"   
 
 # ----------------------------
 # 1) Load fit (cmdstanr)
@@ -85,12 +87,18 @@ b2 <- df$b2
 
 cat("\nStress main effect b1 (PRE vs BASELINE; NNE units dB):\n")
 print(summ(b1))
+#     mean median ci_lower ci_upper    pd   p_gt0 p_lt0
+# 1 -0.794 -0.792    -1.28   -0.304 0.995 0.00471 0.995
 
 cat("\nRecovery main effect b2 (POST vs PRE; NNE units dB):\n")
 print(summ(b2))
+#     mean median ci_lower ci_upper    pd p_gt0 p_lt0
+# 1 -0.192 -0.192   -0.689    0.299 0.734 0.266 0.734
 
 cat("\nP(b1 in expected direction):", p_dir(b1, expected_stress), "\n")
+# P(b1 in expected direction): 0.004708333 
 cat("P(b2 in expected direction):", p_dir(b2, expected_recover), "\n")
+# P(b2 in expected direction): 0.73375 
 
 # ----------------------------
 # 5) Moderation effects g1/g2 (per trait)
@@ -122,6 +130,18 @@ mod_tbl <- map_dfr(seq_len(D), function(d) {
 
 cat("\n=== MODERATION (g1 = stress moderation; g2 = recovery moderation) ===\n")
 data.frame(mod_tbl %>% arrange(desc(g1_pd)), n = 50)
+# trait     g1_mean   g1_lower  g1_upper     g1_pd g1_p_expected    g2_mean
+# 1 pid5_negative_affectivity -0.46486826 -1.2687178 0.3441161 0.8216250     0.1783750 -0.3894313
+# 2           pid5_detachment  0.30149730 -0.5175664 1.1228701 0.7202083     0.7202083  0.2147038
+# 3        pid5_disinhibition  0.31740905 -0.6439115 1.2685841 0.7048333     0.7048333 -0.3970315
+# 4         pid5_psychoticism -0.02378296 -0.8279230 0.7887535 0.5199583     0.4800417  0.8794139
+# 5           pid5_antagonism -0.01411096 -0.7574672 0.7402517 0.5133750     0.4866250 -0.4322235
+# g2_lower  g2_upper     g2_pd g2_p_expected  n
+# 1 -1.18534878 0.4148912 0.7830000     0.7830000 50
+# 2 -0.60567697 1.0397447 0.6639167     0.3360833 50
+# 3 -1.34335950 0.5635537 0.7500000     0.7500000 50
+# 4  0.06674029 1.6790450 0.9588750     0.0411250 50
+# 5 -1.18468679 0.3286394 0.8193750     0.8193750 50
 
 # ----------------------------
 # 6) Simple effects at -1/0/+1 SD for each trait separately
@@ -148,6 +168,18 @@ simple_effects <- map_dfr(seq_len(D), function(d) {
 
 cat("\n=== SIMPLE EFFECTS (mean) at trait -1/0/+1 SD ===\n")
 as.data.frame(simple_effects, n = 50)
+# trait stress_m1sd stress_0sd stress_p1sd recov_m1sd  recov_0sd recov_p1sd
+# 1 pid5_negative_affectivity  -0.3293455 -0.7942138  -1.2590820  0.1976881 -0.1917432 -0.5811745
+# 2           pid5_detachment  -1.0957111 -0.7942138  -0.4927165 -0.4064470 -0.1917432  0.0229606
+# 3           pid5_antagonism  -0.7801028 -0.7942138  -0.8083247  0.2404803 -0.1917432 -0.6239667
+# 4        pid5_disinhibition  -1.1116228 -0.7942138  -0.4768047  0.2052883 -0.1917432 -0.5887747
+# 5         pid5_psychoticism  -0.7704308 -0.7942138  -0.8179967 -1.0711571 -0.1917432  0.6876707
+# P_stress_expected_at_p1sd P_recov_expected_at_p1sd
+# 1                0.01725000                0.8379167
+# 2                0.20400000                0.4901250
+# 3                0.07458333                0.8687917
+# 4                0.23995833                0.8115417
+# 5                0.08500000                0.1249167
 
 # ----------------------------
 # 7) A compact “takeaway” table (Bayesian evidence)
@@ -164,6 +196,12 @@ takeaway <- mod_tbl |>
 
 cat("\n=== TAKEAWAY (PD + P in expected direction) ===\n")
 print(takeaway, n = 50)
+#   trait                     stress_PD stress_P_expected recovery_PD recovery_P_expected
+# 1 pid5_negative_affectivity     0.822             0.178       0.783              0.783 
+# 2 pid5_detachment               0.720             0.720       0.664              0.336 
+# 3 pid5_disinhibition            0.705             0.705       0.75               0.75  
+# 4 pid5_psychoticism             0.520             0.480       0.959              0.0411
+# 5 pid5_antagonism               0.513             0.487       0.819              0.819 
 
 cat("\nNotes:\n")
 cat("• g1: quanto il tratto (1 SD) amplifica/riduce l'effetto stress b1.\n")
@@ -223,3 +261,4 @@ cat(
 #' findings support a model in which acute stress elicits simultaneous increases
 #' in arousal and control, with personality differences shaping the former more
 #' strongly than the latter.
+

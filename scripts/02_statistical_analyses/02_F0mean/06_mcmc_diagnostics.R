@@ -35,7 +35,7 @@ cri_label <- paste0(round(cri_level * 100), "%")
 # ==============================================================================
 
 fit_rds <- here("stan", "F0", "f0mean_pid5_moderation.RDS")
-bundle_rds <- here("results", "stan_bundle_f0mean_pid5.rds")
+bundle_rds <- here("results", "F0", "data", "stan_bundle_f0mean_pid5.rds")
 
 if (!file.exists(fit_rds)) {
   stop(
@@ -51,7 +51,7 @@ stan_data <- bundle$stan_data
 pid5_vars <- bundle$pid5_vars
 
 # Create output directory
-out_dir <- here("results", "diagnostics")
+out_dir <- here("results", "F0", "diagnostics")
 dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
 
 cat("=== MCMC DIAGNOSTICS FOR F0 MODERATION MODEL ===\n")
@@ -568,7 +568,10 @@ supp_table <- summary_key %>%
     ESS_tail = round(ESS_tail)
   )
 
-write_csv(supp_table, file.path(out_dir, "supplementary_table_diagnostics_89cri.csv"))
+write_csv(
+  supp_table,
+  file.path(out_dir, "supplementary_table_diagnostics_89cri.csv")
+)
 
 cat("\n=== DIAGNOSTICS COMPLETE ===\n")
 cat("Output saved to:", out_dir, "\n")
