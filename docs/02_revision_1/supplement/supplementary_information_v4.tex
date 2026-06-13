@@ -509,7 +509,7 @@ Between-person descriptives indicate substantial inter-individual variability in
 
 \subsection{Main Effects of Exam-Related Stress on Vocal Parameters}\label{main-effects-of-exam-related-stress-on-vocal-parameters}
 
-All analyses used hierarchical Bayesian models implemented in Stan via the rstan package, with four chains of 4,000 iterations each (2,000 warmup). Convergence was verified through R-hat statistics (all \textless{} 1.01) and trace plot inspection. We report posterior medians with 95\% credible intervals (CrIs) and directional probabilities.
+All analyses used hierarchical Bayesian models implemented in Stan via the rstan package, with four chains of 4,000 iterations each (2,000 warmup). Convergence was verified through R-hat statistics (all \textless{} 1.01) and trace plot inspection. We report posterior medians with the probability of direction (pd) as the primary index of evidence and 89\% equal-tailed credible intervals (CrIs) as summaries of magnitude uncertainty; see \emph{Inferential Framework and Reporting} below.
 
 \subsubsection{Research Question}\label{research-question}
 
@@ -670,7 +670,7 @@ The \texttt{generated\ quantities} block produces posterior predictive samples f
 
 \subsection{Supplementary Sensitivity Analysis for Main Effects: Robust Student-t Models}\label{supplementary-sensitivity-analysis-for-main-effects-robust-student-t-models}
 
-To assess whether the main findings were sensitive to the Gaussian residual assumption and to the influence of potentially outlying observations, we fitted robust versions of the main-effects models for both acoustic outcomes: mean fundamental frequency, F0, and normalized noise energy, NNE. The robust models retained the same fixed-effect structure as the primary models, with two planned contrasts: stress, comparing PRE with BASELINE, and recovery, comparing POST with PRE. The hierarchical structure was also retained, but the subject-level random intercepts and random slopes were modeled as correlated random effects. The residual likelihood was changed from Gaussian to Student-t with fixed degrees of freedom, ν = 4, providing heavier tails and therefore reduced sensitivity to influential observations.
+To assess whether the main findings were sensitive to the Gaussian residual assumption and to the influence of potentially outlying observations, we fitted robust versions of the main-effects models for both acoustic outcomes: mean fundamental frequency, F0, and normalized noise energy, NNE. The robust models retained the same fixed-effect structure as the primary models, with two planned contrasts: stress, comparing PRE with BASELINE, and recovery, comparing POST with PRE. The hierarchical structure was also retained, but the subject-level random intercepts and random slopes were modeled as correlated random effects. The residual likelihood was changed from Gaussian to Student-t with fixed degrees of freedom, \(\nu\) = 4, providing heavier tails and therefore reduced sensitivity to influential observations.
 
 The robust models were fitted as sensitivity analyses rather than as entirely separate substantive models. Thus, the key question was whether the direction, magnitude, and uncertainty of the stress and recovery effects remained consistent with the original Gaussian models, and whether the robust specification improved predictive diagnostics.
 
@@ -828,9 +828,9 @@ We report posterior medians, MADs, and central 89\% credible intervals, computed
 
 For F0, the original Gaussian model estimated a positive stress effect, with a median effect of 3.27 Hz, MAD = 1.25, and an 89\% credible interval from 1.25 to 5.27 Hz. The posterior probability that the stress effect was positive was 0.995. In the robust Student-t model, the estimated stress effect was smaller, with a median of 2.30 Hz, MAD = 1.14, and an 89\% credible interval from 0.47 to 4.16 Hz. The posterior probability that the stress effect was positive remained high, pd = 0.979.
 
-Thus, the robust model attenuated the estimated F0 stress effect by approximately 0.97 Hz, but the effect remained positive and credibly different from zero under the 89\% credible interval.
+Thus, the robust model attenuated the estimated F0 stress effect by approximately 0.97 Hz, but the effect remained positive, with a high probability of direction (pd = 0.979).
 
-For the recovery contrast, the original Gaussian model showed essentially no clear effect, median = 0.14 Hz, MAD = 1.24, 89\% CI {[}-1.89, 2.11{]}, with P(b2 \textgreater{} 0) = 0.542. The robust model estimated a slightly negative recovery effect, median = -0.39 Hz, MAD = 1.14, 89\% CI {[}-2.21, 1.41{]}, with P(b2 \textgreater{} 0) = 0.368. This result remains compatible with no reliable recovery effect.
+For the recovery contrast, the original Gaussian model showed essentially no clear effect, median = 0.14 Hz, MAD = 1.24, 89\% CrI {[}-1.89, 2.11{]}, with P(b2 \textgreater{} 0) = 0.542. The robust model estimated a slightly negative recovery effect, median = -0.39 Hz, MAD = 1.14, 89\% CrI {[}-2.21, 1.41{]}, with P(b2 \textgreater{} 0) = 0.368. This result remains compatible with no clear recovery effect.
 
 {\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
@@ -868,15 +868,15 @@ F0 & Robust Student-t & Recovery, b2 & -0.39 & 1.14 & {[}-2.21, 1.41{]} & P(b2 \
 \end{longtable}
 }
 
-The residual scale parameter was lower in the robust model, median σ = 6.52, 89\% CI {[}5.93, 7.16{]}. Because this is the scale parameter of a Student-t likelihood rather than a Gaussian residual standard deviation, it should not be interpreted as directly equivalent to the Gaussian residual standard deviation.
+The residual scale parameter was lower in the robust model, median \(\sigma\) = 6.52, 89\% CrI {[}5.93, 7.16{]}. Because this is the scale parameter of a Student-t likelihood rather than a Gaussian residual standard deviation, it should not be interpreted as directly equivalent to the Gaussian residual standard deviation.
 
 \subsubsection{NNE model}\label{nne-model}
 
-For NNE, the original Gaussian model estimated a negative stress effect, median = -0.65 dB, MAD = 0.28, 89\% CI {[}-1.10, -0.21{]}, with P(b1 \textless{} 0) = 0.990. The robust Student-t model produced a somewhat larger negative estimate, median = -0.79 dB, MAD = 0.27, 89\% CI {[}-1.21, -0.36{]}, with P(b1 \textless{} 0) = 0.998.
+For NNE, the original Gaussian model estimated a negative stress effect, median = -0.65 dB, MAD = 0.28, 89\% CrI {[}-1.10, -0.21{]}, with P(b1 \textless{} 0) = 0.990. The robust Student-t model produced a somewhat larger negative estimate, median = -0.79 dB, MAD = 0.27, 89\% CrI {[}-1.21, -0.36{]}, with P(b1 \textless{} 0) = 0.998.
 
 Thus, the NNE stress effect was not weakened by the robust specification. Instead, the robust model slightly strengthened the estimated negative stress-related change in NNE.
 
-For the recovery contrast, the original Gaussian model estimated a small negative effect, median = -0.22 dB, MAD = 0.28, 89\% CI {[}-0.67, 0.23{]}, with P(b2 \textgreater{} 0) = 0.219. The robust model estimated a somewhat more negative effect, median = -0.32 dB, MAD = 0.25, 89\% CI {[}-0.73, 0.09{]}, with P(b2 \textgreater{} 0) = 0.105. Although the interval still included zero, the robust model shifted the recovery estimate in a more negative direction.
+For the recovery contrast, the original Gaussian model estimated a small negative effect, median = -0.22 dB, MAD = 0.28, 89\% CI {[}-0.67, 0.23{]}, with P(b2 \textgreater{} 0) = 0.219. The robust model estimated a somewhat more negative effect, median = -0.32 dB, MAD = 0.25, 89\% CI {[}-0.73, 0.09{]}, with P(b2 \textgreater{} 0) = 0.105. Although directional evidence remained modest (pd = 0.895), the robust model shifted the recovery estimate in a more negative direction.
 
 {\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
@@ -914,7 +914,7 @@ NNE & Robust Student-t & Recovery, b2 & -0.32 & 0.25 & {[}-0.73, 0.09{]} & P(b2 
 \end{longtable}
 }
 
-The Student-t residual scale for NNE was median σ = 1.44, 89\% CI {[}1.28, 1.60{]}. As for F0, this parameter indexes the scale of the Student-t residual distribution and is not directly comparable to the Gaussian residual standard deviation.
+The Student-t residual scale for NNE was median σ = 1.44, 89\% CrI {[}1.28, 1.60{]}. As for F0, this parameter indexes the scale of the Student-t residual distribution and is not directly comparable to the Gaussian residual standard deviation.
 
 \subsubsection{Predictive comparison using PSIS-LOO}\label{predictive-comparison-using-psis-loo}
 
@@ -958,13 +958,13 @@ Here, negative elpd differences indicate worse expected predictive accuracy for 
 
 Overall, the sensitivity analysis supports the robustness of the main inferential conclusions. The stress effect remained positive for F0 and negative for NNE under the robust Student-t specification. The F0 stress effect was attenuated but remained directionally strong and credibly positive. The NNE stress effect was slightly strengthened, with very high posterior probability for a negative effect.
 
-The recovery effects were less stable and remained uncertain in both outcomes. For F0, the recovery effect was close to zero in the Gaussian model and slightly negative in the robust model, with credible intervals spanning zero in both cases. For NNE, the recovery effect became more negative in the robust model, but uncertainty remained sufficient that this effect should be interpreted cautiously.
+The recovery effects were less stable and remained uncertain in both outcomes. For F0, the recovery effect was close to zero in the Gaussian model and slightly negative in the robust model, with directional probabilities near chance in both cases. For NNE, the recovery effect became more negative in the robust model, but uncertainty remained sufficient that this effect should be interpreted cautiously.
 
 The robust models also improved predictive diagnostics. The elimination of problematic Pareto-k values suggests that the Student-t likelihood successfully reduced the influence of observations that were poorly handled by the Gaussian residual model. Because the substantive conclusions for the stress contrast were preserved while predictive diagnostics improved, the robust Student-t models provide a useful confirmation of the primary findings and may be preferred for sensitivity reporting.
 
 \subsubsection{Summary}\label{summary}
 
-As a sensitivity analysis, we refitted the main-effects models using a robust Student-t residual likelihood with \(\nu\) = 4 and correlated subject-level random effects. This specification was intended to assess whether the Gaussian models were sensitive to influential observations. For F0, the robust model estimated a positive stress effect, median = 2.30 Hz, MAD = 1.14, 89\% CI {[}0.47, 4.16{]}, P(b1 \textgreater{} 0) = 0.979, compared with median = 3.27 Hz, MAD = 1.25, 89\% CI {[}1.25, 5.27{]}, P(b1 \textgreater{} 0) = 0.995 in the Gaussian model. For NNE, the robust model estimated a negative stress effect, median = -0.79 dB, MAD = 0.27, 89\% CI {[}-1.21, -0.36{]}, P(b1 \textless{} 0) = 0.998, compared with median = -0.65 dB, MAD = 0.28, 89\% CI {[}-1.10, -0.21{]}, P(b1 \textless{} 0) = 0.990 in the Gaussian model. Recovery effects remained uncertain in both outcomes. PSIS-LOO comparisons favored the robust models over the Gaussian models for both F0, elpd difference = 16.3, SE = 5.9, and NNE, elpd difference = 12.9, SE = 6.9. Moreover, all Pareto-k estimates were below 0.7 in the robust models, indicating reliable LOO estimates. These results suggest that the main stress effects are robust to a heavy-tailed residual specification and that the Student-t models provide improved predictive diagnostics.
+As a sensitivity analysis, we refitted the main-effects models using a robust Student-t residual likelihood with \(\nu\) = 4 and correlated subject-level random effects. This specification was intended to assess whether the Gaussian models were sensitive to influential observations. For F0, the robust model estimated a positive stress effect, median = 2.30 Hz, MAD = 1.14, 89\% CrI {[}0.47, 4.16{]}, P(b1 \textgreater{} 0) = 0.979, compared with median = 3.27 Hz, MAD = 1.25, 89\% CrI {[}1.25, 5.27{]}, P(b1 \textgreater{} 0) = 0.995 in the Gaussian model. For NNE, the robust model estimated a negative stress effect, median = -0.79 dB, MAD = 0.27, 89\% CrI {[}-1.21, -0.36{]}, P(b1 \textless{} 0) = 0.998, compared with median = -0.65 dB, MAD = 0.28, 89\% CrI {[}-1.10, -0.21{]}, P(b1 \textless{} 0) = 0.990 in the Gaussian model. Recovery effects remained uncertain in both outcomes. PSIS-LOO comparisons favored the robust models over the Gaussian models for both F0, elpd difference = 16.3, SE = 5.9, and NNE, elpd difference = 12.9, SE = 6.9. Moreover, all Pareto-k estimates were below 0.7 in the robust models, indicating reliable LOO estimates. These results suggest that the main stress effects are robust to a heavy-tailed residual specification and that the Student-t models provide improved predictive diagnostics.
 
 \subsection{Personality Moderation of Vocal Stress Responses}\label{personality-moderation-of-vocal-stress-responses}
 
@@ -1109,13 +1109,61 @@ The \texttt{generated\ quantities} block produces posterior predictive samples (
 
 \newpage
 
+\subsection{Prior-Sensitivity Analysis}\label{prior-sensitivity-analysis}
+
+The probability of direction is, in principle, sensitive to the prior placed on the
+parameter under test, and the moderation magnitudes are only weakly constrained by the
+present sample. To make this dependence explicit, we refitted the moderation models under
+three prior standard deviations on the interaction coefficients (\(\gamma\)): half the
+default (1.5), the default (3.0), and double the default (6.0). We focus on the three
+effects with the strongest directional evidence in the primary analysis: Negative
+Affectivity \(\times\) stress and Antagonism \(\times\) recovery on F0, and
+Psychoticism \(\times\) recovery on NNE.
+
+\begin{table}[H]
+\centering
+\caption{\label{tab:table-prior-sensitivity}Prior-sensitivity analysis. Posterior median, 89\% credible interval, and probability of direction ($pd$) for the three headline moderation effects under three prior standard deviations on the interaction coefficients (half, default, and double the default).}
+\centering
+\fontsize{9}{11}\selectfont
+\begin{tabular}[t]{lrllll}
+\toprule
+Effect & Prior SD & Default & Median & 89\% CrI & pd\\
+\midrule
+Antagonism x recovery (F0) & 1.5 &  & 1.62 & {}[-0.21, 3.44] & .92\\
+Antagonism x recovery (F0) & 3.0 & default & 3.16 & {}[0.62, 5.76] & .98\\
+Antagonism x recovery (F0) & 6.0 &  & 4.48 & {}[1.39, 7.57] & .99\\
+NegAff x stress (F0) & 1.5 &  & 1.76 & {}[-0.09, 3.62] & .93\\
+NegAff x stress (F0) & 3.0 & default & 3.14 & {}[0.46, 5.85] & .97\\
+\addlinespace
+NegAff x stress (F0) & 6.0 &  & 4.39 & {}[1.15, 7.64] & .98\\
+Psychoticism x recovery (NNE) & 1.5 &  & 0.80 & {}[0.03, 1.55] & .95\\
+Psychoticism x recovery (NNE) & 3.0 & default & 0.88 & {}[0.06, 1.68] & .96\\
+Psychoticism x recovery (NNE) & 6.0 &  & 0.90 & {}[0.08, 1.73] & .96\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Two regularities emerge. First, the \emph{direction} of all three effects is robust: the
+probability of direction remains high under every prior, with an overall minimum of about
+.92 (Antagonism \(\times\) recovery under the tightest prior). Second, the \emph{magnitudes} are
+prior-dependent, and markedly so for the F0 effects. The Negative Affectivity \(\times\)
+stress median moves from roughly 1.8 Hz under the tightest prior to about 4.4 Hz under the
+widest --- an approximately 2.5-fold range --- and its 89\% interval includes zero under the
+tightest prior even though its \(pd\) stays near .94. The NNE effect (Psychoticism \(\times\)
+recovery) is considerably more stable in magnitude (median \(\approx\) 0.80--0.90 dB across
+priors, \(pd \approx\) .95). All models converged cleanly (\(\hat{R} \approx\) 1.00, no
+divergent transitions). This is the empirical basis for the reporting strategy adopted
+throughout: we foreground direction and the probability of direction, and treat the
+reported magnitudes --- and the widths of their credible intervals --- as estimates carrying
+substantial, partly prior-dependent uncertainty.
+
 \section{Within-Person Temporal Covariation}\label{within-person-temporal-covariation}
 
 We examined whether momentary fluctuations in personality states---assessed via EMA immediately before each voice recording---covaried with concurrent F0 levels. This tests whether trait-level moderation effects have within-person analogs: do individuals show higher F0 when they report elevated negative affectivity in the moment?
 
-We compared hierarchical specifications with fixed effects (population-average slopes only) versus random slopes (allowing individual differences in within-person associations). Random slopes models substantially outperformed fixed-effects specifications (\(R^2\) = 35\% vs 2.5\%; ELPD difference \(\approx\) 40 points). However, with only three observations per person, posterior distributions for individual slopes were extremely wide---99.7\% of participant × domain combinations yielded credible intervals spanning zero.
+We compared hierarchical specifications with fixed effects (population-average slopes only) versus random slopes (allowing individual differences in within-person associations). The random slopes model had higher predictive accuracy than the fixed-effects specification (\(R^2\) = 35\% vs 2.5\%; ELPD difference \(\approx\) 40 points). By itself, however, this improvement in fit does not establish identifiable individual-level effects. With only three observations per person, the 89\% credible intervals for individual slopes were very wide and almost always included zero, so the sign and magnitude of any single participant's slope are not identifiable from these data; we therefore do not interpret individual slopes one by one.
 
-This pattern reveals a critical distinction: the population shows clear evidence of slope heterogeneity (nonzero \(\sigma_\beta\) for several domains), but we cannot reliably identify which specific individuals have nonzero slopes. This reflects statistical power limitations rather than modeling failure. Denser temporal sampling would be required to resolve individual-level within-person dynamics.
+This pattern reflects a limitation of the sparse design rather than a substantive null. The between-subject standard deviations of the slopes (\(\sigma_\beta\)) are non-negligible for several domains, suggesting some heterogeneity, but they are themselves only weakly identified, so we do not attempt to characterize which individuals have larger or smaller slopes. Denser temporal sampling would be required to resolve individual-level within-person dynamics.
 
 \newpage
 
@@ -1215,8 +1263,8 @@ The same estimation and diagnostic procedures were applied to the NNE moderation
 \toprule
 Model & Divergences & Max Treedepth Exceeded & $\hat{R}$ (max) & $\hat{R} > 1.01$ & ESS Bulk (min) & ESS Tail (min)\\
 \midrule
-F0 & 0 & 0 & 1.0015 & 0 & 4490 & 8441\\
-NNE & 0 & 0 & 1.0013 & 0 & 3775 & 4659\\
+F0 & 0 & 0 & 1.0009 & 0 & 4413 & 8211\\
+NNE & 0 & 0 & 1.0039 & 0 & 3578 & 4466\\
 \bottomrule
 \end{tabular}}
 \end{table}

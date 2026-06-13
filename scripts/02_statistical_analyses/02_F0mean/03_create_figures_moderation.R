@@ -25,8 +25,8 @@ print(cri_probs)
 # 0.055 0.945
 
 # Carica il modello fitted
-fit <- readRDS("stan/F0/f0mean_pid5_moderation.RDS")
-bundle <- readRDS("results/F0/data/stan_bundle_f0mean_pid5.rds")
+fit <- readRDS("stan/F2/f0mean_pid5_moderation.RDS")
+bundle <- readRDS("results/F2/data/stan_bundle_f0mean_pid5.rds")
 
 stan_data <- bundle$stan_data
 pid5_vars <- bundle$pid5_vars
