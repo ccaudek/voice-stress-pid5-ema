@@ -1,9 +1,9 @@
-This is XeTeX, Version 3.141592653-2.6-0.999998 (TeX Live 2026) (preloaded format=xelatex 2026.6.10)  13 JUN 2026 07:00
+This is XeTeX, Version 3.141592653-2.6-0.999998 (TeX Live 2026) (preloaded format=xelatex 2026.6.10)  16 JUN 2026 04:58
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
-**supplementary_information_v4.tex
-(./supplementary_information_v4.tex
+**supplementary_information_v2_8.tex
+(./supplementary_information_v2_8.tex
 LaTeX2e <2026-06-01>
 L3 programming layer <2026-05-26>
 (/Users/corrado/Library/TinyTeX/texmf-dist/tex/latex/apa6/apa6.cls
@@ -739,8 +739,8 @@ Package csquotes Info: Checking for multilingual support...
 Package csquotes Info: ... found 'babel' package.
 Package csquotes Info: Adjusting default style.
 Package csquotes Info: Redefining alias 'default' -> 'english'.
-(./supplementary_information_v4.aux)
-\openout1 = `supplementary_information_v4.aux'.
+(./supplementary_information_v2_8.aux)
+\openout1 = `supplementary_information_v2_8.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 273.
 LaTeX Font Info:    ... okay on input line 273.
@@ -1097,272 +1097,315 @@ File: mt-eur.cfg 2006/07/31 v1.1 microtype config. file: AMS Euler Roman (RS)
 Underfull \vbox (badness 4569) has occurred while \output is active []
 
 [2] [3] [4] [5]
-LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(1)/m/n' will be
-(Font)              scaled to size 8.0pt on input line 400.
-LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(1)/m/n' will be
-(Font)              scaled to size 5.0pt on input line 400.
-LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(2)/m/n' will be
-(Font)              scaled to size 8.00073pt on input line 400.
-LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(2)/m/n' will be
-(Font)              scaled to size 5.00046pt on input line 400.
-LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(3)/m/n' will be
-(Font)              scaled to size 7.99915pt on input line 400.
-LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(3)/m/n' will be
-(Font)              scaled to size 4.99947pt on input line 400.
+Overfull \hbox (58.48515pt too wide) in paragraph at lines 398--413
+ [][] 
+ []
 
-Underfull \hbox (badness 10000) in paragraph at lines 402--403
+[6]
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(1)/m/n' will be
+(Font)              scaled to size 8.0pt on input line 450.
+LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(1)/m/n' will be
+(Font)              scaled to size 5.0pt on input line 450.
+LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(2)/m/n' will be
+(Font)              scaled to size 8.00073pt on input line 450.
+LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(2)/m/n' will be
+(Font)              scaled to size 5.00046pt on input line 450.
+LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(3)/m/n' will be
+(Font)              scaled to size 7.99915pt on input line 450.
+LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(3)/m/n' will be
+(Font)              scaled to size 4.99947pt on input line 450.
+
+Underfull \hbox (badness 10000) in paragraph at lines 452--453
 []|\TU/lmr/m/n/8 Psychological signifi-
  []
 
 
-Underfull \hbox (badness 3088) in paragraph at lines 404--404
+Underfull \hbox (badness 3088) in paragraph at lines 454--454
 []|\TU/lmr/m/n/8 Fundamental fre-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 405--405
+Underfull \hbox (badness 10000) in paragraph at lines 455--455
 []|\TU/lmr/m/n/8 Cricothyroid and
  []
 
 
-Underfull \hbox (badness 6725) in paragraph at lines 405--405
+Underfull \hbox (badness 6725) in paragraph at lines 455--455
 \TU/lmr/m/n/8 fold stiffness and
  []
 
 
-Underfull \hbox (badness 1902) in paragraph at lines 406--406
+Underfull \hbox (badness 1902) in paragraph at lines 456--456
 []|\TU/lmr/m/n/8 Most robust acoustic
  []
 
 
-Underfull \hbox (badness 1590) in paragraph at lines 406--406
+Underfull \hbox (badness 1590) in paragraph at lines 456--456
 \TU/lmr/m/n/8 increases reliably un-
  []
 
 
-Underfull \hbox (badness 1048) in paragraph at lines 408--408
+Underfull \hbox (badness 1048) in paragraph at lines 458--458
 []|\TU/lmr/m/n/8 Normalized Noise
  []
 
 
-Underfull \hbox (badness 5091) in paragraph at lines 408--408
+Underfull \hbox (badness 5091) in paragraph at lines 458--458
 \TU/lmr/m/n/8 harmonic spectral en-
  []
 
 
-Underfull \hbox (badness 7631) in paragraph at lines 409--409
+Underfull \hbox (badness 7631) in paragraph at lines 459--459
 []|\TU/lmr/m/n/8 Degree of glottal
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 409--409
+Underfull \hbox (badness 10000) in paragraph at lines 459--459
 \TU/lmr/m/n/8 closure complete-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 410--410
+Underfull \hbox (badness 10000) in paragraph at lines 460--460
 []|\TU/lmr/m/n/8 Reflects phonatory
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 410--410
+Underfull \hbox (badness 10000) in paragraph at lines 460--460
 \TU/lmr/m/n/8 control and vocal
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 410--410
+Underfull \hbox (badness 10000) in paragraph at lines 460--460
 \TU/lmr/m/n/8 effort; stress may
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 410--410
+Underfull \hbox (badness 10000) in paragraph at lines 460--460
 \TU/lmr/m/n/8 plete closure under
  []
 
 
-Underfull \hbox (badness 2027) in paragraph at lines 410--410
+Underfull \hbox (badness 2027) in paragraph at lines 460--460
 \TU/lmr/m/n/8 (compensatory hyper-
  []
 
 
-Underfull \hbox (badness 1472) in paragraph at lines 412--412
+Underfull \hbox (badness 1472) in paragraph at lines 462--462
 []|\TU/lmr/m/n/8 Cycle-to-cycle variation
  []
 
 
-Underfull \hbox (badness 5316) in paragraph at lines 414--415
+Underfull \hbox (badness 5316) in paragraph at lines 464--465
 []|\TU/lmr/m/n/8 Proposed as an in-
  []
 
 LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(1)/m/n' will be
-(Font)              scaled to size 10.0pt on input line 420.
+(Font)              scaled to size 10.0pt on input line 470.
 LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(1)/m/n' will be
-(Font)              scaled to size 7.0pt on input line 420.
+(Font)              scaled to size 7.0pt on input line 470.
 LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(2)/m/n' will be
-(Font)              scaled to size 10.00092pt on input line 420.
+(Font)              scaled to size 10.00092pt on input line 470.
 LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(2)/m/n' will be
-(Font)              scaled to size 7.00064pt on input line 420.
+(Font)              scaled to size 7.00064pt on input line 470.
 LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(3)/m/n' will be
-(Font)              scaled to size 9.99893pt on input line 420.
+(Font)              scaled to size 9.99893pt on input line 470.
 LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(3)/m/n' will be
-(Font)              scaled to size 6.99925pt on input line 420.
-[6] [7]
+(Font)              scaled to size 6.99925pt on input line 470.
+
+Underfull \vbox (badness 1400) has occurred while \output is active []
+
+[7] [8] [9]
 Missing character: There is no χ (U+03C7) in font [lmroman12-regular]:mapping=tex-text;!
-[8] [9]
+[10]
 Missing character: There is no χ (U+03C7) in font [lmroman12-regular]:mapping=tex-text;!
-[10] [11] [12] [13] [14] [15] [16] [17]
+[11] [12] [13] [14] [15]
+Underfull \vbox (badness 4752) has occurred while \output is active []
+
+[16] [17] [18] [19]
 LaTeX Font Info:    Font shape `TU/lmtt/bx/n' in size <12> not available
-(Font)              Font shape `TU/lmtt/b/n' tried instead on input line 716.
+(Font)              Font shape `TU/lmtt/b/n' tried instead on input line 766.
 
-Underfull \vbox (badness 10000) detected at line 779
- []
-
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-[18]
-Underfull \vbox (badness 10000) detected at line 779
- []
-
-
-Underfull \vbox (badness 10000) detected at line 779
- []
-
-[19]
-Underfull \vbox (badness 10000) detected at line 853
+Underfull \vbox (badness 10000) detected at line 829
  []
 
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
 [20]
-Underfull \vbox (badness 10000) detected at line 853
+Underfull \vbox (badness 10000) detected at line 829
  []
 
 
-Underfull \vbox (badness 10000) detected at line 853
+Underfull \vbox (badness 10000) detected at line 829
  []
 
 [21]
-Underfull \vbox (badness 10000) detected at line 853
+Underfull \vbox (badness 10000) detected at line 903
  []
 
 
-Underfull \vbox (badness 10000) detected at line 853
- []
+Underfull \vbox (badness 10000) has occurred while \output is active []
 
 [22]
-Underfull \vbox (badness 1448) has occurred while \output is active []
+Underfull \vbox (badness 10000) detected at line 903
+ []
+
+
+Underfull \vbox (badness 10000) detected at line 903
+ []
 
 [23]
-Overfull \hbox (11.99187pt too wide) in paragraph at lines 876--877
+Underfull \vbox (badness 10000) detected at line 903
+ []
+
+
+Underfull \vbox (badness 10000) detected at line 903
+ []
+
+[24]
+Overfull \hbox (11.99187pt too wide) in paragraph at lines 926--927
 []\TU/lmr/m/n/12 Outcome  
  []
 
 
-Overfull \hbox (8.71169pt too wide) in paragraph at lines 882--883
+Overfull \hbox (8.71169pt too wide) in paragraph at lines 932--933
  []\TU/lmr/m/n/12 Median
  []
 
 
-Overfull \hbox (8.90181pt too wide) in paragraph at lines 884--885
+Overfull \hbox (8.90181pt too wide) in paragraph at lines 934--935
  []\TU/lmr/m/n/12 MAD
  []
 
 
-Overfull \hbox (1.25781pt too wide) in paragraph at lines 894--894
+Overfull \hbox (1.25781pt too wide) in paragraph at lines 944--944
  []|\TU/lmr/m/n/12 1.25|
  []
 
 
-Overfull \hbox (1.25781pt too wide) in paragraph at lines 895--895
+Overfull \hbox (1.25781pt too wide) in paragraph at lines 945--945
  []|\TU/lmr/m/n/12 1.14|
  []
 
 
-Overfull \hbox (1.25781pt too wide) in paragraph at lines 896--896
+Overfull \hbox (1.25781pt too wide) in paragraph at lines 946--946
  []|\TU/lmr/m/n/12 1.24|
  []
 
 
-Overfull \hbox (1.25781pt too wide) in paragraph at lines 897--897
+Overfull \hbox (1.25781pt too wide) in paragraph at lines 947--947
  []|\TU/lmr/m/n/12 1.14|
  []
 
-[24]
-Overfull \hbox (12.38637pt too wide) in paragraph at lines 922--923
+[25]
+Overfull \hbox (12.38637pt too wide) in paragraph at lines 972--973
 []\TU/lmr/m/n/12 Outcome  
  []
 
 
-Overfull \hbox (9.06978pt too wide) in paragraph at lines 928--929
+Overfull \hbox (9.06978pt too wide) in paragraph at lines 978--979
  []\TU/lmr/m/n/12 Median
  []
 
 
-Overfull \hbox (9.13852pt too wide) in paragraph at lines 930--931
+Overfull \hbox (9.13852pt too wide) in paragraph at lines 980--981
  []\TU/lmr/m/n/12 MAD
  []
 
 
-Overfull \hbox (1.49452pt too wide) in paragraph at lines 940--940
+Overfull \hbox (1.49452pt too wide) in paragraph at lines 990--990
  []|\TU/lmr/m/n/12 0.28|
  []
 
 
-Overfull \hbox (1.49452pt too wide) in paragraph at lines 941--941
+Overfull \hbox (1.49452pt too wide) in paragraph at lines 991--991
  []|\TU/lmr/m/n/12 0.27|
  []
 
 
-Overfull \hbox (1.49452pt too wide) in paragraph at lines 942--942
+Overfull \hbox (1.49452pt too wide) in paragraph at lines 992--992
  []|\TU/lmr/m/n/12 0.28|
  []
 
 
-Overfull \hbox (1.49452pt too wide) in paragraph at lines 943--943
+Overfull \hbox (1.49452pt too wide) in paragraph at lines 993--993
  []|\TU/lmr/m/n/12 0.25|
  []
 
+[26]
 Missing character: There is no σ (U+03C3) in font [lmroman12-regular]:mapping=tex-text;!
-[25]
-Overfull \hbox (18.77357pt too wide) in paragraph at lines 966--967
+
+Overfull \hbox (18.77357pt too wide) in paragraph at lines 1016--1017
 []\TU/lmr/m/n/12 Outcome  
  []
 
-[26] [27]
-Underfull \vbox (badness 7722) has occurred while \output is active []
+[27] [28] [29] [30] [31] [32] [33] [34] [35]
+Underfull \vbox (badness 8113) has occurred while \output is active []
 
-[28] [29] [30]
-Underfull \vbox (badness 1924) has occurred while \output is active []
+[36]
+LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(1)/b/n' will be
+(Font)              scaled to size 12.0pt on input line 1252.
+LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(1)/b/n' will be
+(Font)              scaled to size 8.4pt on input line 1252.
+LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(1)/b/n' will be
+(Font)              scaled to size 6.0pt on input line 1252.
+LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(2)/b/n' will be
+(Font)              scaled to size 12.0011pt on input line 1252.
+LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(2)/b/n' will be
+(Font)              scaled to size 8.40076pt on input line 1252.
+LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(2)/b/n' will be
+(Font)              scaled to size 6.00055pt on input line 1252.
+LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(3)/b/n' will be
+(Font)              scaled to size 11.99872pt on input line 1252.
+LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(3)/b/n' will be
+(Font)              scaled to size 8.3991pt on input line 1252.
+LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(3)/b/n' will be
+(Font)              scaled to size 5.99936pt on input line 1252.
+[37] [38]
+Overfull \hbox (0.11523pt too wide) in alignment at lines 1272--1290
+ [] [] [] [] [] [] [] 
+ []
 
-[31] [32] [33] [34] [35]
+
+Overfull \hbox (0.11523pt too wide) in alignment at lines 1290--1292
+ [] [] [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (0.11523pt too wide) in alignment at lines 1292--1306
+ [] [] [] [] [] [] [] 
+ []
+
+[39] [40] [41] [42] [43] [44] [45]
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 
 Underfull \vbox (badness 1383) has occurred while \output is active []
 
-[36] [37]
+[46] [47]
 LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(1)/m/n' will be
-(Font)              scaled to size 9.0pt on input line 1299.
+(Font)              scaled to size 9.0pt on input line 1440.
 LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(2)/m/n' will be
-(Font)              scaled to size 9.00082pt on input line 1299.
+(Font)              scaled to size 9.00082pt on input line 1440.
 LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(3)/m/n' will be
-(Font)              scaled to size 8.99904pt on input line 1299.
-[38] [39] [40] [41] AED endfloat: Processing end Figures and Tables [42] (./supplementary_information_v4.aux)
+(Font)              scaled to size 8.99904pt on input line 1440.
+[48] [49] [50] [51] AED endfloat: Processing end Figures and Tables [52] (./supplementary_information_v2_8.aux)
  ***********
 LaTeX2e <2026-06-01>
 L3 programming layer <2020/03/25>
  ***********
  ) 
 Here is how much of TeX's memory you used:
- 24346 strings out of 469765
- 448157 string characters out of 5465904
- 1053250 words of memory out of 5000000
- 52921 multiletter control sequences out of 15000+600000
- 670160 words of font info for 139 fonts, out of 8000000 for 9000
+ 24403 strings out of 469765
+ 449877 string characters out of 5465904
+ 1059860 words of memory out of 5000000
+ 52962 multiletter control sequences out of 15000+600000
+ 671416 words of font info for 152 fonts, out of 8000000 for 9000
  36 hyphenation exceptions out of 8191
- 90i,13n,114p,2267b,560s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 90i,13n,114p,2269b,584s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on supplementary_information_v4.pdf (42 pages).
+Output written on supplementary_information_v2_8.pdf (52 pages).

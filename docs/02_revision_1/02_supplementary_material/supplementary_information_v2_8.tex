@@ -260,7 +260,7 @@
 \date{}
 
 
-\shorttitle{Passive Acoustic Sensing and Personality Pathology}
+\shorttitle{Vocal Stress Responses and Personality Pathology}
 
 \authornote{
 
@@ -387,6 +387,56 @@ $N$ & EMA $M$ & EMA $SD$ & EMA Range & Voice Obs. (per period)\\
 \end{tabular}
 \end{table}
 
+\subsection{Manipulation Check: EMA Affect and Appraisal}\label{s-mc}
+
+The exam-related EMA prompts provided an empirical manipulation check for the stressor. The items were administered in the same smartphone notifications as the other EMA items, so the manipulation check reflects the same ambulatory assessment context as the personality and affect data. We summarized routine EMA prompts as the baseline EMA period and compared these with the exam-linked pre- and post-exam prompts. The focal negative-affect composite summed angry, sad, reverse-keyed happy, and reverse-keyed satisfied ratings (range 0--400). We also examined perceived threat (0--5) and situational pleasantness (-2--2) as appraisal indicators; for descriptive purposes, a negative-appraisal composite combined threat with reverse-keyed pleasantness after rescaling pleasantness to 0--5 (range 0--10).
+
+\begin{table}
+
+\caption{\label{tab:table-s-mc-descriptives}Subject-timepoint descriptive statistics for EMA manipulation-check items and composites.}
+\centering
+\begin{tabular}[t]{lllll}
+\toprule
+Measure & Scale & Baseline $M$ ($SD$) & Pre-exam $M$ ($SD$) & Post-exam $M$ ($SD$)\\
+\midrule
+Negative affect composite & 0--400 & 157.77 (50.90) & 201.16 (78.88) & 131.35 (80.72)\\
+Angry & 0--100 & 18.87 (16.06) & 28.50 (27.23) & 16.58 (22.73)\\
+Sad & 0--100 & 22.47 (16.32) & 30.86 (27.13) & 19.40 (23.56)\\
+Happy & 0--100 & 45.48 (17.91) & 31.26 (23.68) & 53.80 (27.49)\\
+Satisfied & 0--100 & 38.09 (17.65) & 26.94 (22.73) & 50.83 (29.09)\\
+\addlinespace
+Perceived threat & 0--5 & 1.71 (0.70) & 2.30 (1.22) & 1.64 (1.14)\\
+Pleasantness & -2--2 & 0.08 (0.52) & -0.52 (0.87) & 0.44 (1.04)\\
+Negative appraisal composite & 0--10 & 4.11 (1.20) & 5.46 (2.09) & 3.59 (2.19)\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Internal consistency diagnostics supported the use of the four keyed affect items as a descriptive composite: Cronbach's alpha based on subject-by-timepoint means was .80 (mean inter-item \(r\) = .50). For the two appraisal components, the two-item alpha/Spearman-Brown coefficient was .78/.78 (inter-item \(r\) = .64). Because the appraisal score combines two conceptually distinct single-item facets, this coefficient is reported only as a descriptive diagnostic rather than as evidence that threat and pleasantness form a unidimensional scale.
+
+For posterior summaries, we used the same inferential logic as in the main analyses: the posterior median summarizes the central tendency, the 89\% equal-tailed CrI summarizes magnitude uncertainty, and the probability of direction is treated as a continuous index of directional evidence rather than as a decision rule. The pre-exam prompt showed higher negative affect than the baseline EMA period, higher threat, and lower pleasantness. Post-exam negative affect decreased relative to the pre-exam prompt, consistent with relief after exam completion and grade feedback. This pattern supports the interpretation of the pre-exam assessment as an anticipatory-stress phase.
+
+\begin{table}[!h]
+\centering
+\caption{\label{tab:table-s-mc-contrasts}Bayesian manipulation-check contrasts. CrIs are 89\% equal-tailed intervals and are not used as significance tests.}
+\centering
+\resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{
+\begin{tabular}[t]{lllll}
+\toprule
+Outcome & Contrast & Posterior median & 89\% CrI & Directional probability\\
+\midrule
+Negative affect composite (0--400) & PRE - BASELINE & 43.92 & {}[31.73, 55.99] & Pr($\Delta$ > 0) = 1.00\\
+Perceived threat (0--5) & PRE - BASELINE & 0.60 & {}[0.43, 0.77] & Pr($\Delta$ > 0) = 1.00\\
+Pleasantness (-2--2) & PRE - BASELINE & -0.61 & {}[-0.76, -0.46] & Pr($\Delta$ < 0) = 1.00\\
+Negative affect composite (0--400) & POST - PRE & -69.70 & {}[-81.81, -57.59] & Pr($\Delta$ < 0) = 1.00\\
+Negative appraisal composite (0--10) & PRE - BASELINE & 1.36 & {}[1.03, 1.70] & Pr($\Delta$ > 0) = 1.00\\
+\addlinespace
+Negative appraisal composite (0--10) & POST - PRE & -1.88 & {}[-2.22, -1.54] & Pr($\Delta$ < 0) = 1.00\\
+Negative appraisal composite (0--10) & POST - BASELINE & -0.52 & {}[-0.86, -0.18] & Pr($\Delta$ < 0) = 0.99\\
+\bottomrule
+\end{tabular}}
+\end{table}
+
 \subsection{Definition and psychological significance of the three principal acoustic features}\label{definition-and-psychological-significance-of-the-three-principal-acoustic-features}
 
 Table~\ref{tab:acoustic-features} summarizes the definition, physiological basis, and psychological significance of the three principal acoustic features discussed in this literature.
@@ -438,9 +488,9 @@ Second, we examined whether F0 change scores were also consistent across vowels.
 
 Third, we estimated the reliability of the cross-vowel F0 composite. The consistency reliability of the three-vowel mean was high for absolute F0 values, ICC(3,k) = .97, 95\% CI {[}.96, .97{]}. Reliability remained high when computed separately by timepoint: ICC(3,k) = .97 at baseline, .95 pre-exam, and .98 post-exam. Reliability was also adequate for the change-score composites: ICC(3,k) = .83, 95\% CI {[}.77, .88{]}, for PRE − BASELINE changes; ICC(3,k) = .82, 95\% CI {[}.76, .87{]}, for POST − PRE changes; and ICC(3,k) = .87, 95\% CI {[}.83, .91{]}, for POST − BASELINE changes.
 
-Finally, as a sensitivity check, we fitted a mixed-effects model in which F0 was predicted by the stress and recovery contrasts, vowel, and the interactions between vowel and the two time contrasts, with random intercepts for participant and observation. Adding the vowel-by-time interactions did not significantly improve model fit relative to a model without these interactions, χ²(4) = 7.70, p = .103. The estimated PRE − BASELINE F0 increase was positive for all three vowels: /a/ = 3.77 Hz, /i/ = 2.73 Hz, and /u/ = 3.94 Hz.
+Finally, as a sensitivity check, we fitted a mixed-effects model in which F0 was predicted by the stress and recovery contrasts, vowel, and the interactions between vowel and the two time contrasts, with random intercepts for participant and observation. Adding the vowel-by-time interactions produced little improvement in fit (likelihood-ratio χ²(4) = 7.70, p = .103), and the estimated PRE − BASELINE F0 increase was positive for all three vowels: /a/ = 3.77 Hz, /i/ = 2.73 Hz, and /u/ = 3.94 Hz.
 
-Overall, these analyses support the use of the cross-vowel F0 mean as a robust aggregate. F0 values were highly concordant across /a/, /i/, and /u/, and stress-related F0 changes showed moderate-to-strong cross-vowel convergence. The primary F0 findings therefore do not appear to be driven by a single sustained vowel.
+Overall, these analyses support the use of the cross-vowel F0 mean as a stable aggregate. F0 values were highly concordant across /a/, /i/, and /u/, and stress-related F0 changes showed moderate-to-strong cross-vowel convergence. The primary F0 findings therefore do not appear to be driven by a single sustained vowel.
 
 \subsubsection{Cross-vowel convergence of NNE}\label{cross-vowel-convergence-of-nne}
 
@@ -452,9 +502,9 @@ Second, we examined whether NNE change scores were also consistent across vowels
 
 Third, we estimated the reliability of the three-vowel NNE composite. The consistency reliability of the cross-vowel mean was acceptable for absolute NNE values, ICC(3,k) = .75, 95\% CI {[}.71, .79{]}. Reliability was similar when estimated separately by timepoint: ICC(3,k) = .71 at baseline, .79 pre-exam, and .74 post-exam. Reliability for change-score composites was lower but still acceptable: ICC(3,k) = .65, 95\% CI {[}.54, .74{]}, for PRE − BASELINE changes; ICC(3,k) = .70, 95\% CI {[}.60, .78{]}, for POST − PRE changes; and ICC(3,k) = .60, 95\% CI {[}.48, .71{]}, for POST − BASELINE changes.
 
-Finally, as a sensitivity check, we fitted a mixed-effects model in which NNE was predicted by the stress and recovery contrasts, vowel, and the interactions between vowel and the two time contrasts, with random intercepts for participant and observation. Adding the vowel-by-time interactions did not significantly improve model fit relative to a model without these interactions, χ²(4) = 4.15, p = .387. The estimated PRE − BASELINE NNE change was negative for all three vowels, although its magnitude varied across vowels: /a/ = −1.05, /i/ = −0.18, and /u/ = −0.72.
+Finally, as a sensitivity check, we fitted a mixed-effects model in which NNE was predicted by the stress and recovery contrasts, vowel, and the interactions between vowel and the two time contrasts, with random intercepts for participant and observation. Adding the vowel-by-time interactions produced essentially no improvement in fit (likelihood-ratio χ²(4) = 4.15, p = .387), and the estimated PRE − BASELINE NNE change was negative for all three vowels, although its magnitude varied across vowels: /a/ = −1.05, /i/ = −0.18, and /u/ = −0.72.
 
-Overall, these analyses support the use of the cross-vowel NNE mean as a reasonable aggregate. NNE showed moderate cross-vowel convergence, acceptable reliability of the three-vowel composite, and no evidence that the temporal NNE pattern differed significantly by vowel. At the same time, convergence was weaker than for F0, suggesting that NNE may be more vowel-sensitive and that NNE-based findings should be interpreted with somewhat greater caution.
+Overall, these analyses support the use of the cross-vowel NNE mean as a reasonable aggregate. NNE showed moderate cross-vowel convergence, acceptable reliability of the three-vowel composite, and little indication that the temporal NNE pattern differed by vowel. At the same time, convergence was weaker than for F0, suggesting that NNE may be more vowel-sensitive and that NNE-based findings should be interpreted with somewhat greater caution.
 
 \subsection{Voice Outcomes by Assessment Period}\label{voice-outcomes-by-assessment-period}
 
@@ -531,7 +581,7 @@ Psychoticism & 119 & 0.93 & 0.68 & 0.00 & 2.93\\
 \end{tabular}
 \end{table}
 
-Between-person descriptives indicate substantial inter-individual variability in EMA trait levels, while within-person descriptives confirm meaningful intra-individual fluctuation across repeated assessments. This pattern is consistent with the multilevel measurement model used to estimate latent trait scores and propagate measurement uncertainty into moderation effects.
+Between-person descriptives indicate substantial inter-individual variability in EMA trait levels, while within-person descriptives indicate meaningful intra-individual fluctuation across repeated assessments. This pattern is consistent with the multilevel measurement model used to estimate latent trait scores and propagate measurement uncertainty into moderation effects.
 
 \newpage
 
@@ -543,7 +593,7 @@ All analyses used hierarchical Bayesian models implemented in Stan via the rstan
 
 \subsubsection{Research Question}\label{research-question}
 
-Before examining personality moderation, we first establish whether exam-related stress produces reliable changes in vocal acoustics. This model addresses the foundational question: Do vocal parameters (F0, NNE) change systematically across the three assessment phases---baseline, pre-exam (anticipatory stress), and post-exam (recovery)?
+Before examining personality moderation, we first examine whether exam-related stress produces systematic changes in vocal acoustics. This model addresses the foundational question: Do vocal parameters (F0, NNE) change systematically across the three assessment phases---baseline, pre-exam (anticipatory stress), and post-exam (recovery)?
 
 \subsubsection{Inferential Framework and Reporting}\label{inferential-framework-and-reporting}
 
@@ -950,9 +1000,9 @@ The Student-t residual scale for NNE was median σ = 1.44, 89\% CrI {[}1.28, 1.6
 
 The robust models improved the approximate leave-one-observation-out cross-validation diagnostics. In the original Gaussian models, some observations had problematic Pareto-k values, indicating sensitivity to influential observations. In contrast, both robust Student-t models had all Pareto-k estimates below 0.7, indicating reliable PSIS-LOO estimates.
 
-For F0, the robust model had better expected log predictive density than the Gaussian model. The LOO comparison favored the robust model by 16.3 elpd units, SE = 5.9. This suggests a clear improvement in expected out-of-sample predictive performance.
+For F0, the robust model had better expected log predictive density than the Gaussian model. The LOO comparison favored the robust model by 16.3 elpd units, SE = 5.9. This indicates improved expected out-of-sample predictive performance for the robust model, albeit estimated with uncertainty.
 
-For NNE, the robust model was also preferred, with an elpd improvement of 12.9 units, SE = 6.9. This provides weaker but still meaningful evidence in favor of the robust specification.
+For NNE, the robust model was also preferred, with an elpd improvement of 12.9 units, SE = 6.9. This difference is smaller relative to its standard error and correspondingly less certain.
 
 {\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
@@ -1187,6 +1237,97 @@ throughout: we foreground direction and the probability of direction, and treat 
 reported magnitudes --- and the widths of their credible intervals --- as estimates carrying
 substantial, partly prior-dependent uncertainty.
 
+\newpage
+
+\section{Connected-Speech Spectral Features: Mel-Frequency Cepstral Coefficient (MFCC) Analysis}\label{connected-speech-spectral-features-mel-frequency-cepstral-coefficient-mfcc-analysis}
+
+\textbf{Rationale and feature extraction.} In addition to the sustained vowels analyzed in the main text, participants produced a standardized connected-speech sample at each of the three sessions. To assess whether exam-related stress affects the voice beyond the controlled vowel task, we analyzed mel-frequency cepstral coefficients (MFCCs), which summarize the short-term spectral envelope of the signal and are widely used to characterize connected speech. MFCCs index global spectral shape (vocal-tract configuration, timbre) rather than the specific phonatory mechanisms captured by F0 and NNE, and therefore provide a complementary, holistic probe of stress-related vocal change.
+
+{[}PLACEHOLDER: MFCC extraction details --- connected-speech material used (e.g., the standardized sentence \emph{``Io amo le aiuole della mamma''} and/or the counting task); software and version; sampling rate; frame length and hop size; pre-emphasis and windowing; number of coefficients (13); and the summary statistics computed per coefficient.{]} For each coefficient we used the per-session mean across analysis frames as the primary representation; this is the canonical MFCC summary and was specified a priori. Higher-order distributional statistics (standard deviation, skewness, kurtosis, interquartile range, percentiles) were extracted but were not modeled, because they are noisier and lack a clear interpretive mapping --- paralleling the rationale for restricting the sustained-vowel analyses to F0 and NNE.
+
+{[}PLACEHOLDER: Sample for this analysis --- {[}N\_MFCC{]} participants contributed usable connected-speech recordings at all three sessions ({[}N\_OBS{]} = {[}N\_MFCC{]} \(\times\) 3 observations). Reconcile this count with the main analytic sample (\(N\) = 119) and with the recruited sample, and state the reason for any difference (e.g., connected-speech recordings excluded for file quality or background noise).{]}
+
+\textbf{Model specification.} The 13 coefficient means were standardized (\(z\)-scored across all observations) so that effects are expressed in SD units and the priors operate on a common scale. The outcome vector was modeled with a multivariate normal likelihood,
+
+\[\mathbf{y}_n \sim \text{MultiNormal}(\boldsymbol{\mu}_n, \boldsymbol{\Sigma}), \qquad \boldsymbol{\mu}_n = \boldsymbol{\alpha} + \mathbf{u}_{s[n]} + \boldsymbol{\beta}_1\, c1_n + \boldsymbol{\beta}_2\, c2_n,\]
+
+where \(\boldsymbol{\alpha}\), \(\boldsymbol{\beta}_1\), and \(\boldsymbol{\beta}_2\) are 13-dimensional vectors; \(c1\) (stress: pre vs.~baseline) and \(c2\) (recovery: post vs.~pre) are the same orthogonal contrasts used for F0 and NNE; \(\mathbf{u}_s\) is a participant-specific random intercept; and \(\boldsymbol{\Sigma}\) is the residual covariance. We included a subject-level random intercept only. With three observations per participant and a 13-dimensional outcome, random slopes for the contrasts (39 random effects per participant) are not identifiable; the 13-dimensional random intercept absorbs stable between-person differences in the spectral profile as well as the within-person dependence across the three sessions. The random-intercept and residual covariances were parameterized via their Cholesky factors with LKJ(2) priors on the correlations, and random effects used a non-centered parameterization. Priors were weakly informative on the standardized scale: \(\boldsymbol{\alpha} \sim \text{Normal}(0, 2)\); \(\boldsymbol{\beta}_1, \boldsymbol{\beta}_2 \sim \text{Normal}(0, 1)\), providing mild regularization toward zero that guards against the multiplicity inherent in estimating effects for 13 coefficients; and the covariance scales \(\sim \text{Exponential}(1)\). The model was estimated in Stan via cmdstanr ({[}PLACEHOLDER: chains \(\times\) iterations{]}).
+
+\textbf{Convergence and fit.} All \(\hat{R}\) values equaled 1.00 (\(\leq\) 1.01 throughout), bulk- and tail-ESS were in the thousands for all parameters, and there were no divergent transitions or treedepth saturations. Posterior predictive checks (Figure S{[}Y{]}) indicated that the model reproduced the distributional features of the observed coefficients.
+
+\textbf{Omnibus tests.} We evaluated whether the MFCC profile shifts with each contrast using two complementary multivariate tests. (i) A one-sample Hotelling's \(T^2\) on the within-person difference vectors indicated a modest stress-related profile shift (\(F(13, 114) = 2.00\), \(p = .027\); sign-flip permutation \(p = .024\)) and little evidence for a comparable recovery shift (\(F(13, 114) = 1.56\), \(p = .108\); permutation \(p = .105\)). (ii) A Bayesian posterior Wald test -- the Mahalanobis distance of the posterior-mean contrast vector from zero in the metric of its posterior covariance, referred to a \(\chi^2\) distribution with 13 degrees of freedom -- showed a consistent pattern (stress: \(M = 22.3\), \(p = .050\); recovery: \(M = 10.5\), \(p = .655\)). The two tests use different reference covariances (the covariance of difference scores for Hotelling's \(T^2\); the model's posterior covariance, which incorporates the hierarchical structure and shrinkage, for the Wald test), which accounts for the small difference between the two stress \(p\)-values; taken together, they support a modest stress-related spectral shift and do not support a comparable recovery-phase shift.
+
+We deliberately did not use two otherwise-common approaches, for principled reasons. First, we did not report a Bayes-factor omnibus (e.g., bridge sampling or the Savage-Dickey density ratio): a point-null Bayes factor over a 13-dimensional coefficient vector against weakly-informative priors is dominated by the Occam factor (the Lindley-Bartlett paradox) and is strongly prior-dependent, so with modest per-coefficient effects it can favor the null for reasons of dimensionality rather than evidence; bridge-sampling estimates of the marginal likelihood are also unstable in the high-dimensional parameter space of this model. Second, we did not report PSIS-LOO model comparison: with a 13-dimensional subject-level random intercept and only three observations per participant, leave-one-observation-out cross-validation is unreliable, because removing a single observation strongly perturbs that participant's latent profile and produces heavy-tailed importance ratios (\(p_{\text{loo}} \approx 1172\) on {[}PLACEHOLDER: N\_OBS{]} observations, with the majority of Pareto-\(\hat{k}\) diagnostics exceeding 0.7). These choices are consistent with the unified, non-dichotomous inferential framework adopted throughout: we summarize the multivariate contrasts with omnibus tests and the per-coefficient effects with posterior medians, 89\% credible intervals, and the probability of direction, rather than with model-selection verdicts or interval-exclusion rules.
+
+\textbf{Per-coefficient effects.} Table S{[}Z{]} reports the stress (\(\beta_1\)) and recovery (\(\beta_2\)) effects for each coefficient (posterior median, 89\% CrI, and probability of direction, pd). For the stress contrast, MFCC2 and MFCC4 showed the strongest directional certainty (pd \(\geq\) .99), and MFCC3 also showed high directional certainty (pd = .97); the remaining coefficients showed weaker directional certainty (pd \textless{} .95). For the recovery contrast, the omnibus profile shift was not comparably supported; at the coefficient level, MFCC10 showed the strongest directional certainty (pd = .97), but this isolated pattern should be interpreted cautiously. This per-coefficient pattern is consistent with a modest, sparsely carried stress shift and a weaker, less coherent recovery pattern.
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Coefficient
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Stress \(\beta_1\)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+89\% CrI
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+pd
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Recovery \(\beta_2\)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+89\% CrI
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+pd
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+MFCC1 & −0.02 & {[}−0.15, 0.11{]} & .60 & −0.02 & {[}−0.14, 0.10{]} & .61 \\
+MFCC2 & 0.22 & {[}0.07, 0.37{]} & .99 & 0.10 & {[}−0.04, 0.25{]} & .87 \\
+MFCC3 & 0.20 & {[}0.03, 0.36{]} & .97 & 0.01 & {[}−0.15, 0.18{]} & .55 \\
+MFCC4 & −0.25 & {[}−0.42, −0.09{]} & .99 & −0.16 & {[}−0.33, 0.00{]} & .94 \\
+MFCC5 & 0.09 & {[}−0.08, 0.25{]} & .80 & −0.01 & {[}−0.18, 0.16{]} & .53 \\
+MFCC6 & 0.16 & {[}−0.02, 0.34{]} & .92 & 0.09 & {[}−0.09, 0.27{]} & .78 \\
+MFCC7 & 0.05 & {[}−0.13, 0.24{]} & .68 & 0.08 & {[}−0.10, 0.27{]} & .76 \\
+MFCC8 & 0.05 & {[}−0.11, 0.22{]} & .70 & −0.12 & {[}−0.28, 0.05{]} & .87 \\
+MFCC9 & −0.12 & {[}−0.29, 0.06{]} & .85 & 0.00 & {[}−0.18, 0.18{]} & .50 \\
+MFCC10 & 0.10 & {[}−0.06, 0.26{]} & .84 & −0.19 & {[}−0.35, −0.03{]} & .97 \\
+MFCC11 & −0.08 & {[}−0.28, 0.11{]} & .75 & −0.09 & {[}−0.29, 0.10{]} & .77 \\
+MFCC12 & −0.13 & {[}−0.30, 0.03{]} & .90 & −0.04 & {[}−0.21, 0.12{]} & .67 \\
+MFCC13 & 0.05 & {[}−0.13, 0.23{]} & .66 & −0.04 & {[}−0.23, 0.14{]} & .65 \\
+\end{longtable}
+}
+
+\emph{Note.} Effects are in SD units of the standardized coefficient. pd = probability of direction; CrI = 89\% credible interval; \(\beta_1\) = stress contrast (pre vs.~baseline), \(\beta_2\) = recovery contrast (post vs.~pre). Values are reported descriptively and should be read together with the multivariate omnibus summaries rather than as separate decision rules.
+
+\textbf{Multivariate effect size.} As a magnitude descriptor we computed the Mahalanobis length of each contrast vector in the residual metric, \(D = \sqrt{\boldsymbol{\beta}' \boldsymbol{\Sigma}^{-1} \boldsymbol{\beta}}\): stress \(D = 0.87\) (89\% CrI {[}0.65, 1.09{]}); recovery \(D = 0.70\) (89\% CrI {[}0.50, 0.90{]}). Because \(D\) is nonnegative, its posterior interval does not approach zero even under a null shift; \(D\) should therefore be interpreted as an effect-size magnitude -- with the stress shift larger than the recovery shift -- whereas evidence for a profile shift is summarized by the omnibus tests and coefficient-level posterior summaries above. \(D\) is expressed relative to the within-occasion residual covariance and is consequently larger than the difference-score-based Hotelling effect, which uses the covariance of between-session differences.
+
+\textbf{No personality moderation on connected speech.} Given the modest and diffusely distributed connected-speech main effect, we did not test PID-5 moderation of the MFCC features. Such an analysis would involve 13 coefficients \(\times\) five trait domains \(\times\) two contrasts; it would be substantially underpowered and would reintroduce precisely the analytic flexibility we sought to avoid, and any resulting interactions would be uninterpretable. Personality moderation was therefore restricted to the sustained-vowel outcomes (F0 and NNE), for which the stress-related changes were strongest and mechanistically interpretable.
+
+\textbf{Data and code.} All R and Stan scripts and the de-identified data for the connected-speech analysis are available at {[}PLACEHOLDER: OSF LINK{]}.
+
+\newpage
+
+\section{Voice--Affect Coupling}\label{voiceaffect-coupling}
+
+To test whether the vocal stress response tracked the self-reported affective response at the person level, we related the anticipatory change in F0 (pre minus baseline) to the anticipatory change in EMA negative affect (pre minus baseline) across participants (\(n\) = 115). We focused on the anticipatory phase because the pre-exam voice and EMA assessments are temporally aligned, whereas the post-exam EMA prompt (evening of the exam day) and the post-exam voice recording (the following day) are not.
+
+The between-person coupling was negligible: \(r\) = −0.01, 89\% CrI {[}−0.16, 0.14{]}, Pr(\(r\) \textgreater{} 0) = .54 (equivalently, about −0.10 Hz per SD of negative-affect change). A frequentist Pearson correlation agreed (\(r\) = −0.01, \(p\) = .91). The recovery-phase coupling, computed analogously from POST − PRE change scores for the subset with temporally aligned data (\(n\) = 112), was also weak and directionally uncertain (\(r\) = 0.05, 89\% CrI {[}−0.10, 0.21{]}, Pr(\(r\) \textgreater{} 0) = .70).
+
+We read these coefficients in terms of direction and the probability of direction rather than interval exclusion: a pd close to .5 together with a near-zero \(r\) indicates weak or absent person-level coupling between the vocal and affective stress responses. This pattern is consistent with two non-exclusive interpretations. First, the vocal signal may index physiological activation that is only partly reflected in self-reported affect---consistent with the subjective/physiological dissociation observed in the recovery phase, where self-reported affect normalized (indeed dropped below baseline, consistent with relief) while F0 remained elevated. Second, change scores derived from only three waves are measured with limited reliability, which attenuates any underlying coupling. This analysis is therefore exploratory.
+
+Importantly, this weak person-level coupling does not bear on the group-level findings: the exam was associated with strong directional evidence for increases in both negative affect (manipulation check) and F0 (main effect, pd = .99); the two responses simply did not covary in magnitude across individuals.
+
+\newpage
+
 \section{Within-Person Temporal Covariation}\label{within-person-temporal-covariation}
 
 We examined whether momentary fluctuations in personality states---assessed via EMA immediately before each voice recording---covaried with concurrent F0 levels. This tests whether trait-level moderation effects have within-person analogs: do individuals show higher F0 when they report elevated negative affectivity in the moment?
@@ -1277,7 +1418,7 @@ Additional posterior predictive checks confirmed that the model adequately recov
 
 \subsection{Summary}\label{summary-1}
 
-All convergence diagnostics indicated that the MCMC sampler successfully explored the posterior distribution. The absence of divergent transitions, combined with \(\hat{R}\) values below 1.01 and effective sample sizes exceeding 4,000, provides strong evidence that the posterior summaries reported in the main text are reliable. Posterior predictive checks confirmed that the model adequately captured the key features of the observed data.
+All convergence diagnostics indicated that the MCMC sampler successfully explored the posterior distribution. The absence of divergent transitions, combined with \(\hat{R}\) values below 1.01 and effective sample sizes exceeding 4,000, indicates that the posterior summaries reported in the main text are numerically trustworthy. Posterior predictive checks confirmed that the model adequately captured the key features of the observed data.
 
 \subsection{NNE Model Diagnostics}\label{nne-model-diagnostics}
 

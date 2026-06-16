@@ -1,60 +1,24 @@
+Te lo organizzo come checklist, distinguendo ciò che richiede solo te da ciò che è tecnico. Prima un paio di verifiche rapide sullo stato attuale (sezione "Methodological contribution", running head, titolo):Verificato lo stato attuale. La parte **analitica e di scrittura è essenzialmente completa**: tutte le analisi richieste dai reviewer sono integrate e coerenti nei tre documenti, i valori sono allineati a `manuscript_values.md`, il linguaggio inferenziale è ripulito, gli errori (E6, CrI, MCMC, esclusioni) corretti. Quello che resta è soprattutto **contenuto fattuale che solo tu hai, due-tre decisioni, e la rifinitura finale di riferimenti/numeri**.
 
-Con l'albero completo posso darti un piano ordinato. Il principio è uno solo, da applicare ovunque si riportino **stime di effetti**: intervalli **89% a code uguali** (quantili 5.5/94.5), **pd come indice primario e descrittivo**, **nessuna soglia/classificazione** ("Strong/Moderate", "CrI esclude lo zero", PD>.95), **niente Bayes factor né ROPE**. Fanno eccezione le quantità che *non* sono inferenza sugli effetti (affidabilità, assurance Monte Carlo, descrittive): lì il 95% è difendibile, decidi tu.
+**A. Decisioni (tue, bloccanti)**
+1. **E4** — la sezione *"Methodological contribution: intensive ambulatory trait assessment"* è **ancora nel manoscritto**. Devi decidere se *rivederla* (riformulandola come "replica tra strategie di misura") o *rimuoverla*, e aggiornare di conseguenza la risposta E4 nella lettera.
+2. **R2.16** — dichiarazione sull'uso di AI: sì/no e, se sì, quali strumenti e per cosa.
+3. **R2.22** — conferma il titolo definitivo (il running head è **già aggiornato** a "VOCAL STRESS RESPONSES AND PERSONALITY PATHOLOGY", quindi quel sotto-punto è chiuso).
 
-## Già fatto
-- `02_statistical_analyses/02_F0mean/` (01–06) ✓
-- `02_statistical_analyses/03_NNE/` (02–05 + nuovo 06) ✓
+**B. Informazioni che solo tu hai (fattuali)**
+4. **R1.2 / R2.9** — stato di validazione del brief PID-5 EMA: validato per uso *momentary* o short-form trasversale adattato a current-state? Poi le reliability (ω_B = .85, ω_W = .72) vanno nel main text.
+5. **R1.3** — inventario *completo* delle feature estratte dai vocali sostenuti (oltre a F0/NNE/jitter/shimmer: formanti F1–F3? durate?) e disclosure di cosa non è stato analizzato.
+6. **R1.5 / R2.8** — questo è il **blocco EMA che avevi rimandato**: prompt programmati, compliance (mean/median/min/max), missingness, e soprattutto riconciliare "twice-weekly su 2.5 mesi" (~20–22) con la media osservata di 27 (range 12–31).
+7. **R2.20** — QC registrazioni: chiarire il fatto (vocali analizzati = laboratorio; smartphone = campione separato) e riportare screening/esclusioni effettivi.
+8. **R1.6** — verifica che la mia proposta di riconciliazione esclusioni (soglia ≥50% come regola operativa, careless-screen agganciato, "<5" rimosso) corrisponda a quanto avete realmente applicato.
 
-## Fase 1 — numeri "core" del manoscritto (priorità massima, legati a R2.11)
+**C. Task tecnici**
+9. **Placeholder nel supplemento (5)**: dettagli di estrazione MFCC (materiale, software, sampling rate, frame/hop, n. coefficienti), N_MFCC / N_OBS, chains × iterations, link OSF.
+10. **OSF (R2.17)**: push degli script ancora non caricati (manipulation check, coupling, MFCC, exam-grade) e conferma che tutto sia nel repo.
+11. **Riferimenti (R2.18)**: audit APA-7 completo; confermare la voce **Wright et al. (2025)** nella reference list; aggiungere Ringwald et al. e Kaurin et al. (R2.1) e Molenaar (2004)/Schimmack (2003) (R1.8).
+12. **Numerazione cross-ref**: una volta reso il supplemento, sostituire ovunque (manoscritto, supplemento, lettera) i segnaposto S[X] / Table S[Z] / Figure S[Y] con i numeri effettivi — la nuova sezione *Voice–Affect Coupling* e *Connected-Speech Spectral Features* vanno numerate e i rimandi (R1.9, R1.4, R1.7) aggiornati.
 
-1. **Effetti principali F0/NNE** → `02_statistical_analyses/01_stress_effect/` (`01_main_effects_analysis.R`, `02_manuscript_tables_figures.R`, `05_populate_results.R`, `06_diagnostic_report.R`).
-   Qui stanno i par. 60–63 (es. F0 stress 3.27 [0.81, 5.71], riportato come mediana ± 1.96·MAD). Da portare a **89% quantili**. Le conclusioni non cambiano (pd ≈ .995), è solo uniformità di metodo. Output: `results/stress/...`.
+**D. Per ultimo**
+13. **Page/line refs**: riempire tutti i `[PLACEHOLDER: page refs]` nella lettera dopo la re-paginazione finale.
 
-2. **EMA vs Baseline / "più preciso"** → `02_statistical_analyses/04_followup/` (`01_loo_comparison_f0_pid5_improved.R`, `02_create_loo_figures_improved.R`).
-   Qui c'è il claim dei par. 73–75, 98 e abstract ("CrI più stretti / più preciso"; Tab. 4, NA 3.07 [−0.44, 6.55]). Due interventi: intervalli a **89%** *e* riformulazione da "precisione" a "replicazione" (è anche E3/E4/R2.12). Output: `results/followup/...`.
-
-3. **Prior-sensitivity** → `02_statistical_analyses/10_prior_sensitivity_check/04_prior_sensitivity_bundle_only.R`.
-   Verifica che gli intervalli siano **89%** e che il testo (`results/prior_sensitivity/prior_sensitivity_text.txt`) sia la versione *direzionale onesta* (non "slight/unchanged"). È la nuova sotto-sezione del SM.
-
-## Fase 2 — analisi di supporto nel manoscritto/SM
-
-4. **Manipulation check EMA** → `02_statistical_analyses/08_revision1_02/` (attivi: `02,03,04,05`; ignora `OLD/`). brms con contrasti adiacenti: intervalli a **89%**, pd descrittiva. Output: `results/manipulation_check/...` (le tabelle `reviewer_ready_*`, `contrast_summary.csv`).
-
-5. **MFCC connected speech** → `02_statistical_analyses/07_revision1_01/` (`02_mfcc_main_effects_analysis.R`, `03_mfcc_omnibus_bayesian.R`). Intervalli per-coefficiente a **89%**, pd descrittiva. L'omnibus (M / p) è una singola statistica riassuntiva: decidi se tenerlo come tale o riformularlo, ma togli qualsiasi soglia. Output: `results/stress/tables/mfcc_*`.
-
-6. **Voice–affect coupling (R1.9)** → `02_statistical_analyses/09_voice_affect_coupling/03_voice_affect_coupling_1.R`. r con CrI + pd → **89%**. Output: `results/coupling/...`.
-
-7. **Within-person temporal covariation** → `02_statistical_analyses/05_temporal_covariation/` (`02_fit_models.R`, `03_analyze_heterogeneity.R`, `04_create_manuscript_materials.R`). La frase del SM "99.7% dei CrI attraversa lo zero" va portata a **89%** e, soprattutto, riformulata come "pendenze individuali stimate con grande imprecisione" (non come test). Output: `results/within_person/...`, `results/temporal/...`.
-
-## Fase 3 — generatori finali e mirror pubblico
-
-8. **Generatori di tabelle/figure del manoscritto** → cartella `brms/` (`12_stress_main_effects_summary.R`, `13_generate_manuscript_tables.R`, `14_generate_manuscript_figures.R`, `10_export_results_for_review.R`, `03c_posterior_probability.R`). **Qui devo chiederti una conferma** (vedi sotto): se sono questi a costruire Tabella 1/2/4 e le figure (`figure1_moderation_coefficients`, `figureS1/S2`), vanno trattati con le stesse regole; se sono superati da `05_create_table1` + `03_create_figures`, si ignorano.
-
-9. **Mirror OSF** → `only_for_me_repo_osf/scripts/` e `osf/scripts/` (00–07) + i relativi `stan/`. Dato che dati e codice diventano pubblici (R2.17), **devono coincidere** con la pipeline corretta (89%, pd, niente soglie/BF). Da sincronizzare **per ultimo**, quando tutto il resto è stabile.
-
-## Lascia com'è (o tua scelta)
-- **Assurance** (`01_preprocessing/mde/06_assurance_effect_gt0.R`, 0.92 [0.90, 0.94]): è un CI Monte Carlo su una proporzione, non un CrI sugli effetti → terrei il 95%, etichettandolo bene.
-- **Affidabilità** (`01_preprocessing/reliability/…`, Tab. S1/S2): i CI di affidabilità sono convenzionalmente al 95% → difendibile tenerli, con una nota.
-- **Descrittive** (`…/05_descriptives_from_stan_bundles_F0_NNE.R`): nessun intervallo sugli effetti → nessuna modifica.
-
-## File-output stantii da cancellare (per non rileggerli per sbaglio)
-- `results/NNE/direction_certainty_table.csv`, `results/NNE/theoretical_alignment_table.csv` (vecchi, 95%/classificati)
-- `results/f0mean/direction_certainty_table.csv`, `results/f0mean/theoretical_alignment_table.csv`
-- `results/diagnostics/convergence_diagnostics_key_params.csv`, `results/diagnostics/supplementary_table_diagnostics.csv` (senza suffisso `_89cri`)
-- `results/table1_f0_moderation.csv`, `results/table1_f0_moderation.tex` (il 05 corretto ora scrive `…_89cri.tex`)
-
-## Ordine di riesecuzione consigliato
-1. Cancella i file stantii sopra.
-2. Per ogni script da modificare, **stesso checklist di F0/NNE**: cerca `0.025|0.975|0.05[^0-9]|0.95`, `.width`, `median_qi/stat_halfeye` (default 95%), `bayes`/`BF`/`bridge`, `rope`, classificazioni → correggi. (Posso farlo io cartella per cartella come abbiamo fatto.)
-3. Rilancia in quest'ordine: Fase 1 (1→2→3), poi Fase 2 (4→5→6→7), poi rigenera tabelle/figure (Fase 3.8), infine sincronizza OSF (3.9).
-4. Verifica che ogni CSV/figura nuovo abbia il suffisso/data attesi e che i numeri combacino tra loro.
-5. **Solo allora** tocca il manoscritto, seguendo la lista di propagazione R2.11 che avevamo (par. 53, 66–68, Tab. 1–2, par. 73–75/98/abstract, sotto-sezione prior-sensitivity nel SM, riconciliazioni −1.42 e MCMC).
-
-## Una cosa da confermarmi (determina se la `brms/` va toccata)
-Le **Tabelle 1/2/4 e le figure** del manoscritto sono prodotte da:
-(a) `02_statistical_analyses/02_F0mean/05_create_table1…` + `03_create_figures…` (e analoghi NNE), oppure
-(b) i generatori in `brms/` (`13_…tables`, `14_…figures`)?
-
-E dove vengono calcolati i **Bayes factor** citati al par. 53 (probabilmente in `brms/03*`)? Quelli vanno individuati e tolti. Se mi dici quale dei due tracciati è "canonico" (e se `brms/` è ancora vivo o archiviato), restringo la Fase 3 a ciò che serve davvero ed evitiamo di correggere codice morto.
-
-Se vuoi, partiamo subito dalla Fase 1.1 (`01_stress_effect`): mandami i quattro script e te li allineo con lo stesso standard.
+Nessuna **nuova analisi** serve — su questo restiamo d'accordo. Di tutta la lista, gli unici punti che toccano il *contenuto scientifico* sono E4 (decisione) e il blocco EMA (#6); il resto è rifinitura editoriale e bookkeeping. Se vuoi, posso preparare la riformulazione E4 (versione "replica tra strategie di misura") come bozza tracciata, così resta solo da decidere se inserirla o tagliare.
