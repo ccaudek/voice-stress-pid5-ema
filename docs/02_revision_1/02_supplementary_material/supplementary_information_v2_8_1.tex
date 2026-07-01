@@ -308,7 +308,61 @@ Total PID-5 & 220 & 0.965 & 0.979 & 0.964 & 0.977\\
 
 \subsection{EMA-Based Brief PID-5}\label{ema-based-brief-pid-5}
 
-The brief PID-5 administered via EMA comprised 15 items (3 per domain), selected based on factor loadings and domain representativeness from prior validation work (Bottesi et al., 2024). Because these items were assessed repeatedly across approximately 20 occasions per participant, standard single-level reliability estimates are inappropriate. Instead, we employed the multilevel composite reliability framework described by Lai (2021), which partitions variance into within-person and between-person components and computes separate reliability indices for each level.
+The brief PID-5 administered via EMA comprised 15 items (3 per domain), selected from the full 220-item instrument via a structured psychometric procedure (see \emph{Item Selection}, below). Because these items were assessed repeatedly across approximately 20 occasions per participant, standard single-level reliability estimates are inappropriate. Instead, we employed the multilevel composite reliability framework described by Lai (2021), which partitions variance into within-person and between-person components and computes separate reliability indices for each level.
+
+\subsubsection{Item Selection}\label{item-selection}
+
+The 15 EMA items were drawn from the full 220-item PID-5 using a structured item-selection procedure applied to an independent Italian PID-5 sample (\emph{N} = 1,183; \emph{M}\textsubscript{age} = 31.3, \emph{SD} = 14.8; 46.2\% female; Sica et al., 2024). The aim was to retain, for each PID-5 facet, the single item that best represented its facet and domain while remaining suitable for brief, repeated momentary administration. Selection combined two complementary criteria:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  \textbf{Factor loadings.} For each domain, an exploratory factor analysis (maximum-likelihood extraction) identified items with strong loadings (\(\geq\) .40) on the underlying domain factor.
+\item
+  \textbf{Scalability.} A Mokken scale analysis evaluated item scalability via Loevinger's \(H\) coefficients, retaining items with \(H \geq\) .30 as an index of discrimination.
+\end{enumerate}
+
+The final items were those that performed consistently well under both criteria. Because each of the five PID-5 domains is defined by three facets, this procedure yielded one item per facet---three items per domain, 15 in total---so that the brief scale preserves the full facet-level content structure of each domain rather than sampling a domain narrowly (Table S{[}X{]}). For EMA administration, the selected items were reworded from their dispositional (``trait'') phrasing to a current-state phrasing (e.g., \emph{``I worry a lot about being alone''} \(\rightarrow\) \emph{``At this moment, I worry a lot about being alone''}); item content was otherwise unchanged.
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Domain
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Facet
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Item
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+PID-5 item (official English wording)
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Negative Affectivity & Emotional Lability & 122 & I get emotional easily, often for very little reason. \\
+Negative Affectivity & Anxiousness & 109 & I'm always worrying about something. \\
+Negative Affectivity & Separation Insecurity & 50 & I worry a lot about being alone. \\
+Detachment & Withdrawal & 82 & I keep my distance from people. \\
+Detachment & Anhedonia & 26 & I almost never enjoy life. \\
+Detachment & Intimacy Avoidance & 145 & I steer clear of romantic relationships. \\
+Antagonism & Manipulativeness & 219 & It is easy for me to take advantage of others. \\
+Antagonism & Deceitfulness & 206 & I use people to get what I want. \\
+Antagonism & Grandiosity & 114 & I'm better than almost everyone else. \\
+Disinhibition & Irresponsibility & 129 & I'm often pretty careless with my own and others' things. \\
+Disinhibition & Impulsivity & 16 & I usually do things on impulse without thinking about what might happen as a result. \\
+Disinhibition & Distractibility & 118 & I have trouble keeping my mind focused on what needs to be done. \\
+Psychoticism & Unusual Beliefs \& Experiences & 194 & I often see unusual connections between things that most people miss. \\
+Psychoticism & Eccentricity & 55 & People often look at me as if I'd said something really weird. \\
+Psychoticism & Perceptual Dysregulation & 217 & Things around me often feel unreal, or more real than usual. \\
+\end{longtable}
+}
+
+\emph{Note.} Item numbers refer to the full 220-item PID-5 (Krueger et al., 2012). Item text reproduces the official English PID-5 wording; for EMA the items were reworded to a momentary, current-state frame. Items were selected on an independent Italian sample (Sica et al., 2024) via exploratory factor analysis (loadings \(\geq\) .40) and Mokken scaling (Loevinger's \(H \geq\) .30). Each of the 15 PID-5 facets (three per domain) is represented by one item.
 
 \subsubsection{Multilevel Reliability Framework}\label{multilevel-reliability-framework}
 
@@ -366,6 +420,22 @@ The adequate within-person reliability (\(\alpha_W\) = .73) also suggests that t
 
 \newpage
 
+\section{EMA Response-Quality Screening and Participant Exclusions}\label{ema-response-quality-screening-and-participant-exclusions}
+
+To ensure the quality of the EMA data, we screened participant-level PID-5 EMA response protocols for careless or insufficient-effort responding before conducting the substantive analyses. Careless or insufficient-effort responding was conceptualized as a pattern of responses suggesting that participants may not have attended sufficiently to item content or may have provided responses with limited differentiation across prompts. Consistent with recommendations to use multiple post-hoc indicators of response quality rather than relying on a single metric, we combined indices capturing response invariability and atypical multivariate response patterns.
+
+Careless responding was operationalized using three complementary indices computed with the R package \texttt{\{careless\}}. First, we computed the \textbf{Longstring Index}, defined as the maximum number of consecutive identical responses provided by a participant. This index was used to capture invariant responding or straightlining. Second, we computed \textbf{Individual Response Variability} to quantify within-person variability in EMA responses; unusually low variability was interpreted as a potential indicator of non-differentiated responding. Third, we computed \textbf{Mahalanobis Distance} to identify participants whose multivariate response profiles were atypical relative to the rest of the sample.
+
+The three indices were standardized and oriented so that higher values reflected greater risk of careless or insufficient-effort responding. Specifically, indicators for which lower raw scores reflected greater risk, such as unusually low individual response variability, were reverse-oriented before aggregation. The standardized indicators were then averaged to create a composite response-quality score, with higher composite values indicating a more atypical or potentially careless response profile.
+
+Participants were classified as careless or insufficient-effort responders if they showed an extreme value on the composite response-quality score. Participants were classified as careless or insufficient-effort responders if their composite response-quality score exceeded 2.5 standard deviations above the sample mean. This criterion was intentionally conservative: participants were not excluded solely because they showed an isolated anomaly on one response-quality indicator, but only when their overall response profile was clearly atypical across the combined screening metrics.
+
+This participant-level screening procedure resulted in the exclusion of 12 participants from the initial eligible sample of 131 participants, corresponding to 9.16\% of the sample. After this quality-control step, the final analytic sample consisted of 119 participants.
+
+This exclusion rate reflects a conservative data-cleaning approach intended to balance two goals: removing response protocols with the strongest evidence of insufficient-effort responding while minimizing the risk of false-positive exclusions and preserving statistical power.
+
+\newpage
+
 \section{Descriptive Statistics}\label{descriptive-statistics}
 
 Descriptive statistics are reported for \(N\) = 119 female participants. Participants contributed on average 27 EMA assessments (\(SD\) = 4.16, range = 12--31).
@@ -386,6 +456,20 @@ $N$ & EMA $M$ & EMA $SD$ & EMA Range & Voice Obs. (per period)\\
 \bottomrule
 \end{tabular}
 \end{table}
+
+\subsection{EMA Protocol, Examination Structure, Compliance, and Exclusions}\label{s-ema-protocol}
+
+The EMA and voice data streams differed in their temporal coverage. Participants were recruited from a single university course whose assessment was organized as three scheduled intermediate tests across the approximately 2.5-month study period. Voice recordings were collected only in relation to the first intermediate test: at baseline, the day before the test, and the day after the test. EMA assessments, in contrast, were collected across the broader course-assessment period and included prompts linked to all three intermediate tests.
+
+The EMA protocol combined routine interval-contingent sampling with event-contingent sampling. Routine EMA prompts were scheduled twice weekly across the study period. These prompts were delivered through the m-Path smartphone platform on Wednesdays between 6:00 pm and 10:00 pm and on Saturdays between 9:00 am and 12:00 am. Within each window, the prompt was delivered at a random time; reminder notifications were issued every 15 minutes until the questionnaire was completed or the response window closed. In addition to these routine prompts, participants could receive event-contingent prompts before and after each of the three intermediate tests. Thus, each participant could receive up to 27 EMA notifications in total: 21 routine prompts and 6 test-linked prompts.
+
+The pre- and post-test EMA prompts corresponding to the first intermediate test were paired with the pre- and post-test voice-recording sessions and were used in the manipulation check of the stressor. The EMA prompts linked to the remaining intermediate tests, together with the routine prompts, contributed to the repeated assessment of momentary PID-5 states, affect, and appraisal across the full ambulatory period. Not all participants completed notifications at all three intermediate tests.
+
+The repeated EMA design was intended to reduce reliance on any single momentary report. Aggregating brief personality-relevant states across routine periods and exam-linked occasions improves the stability of person-level EMA estimates by reducing occasion-specific noise. The vocal stress-response analyses remained restricted to the three voice sessions surrounding the first intermediate test.
+
+EMA data quality control targeted insufficient EMA data and careless or insufficient-effort responding. Careless responding was operationalized as insufficient within-person variability and atypical response patterns, including excessive use of scale endpoints. The baseline PID-5 additionally included two embedded attention-check items. The voice stream was handled separately: the primary analytic sample required usable voice recordings at all three sessions surrounding the first intermediate test. Of the 131 recruited participants, 12 were excluded by the combined compliance and quality-control criteria, yielding a final analytic sample of N = 119, corresponding to 90.8 percent of the recruited sample. All 119 analytic participants provided usable voice recordings at all three primary sessions, yielding 357 voice observations.
+
+Across the EMA period, the 119 selected participants completed a mean of 21.00 assessments (SD = 4.16, median = 22, range = 5-26). Using 27 scheduled notifications as the denominator, this corresponded to a mean compliance rate of 77.8 percent (median = 81.5 percent, range = 18.5-96.3 percent). Expressed as missed notifications, participants missed a mean of 6.00 prompts (median = 5, range = 1-22). The lower end of the completion range reflects participants who contributed enough EMA data to estimate person-level scores. 112 of 119 participants (94.1\%) had complete EMA coverage for baseline, pre-exam, and post-exam.
 
 \subsection{Manipulation Check: EMA Affect and Appraisal}\label{s-mc}
 
@@ -437,13 +521,13 @@ Negative appraisal composite (0--10) & POST - BASELINE & -0.52 & {}[-0.86, -0.18
 \end{tabular}}
 \end{table}
 
-\subsection{Definition and psychological significance of the three principal acoustic features}\label{definition-and-psychological-significance-of-the-three-principal-acoustic-features}
+\subsection{Acoustic features: analyzed parameters and full extracted set}\label{acoustic-features-analyzed-parameters-and-full-extracted-set}
 
-Table~\ref{tab:acoustic-features} summarizes the definition, physiological basis, and psychological significance of the three principal acoustic features discussed in this literature.
+Table~\ref{tab:acoustic-features} summarizes the two acoustic parameters analyzed in the present study---fundamental frequency (F0) and normalized noise energy (NNE)---including their definition, physiological basis, and psychological significance. These two parameters were selected a priori because they index theoretically distinct mechanisms (autonomic arousal versus phonatory control) and have the most consistent empirical support as stress markers.
 
 \begin{table}[p]
 \centering
-\caption{Principal Acoustic Features of Speech: Definitions and Psychological Significance}
+\caption{Analyzed Acoustic Features: Definitions and Psychological Significance}
 \label{tab:acoustic-features}
 \begin{threeparttable}
 \scriptsize
@@ -458,23 +542,19 @@ Most robust acoustic marker of stress: F0 increases reliably under acute stress,
 Normalized Noise Energy (NNE) & Ratio of inharmonic to harmonic spectral energy (dB); index of glottal noise & 
 Degree of glottal closure completeness during phonation & 
 Reflects phonatory control and vocal effort; stress may increase noise (incomplete closure under arousal) or decrease it (compensatory hyperadduction and pressed phonation) \\[4pt]
-
-Jitter\textsuperscript{a} & Cycle-to-cycle variation in F0 period (\%); measure of frequency perturbation & 
-Irregularity of successive vocal fold vibratory cycles & 
-Proposed as an index of vocal instability and reduced neuromuscular control; elevated in some emotional and clinical states \\
 \hline
 \end{tabular}
 
 \begin{tablenotes}[para,flushleft]
 \footnotesize
-\item \textit{Note.} F0 and NNE were retained as primary outcome variables in the present study. 
-\textsuperscript{a}Jitter was extracted but not included in the main analyses for the following reasons: 
-(a) the literature on jitter and psychological stress is inconsistent, with effect sizes that are small, heterogeneous in direction, and often non-significant across studies (Giddens et al., 2013); 
-(b) jitter is highly sensitive to recording conditions, signal-to-noise ratio, and extraction algorithm parameters, resulting in substantial measurement noise in field settings (Titze, 1994); and 
-(c) unlike F0 and NNE, which index theoretically distinct mechanisms (autonomic arousal vs.\ phonatory control), jitter does not map onto a clearly separable psychophysiological pathway, limiting its interpretive value in the context of personality moderation hypotheses.
+\item \textit{Note.} F0 and NNE were the acoustic outcomes analyzed in the present study. The full set of parameters returned by BioVoice, including those not analyzed here, is described below.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
+
+\subsubsection{Full set of extracted parameters}\label{full-set-of-extracted-parameters}
+
+BioVoice returns a broader set of acoustic parameters than the two analyzed here. Beyond F0 and NNE, the extracted set includes fundamental-frequency descriptive statistics, jitter (cycle-to-cycle frequency perturbation), and formant-related measures (the first formants and their bandwidths); the complete and authoritative list of BioVoice outputs is given in the BioVoice documentation (Morelli et al., 2021; \url{https://doi.org/10.1016/j.bspc.2020.102302}). These additional parameters were extracted but not analyzed in the present study, and we do not present them as exploratory analyses. Evaluation of further acoustic characteristics---for example, articulatory capacity indexed by the formants or the derived vowel triangle, together with the separate counting task---is deferred to future work in a larger clinical/pathological sample, where they can be modeled with adequate power and interpretive clarity. Jitter in particular was not analyzed because the literature linking it to psychological stress is inconsistent (small, heterogeneous effects; Giddens et al., 2013), it is highly sensitive to recording conditions and extraction settings in field data (Titze, 1994), and---unlike F0 and NNE---it does not map onto a clearly separable psychophysiological pathway.
 
 \subsection{Cross-vowel convergence}\label{cross-vowel-convergence}
 
@@ -1243,9 +1323,9 @@ substantial, partly prior-dependent uncertainty.
 
 \textbf{Rationale and feature extraction.} In addition to the sustained vowels analyzed in the main text, participants produced a standardized connected-speech sample at each of the three sessions. To assess whether exam-related stress affects the voice beyond the controlled vowel task, we analyzed mel-frequency cepstral coefficients (MFCCs), which summarize the short-term spectral envelope of the signal and are widely used to characterize connected speech. MFCCs index global spectral shape (vocal-tract configuration, timbre) rather than the specific phonatory mechanisms captured by F0 and NNE, and therefore provide a complementary, holistic probe of stress-related vocal change.
 
-{[}PLACEHOLDER: MFCC extraction details --- connected-speech material used (e.g., the standardized sentence \emph{``Io amo le aiuole della mamma''} and/or the counting task); software and version; sampling rate; frame length and hop size; pre-emphasis and windowing; number of coefficients (13); and the summary statistics computed per coefficient.{]} For each coefficient we used the per-session mean across analysis frames as the primary representation; this is the canonical MFCC summary and was specified a priori. Higher-order distributional statistics (standard deviation, skewness, kurtosis, interquartile range, percentiles) were extracted but were not modeled, because they are noisier and lack a clear interpretive mapping --- paralleling the rationale for restricting the sustained-vowel analyses to F0 and NNE.
+MFCCs were computed from the connected-speech recordings following the extraction procedure described in Calà et al.~(2025), which applied the same recording protocol and analysis pipeline as the present study; that source documents the signal-processing settings (connected-speech material, sampling rate, frame and hop sizes, pre-emphasis, and windowing) in full. Each recording was summarized by 13 mel-frequency cepstral coefficients. For each coefficient we used the per-session mean across analysis frames as the primary representation; this is the canonical MFCC summary and was specified a priori. Higher-order distributional statistics (standard deviation, skewness, kurtosis, interquartile range, percentiles) were extracted but were not modeled, because they are noisier and lack a clear interpretive mapping --- paralleling the rationale for restricting the sustained-vowel analyses to F0 and NNE.
 
-{[}PLACEHOLDER: Sample for this analysis --- {[}N\_MFCC{]} participants contributed usable connected-speech recordings at all three sessions ({[}N\_OBS{]} = {[}N\_MFCC{]} \(\times\) 3 observations). Reconcile this count with the main analytic sample (\(N\) = 119) and with the recruited sample, and state the reason for any difference (e.g., connected-speech recordings excluded for file quality or background noise).{]}
+The MFCC analysis was restricted to participants with usable connected-speech recordings at all three sessions. As reported in the \emph{Recording quality control and analytic sample} section of the main text, complete and quality-checked connected-speech recordings were available for 127 participants, which contributed to the MFCC models (127 participants \(\times\) 3 sessions = 381 observations). Because this robustness check uses only the connected-speech signal, it does not require the sustained-vowel or EMA data; the 127-participant connected-speech subsample therefore contains the smaller main analytic sample (\(N\) = 119), defined as participants with usable recordings for \emph{both} tasks and valid EMA. {[}CONFIRM: exact number of participants/observations actually entering the MFCC models.{]}
 
 \textbf{Model specification.} The 13 coefficient means were standardized (\(z\)-scored across all observations) so that effects are expressed in SD units and the priors operate on a common scale. The outcome vector was modeled with a multivariate normal likelihood,
 
@@ -1335,6 +1415,18 @@ We examined whether momentary fluctuations in personality states---assessed via 
 We compared hierarchical specifications with fixed effects (population-average slopes only) versus random slopes (allowing individual differences in within-person associations). The random slopes model had higher predictive accuracy than the fixed-effects specification (\(R^2\) = 35\% vs 2.5\%; ELPD difference \(\approx\) 40 points). By itself, however, this improvement in fit does not establish identifiable individual-level effects. With only three observations per person, the 89\% credible intervals for individual slopes were very wide and almost always included zero, so the sign and magnitude of any single participant's slope are not identifiable from these data; we therefore do not interpret individual slopes one by one.
 
 This pattern reflects a limitation of the sparse design rather than a substantive null. The between-subject standard deviations of the slopes (\(\sigma_\beta\)) are non-negligible for several domains, suggesting some heterogeneity, but they are themselves only weakly identified, so we do not attempt to characterize which individuals have larger or smaller slopes. Denser temporal sampling would be required to resolve individual-level within-person dynamics.
+
+\newpage
+
+\section{Replication of Moderation Effects Across Measurement Strategies}\label{replication-of-moderation-effects-across-measurement-strategies}
+
+A secondary aim was to compare two strategies for measuring the same PID-5 trait constructs: a full-length, cross-sectional baseline questionnaire and a brief, repeated EMA assessment aggregated to person-level means. We frame this comparison as a test of whether the moderation effects \emph{replicate across measurement strategies}, not as evidence that either strategy is more valid or more efficient. The corresponding estimates are reported in the main text (\emph{Comparing EMA-Based and Baseline PID-5 Assessments}); here we add the methodological interpretation that the editorial and reviewer comments call for.
+
+\textbf{Convergence, not superiority.} For the focal effect (Negative Affectivity \(\times\) stress on F0), the baseline-derived and EMA-derived moderation estimates agreed in direction and were similar in magnitude, and the two specifications were essentially indistinguishable in out-of-sample predictive accuracy (a LOO elpd difference of roughly 5 points in favour of the EMA-based model, \emph{SE} \(\approx\) 4---i.e., well within one standard error). This pattern is most naturally read as cross-method convergence: the same trait--stress relationship is recovered whether the trait is measured once at length or repeatedly in brief form.
+
+\textbf{Why the EMA intervals are narrower.} The credible intervals for the EMA-derived moderation coefficients are somewhat narrower than those for the baseline-derived coefficients. This difference is largely a near-mechanical consequence of aggregation rather than evidence of more valid measurement: averaging each person's brief assessments across many occasions averages out occasion-specific fluctuation, yielding a person-level mean with smaller sampling variance, which in turn propagates into a tighter posterior for the moderation coefficient. A reduction in interval width obtained in this way does not, by itself, indicate that the EMA measure captures the construct more accurately.
+
+\textbf{Shared-method variance and burden.} Two further cautions temper any ``EMA advantage'' reading. First, associations among the momentary self-reports (e.g., between state personality items and state affect) can be inflated by shared method variance, because such items share a response format, a measurement occasion, and a current-state frame; person-level aggregation attenuates but does not eliminate this. Second, the practical cost differs sharply: a single questionnaire is far less burdensome than weeks of repeated prompting, so even exact predictive parity would not establish that intensive assessment is worthwhile for routine \emph{trait} measurement. Intensive designs are justified when the \emph{within-person dynamics} are themselves of interest---as in the present study---rather than as a more efficient route to a static trait estimate (Wright et al., 2025). Sampling denser than the present design would allow stronger, more direct tests of these within-person processes.
 
 \newpage
 

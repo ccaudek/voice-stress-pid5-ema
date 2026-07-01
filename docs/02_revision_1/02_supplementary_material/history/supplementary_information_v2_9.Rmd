@@ -1,0 +1,1308 @@
+---
+title             : "Supplementary Materials"
+shorttitle        : "Vocal Stress Responses and Personality Pathology"
+
+author:
+  - name          : "Ilaria Colpizzi"
+    affiliation   : "1"
+    corresponding : yes
+    address       : "Trieste, Italy"
+    email         : "ilaria.colpizzi@units.it"
+  - name          : "Federico Calà"
+    affiliation   : "2"
+  - name          : "Lorenzo Frassineti"
+    affiliation   : "2"
+  - name          : "Antonio Lanatà"
+    affiliation   : "2"
+  - name          : "Claudia Manfredi"
+    affiliation   : "2"
+  - name          : "Claudio Sica"
+    affiliation   : "3"
+  - name          : "Igor Marchetti"
+    affiliation   : "3"
+  - name          : "Corrado Caudek"
+    affiliation   : "4"
+
+affiliation:
+  - id            : "1"
+    institution   : "Department of Life Sciences, University of Trieste, Trieste, Italy"
+  - id            : "2"
+    institution   : "Department of Information Engineering, University of Florence, Florence, Italy"
+  - id            : "3"
+    institution   : "Department of Health Sciences, University of Florence, Florence, Italy"
+  - id            : "4"
+    institution   : "Department of NEUROFARBA, University of Florence, Florence, Italy"
+
+authornote: |
+
+keywords          : "voice analysis, personality pathology, ecological momentary assessment, Bayesian modeling, PID-5"
+wordcount         : "X"
+
+bibliography      : "voice-references.bib"
+
+floatsintext      : yes
+linenumbers       : no
+draft             : no
+mask              : no
+
+figurelist        : no
+tablelist         : no
+footnotelist      : no
+
+output:
+  papaja::apa6_pdf:
+    latex_engine: xelatex
+    keep_tex: yes  
+    classoption: "jou"
+
+header-includes:
+  - \usepackage{fontspec}
+  - \usepackage{unicode-math}
+  - \usepackage{booktabs}
+  - \usepackage{longtable}
+  - \usepackage{float}
+  - \renewcommand{\thetable}{S\arabic{table}}
+  - \renewcommand{\thefigure}{S\arabic{figure}}
+---
+
+```{r setup, include=FALSE}
+library("papaja")
+library(tidyverse)
+library(knitr)
+
+# Seed for random number generation
+set.seed(42)
+knitr::opts_chunk$set(
+  cache.extra = knitr::rand_seed,
+  echo = FALSE, 
+  message = FALSE, 
+  warning = FALSE
+)
+```
+
+# Reliability of Personality Measures
+
+## Overview
+
+Reliability was evaluated for both the full baseline PID-5 questionnaire (220 items) and the brief EMA-based PID-5 assessment (15 items, 3 per domain). For the EMA measures, which involve repeated assessments nested within persons, we employed multilevel reliability estimation following @lai2021composite, which distinguishes between-person reliability (consistency of person-level means) from within-person reliability (consistency of occasion-level deviations).
+
+## Baseline PID-5 Questionnaire
+
+The full PID-5 was administered at baseline (T1) using the standard 220-item version. Reliability was computed using Cronbach's alpha and McDonald's omega for each domain and for the total score. Results are reported for both the full sample and a cleaned sample excluding participants who failed attention check items (catch trials embedded at positions 68 and 161 in the questionnaire).
+
+### Results
+
+All domains showed acceptable to excellent internal consistency (Table S1). Psychoticism exhibited the highest reliability ($\alpha$ = .87, $\omega$ = .90), consistent with its larger item pool (33 items). Antagonism showed the lowest reliability ($\alpha$ = .67, $\omega$ = .82), though McDonald's omega—which accounts for item heterogeneity—indicated adequate composite reliability. The total PID-5 score demonstrated excellent reliability ($\alpha$ = .96, $\omega$ = .98). Excluding participants who failed attention checks produced slightly lower but comparable estimates, indicating that careless responding had minimal impact on scale properties in this sample.
+
+```{r table-s1-pid5-reliability}
+pid5_reliability <- data.frame(
+  Domain = c("Negative Affectivity", "Detachment", "Antagonism", 
+             "Disinhibition", "Psychoticism", "Total PID-5"),
+  Items = c(23, 22, 21, 22, 33, 220),
+  Alpha_Full = c(0.783, 0.754, 0.670, 0.747, 0.870, 0.965),
+  Omega_Full = c(0.851, 0.844, 0.819, 0.843, 0.898, 0.979),
+  Alpha_Clean = c(0.767, 0.741, 0.627, 0.725, 0.864, 0.964),
+  Omega_Clean = c(0.843, 0.840, 0.796, 0.824, 0.892, 0.977)
+)
+
+knitr::kable(
+  pid5_reliability, 
+  col.names = c("Domain", "Items", "$\\alpha$ (Full)", "$\\omega$ (Full)", 
+                "$\\alpha$ (Clean)", "$\\omega$ (Clean)"),
+  digits = 3,
+  caption = "Internal consistency of baseline PID-5 domains.",
+  escape = FALSE,
+  booktabs = TRUE
+)
+```
+
+## EMA-Based Brief PID-5
+
+The brief PID-5 administered via EMA comprised 15 items (3 per domain), selected from the full 220-item instrument via a structured psychometric procedure (see *Item Selection*, below). Because these items were assessed repeatedly across approximately 20 occasions per participant, standard single-level reliability estimates are inappropriate. Instead, we employed the multilevel composite reliability framework described by Lai (2021), which partitions variance into within-person and between-person components and computes separate reliability indices for each level.
+
+### Item Selection
+
+The 15 EMA items were selected from the full 220-item PID-5 through a structured item-selection procedure applied to an independent Italian PID-5 sample [*N* = 1,183&#59; $M_{\mathrm{age}}$ = 31.3, *SD* = 14.8&#59; 46.2% female&#59; see @bottesi2025advancing; @sica2024comparing]. The aim was to retain, for each PID-5 facet, the single item that best represented its facet and domain while remaining suitable for brief, repeated momentary administration. Selection combined two complementary criteria:
+
+1. **Factor loadings.** For each domain, an exploratory factor analysis (maximum-likelihood extraction) identified items with strong loadings ($\geq$ .40) on the underlying domain factor.
+
+2. **Scalability.** A Mokken scale analysis evaluated item scalability via Loevinger's $H$ coefficients, retaining items with $H \geq$ .30 as an index of discrimination.
+
+The final items were those that performed consistently well under both criteria. Because each of the five PID-5 domains is defined by three facets, this procedure yielded one item per facet—three items per domain, 15 in total—so that the brief scale preserves the full facet-level content structure of each domain rather than sampling a domain narrowly (Table S[X]). For EMA administration, the selected items were reworded from their dispositional ("trait") phrasing to a current-state phrasing (e.g., *"I worry a lot about being alone"* $\rightarrow$ *"At this moment, I worry a lot about being alone"*); item content was otherwise unchanged.
+
+| Domain | Facet | Item | PID-5 item (official English wording) |
+|---|---|---|---|
+| Negative Affectivity | Emotional Lability | 122 | I get emotional easily, often for very little reason. |
+| Negative Affectivity | Anxiousness | 109 | I'm always worrying about something. |
+| Negative Affectivity | Separation Insecurity | 50 | I worry a lot about being alone. |
+| Detachment | Withdrawal | 82 | I keep my distance from people. |
+| Detachment | Anhedonia | 26 | I almost never enjoy life. |
+| Detachment | Intimacy Avoidance | 145 | I steer clear of romantic relationships. |
+| Antagonism | Manipulativeness | 219 | It is easy for me to take advantage of others. |
+| Antagonism | Deceitfulness | 206 | I use people to get what I want. |
+| Antagonism | Grandiosity | 114 | I'm better than almost everyone else. |
+| Disinhibition | Irresponsibility | 129 | I'm often pretty careless with my own and others' things. |
+| Disinhibition | Impulsivity | 16 | I usually do things on impulse without thinking about what might happen as a result. |
+| Disinhibition | Distractibility | 118 | I have trouble keeping my mind focused on what needs to be done. |
+| Psychoticism | Unusual Beliefs & Experiences | 194 | I often see unusual connections between things that most people miss. |
+| Psychoticism | Eccentricity | 55 | People often look at me as if I'd said something really weird. |
+| Psychoticism | Perceptual Dysregulation | 217 | Things around me often feel unreal, or more real than usual. |
+
+*Note.* Item numbers refer to the full 220-item PID-5 (Krueger et al., 2012). Item text reproduces the official English PID-5 wording; for EMA the items were reworded to a momentary, current-state frame. Items were selected on an independent Italian sample (Sica et al., 2024) via exploratory factor analysis (loadings $\geq$ .40) and Mokken scaling (Loevinger's $H \geq$ .30). Each of the 15 PID-5 facets (three per domain) is represented by one item.
+
+### Multilevel Reliability Framework
+
+Following Lai (2021), we estimated three reliability indices:
+
+- **$\alpha_{2L}$ (Two-level alpha)**: Overall reliability of observed scores, pooling within- and between-person variance. Relevant when scores are used without distinguishing levels.
+
+- **$\alpha_B$ (Between-person alpha)**: Reliability of person-level means (aggregated across occasions). This is the relevant index when EMA scores are averaged to create a single trait estimate per person, as in our moderation analyses.
+
+- **$\alpha_W$ (Within-person alpha)**: Reliability of occasion-level deviations from each person's mean. Relevant for detecting momentary fluctuations in personality states.
+
+The same decomposition was applied using McDonald's omega ($\omega_{2L}$, $\omega_B$, $\omega_W$), which relaxes the assumption of tau-equivalence.
+
+### Results
+
+The multilevel reliability analysis revealed a clear pattern (Table S2):
+
+1. **Between-person reliability was high** ($\alpha_B$ = .87, $\omega_B$ = .85). This indicates that person-level trait estimates derived from aggregating across EMA occasions are measured with good precision. This is the critical index for our moderation analyses, which use person-level latent trait scores as predictors.
+
+2. **Within-person reliability was adequate** ($\alpha_W$ = .73, $\omega_W$ = .72). This suggests that the brief scale can detect meaningful occasion-to-occasion fluctuations in personality states, though with more measurement error than at the between-person level. This is expected given the brevity of the scale (15 items total).
+
+3. **Two-level reliability was good** ($\alpha_{2L}$ = .83, $\omega_{2L}$ = .81), reflecting the overall quality of observed scores when levels are pooled.
+
+```{r table-s2-ema-reliability}
+ema_reliability <- data.frame(
+  Index = c("$\\alpha_{2L}$ (two-level)", "$\\alpha_B$ (between)", "$\\alpha_W$ (within)",
+            "$\\omega_{2L}$ (two-level)", "$\\omega_B$ (between)", "$\\omega_W$ (within)"),
+  Estimate = c(0.826, 0.866, 0.727, 0.814, 0.852, 0.724),
+  CI_Lower = c("0.802", "0.835", "0.687", "---", "---", "---"),
+  CI_Upper = c("0.845", "0.889", "0.758", "---", "---", "---")
+)
+
+knitr::kable(
+  ema_reliability,
+  col.names = c("Reliability Index", "Estimate", "95\\% CI Lower", "95\\% CI Upper"),
+  digits = 3,
+  caption = "Multilevel reliability of EMA-based brief PID-5 (15 items).",
+  escape = FALSE,
+  booktabs = TRUE
+)
+```
+
+### Interpretation for the Present Study
+
+The high between-person reliability ($\alpha_B$ = .87) supports the validity of using EMA-derived personality scores as person-level moderators of vocal stress responses. Because our moderation model estimates latent trait scores from the repeated EMA observations (see Statistical Models section), measurement error is explicitly modeled rather than ignored. The multilevel measurement model in our Stan implementation can be viewed as formalizing the reliability structure documented here: the latent trait $\theta_{id}$ represents the "true" person-level standing on domain $d$, while the occasion-specific observations $X_{nd}$ are treated as noisy indicators with residual variance $\sigma_d^{\text{ema}}$ capturing within-person fluctuation and measurement error.
+
+The adequate within-person reliability ($\alpha_W$ = .73) also suggests that the brief EMA measure could support analyses of state-level personality-voice covariation, though such analyses would require denser sampling than the present design to achieve adequate statistical power.
+
+\newpage
+
+# Descriptive Statistics
+
+```{r descriptives-setup}
+# Define sample characteristics
+N_subj <- 119
+ema_mean <- 27
+ema_sd <- 4.16
+ema_min <- 12
+ema_max <- 31
+```
+
+Descriptive statistics are reported for $N$ = `r N_subj` female participants. Participants contributed on average `r ema_mean` EMA assessments ($SD$ = `r ema_sd`, range = `r ema_min`–`r ema_max`).
+
+## Design and Coverage
+
+Table S3 summarizes the study design, including the number of participants, voice observations, and EMA assessments. All `r N_subj` participants contributed usable voice observations in each assessment period (Baseline, Pre-exam, Post-exam), consistent with the balanced, three-phase design.
+
+```{r table-s3-design}
+S3_display <- data.frame(
+  N = 119,
+  EMA_M = 27,
+  EMA_SD = 4.16,
+  EMA_range = "12--31",
+  Voice_obs = 119
+)
+
+knitr::kable(
+  S3_display,
+  col.names = c("$N$", "EMA $M$", "EMA $SD$", "EMA Range", "Voice Obs. (per period)"),
+  caption = "Study design and data coverage.",
+  escape = FALSE,
+  booktabs = TRUE
+)
+```
+
+
+## Manipulation Check: EMA Affect and Appraisal {#s-mc}
+
+The exam-related EMA prompts provided an empirical manipulation check for the stressor. The items were administered in the same smartphone notifications as the other EMA items, so the manipulation check reflects the same ambulatory assessment context as the personality and affect data. We summarized routine EMA prompts as the baseline EMA period and compared these with the exam-linked pre- and post-exam prompts. The focal negative-affect composite summed angry, sad, reverse-keyed happy, and reverse-keyed satisfied ratings (range 0--400). We also examined perceived threat (0--5) and situational pleasantness (-2--2) as appraisal indicators; for descriptive purposes, a negative-appraisal composite combined threat with reverse-keyed pleasantness after rescaling pleasantness to 0--5 (range 0--10).
+
+```{r table-s-mc-descriptives}
+mc_descriptives <- tibble::tribble(
+  ~Measure, ~Scale, ~Baseline, ~Pre_exam, ~Post_exam,
+  "Negative affect composite", "0--400", "157.77 (50.90)", "201.16 (78.88)", "131.35 (80.72)",
+  "Angry", "0--100", "18.87 (16.06)", "28.50 (27.23)", "16.58 (22.73)",
+  "Sad", "0--100", "22.47 (16.32)", "30.86 (27.13)", "19.40 (23.56)",
+  "Happy", "0--100", "45.48 (17.91)", "31.26 (23.68)", "53.80 (27.49)",
+  "Satisfied", "0--100", "38.09 (17.65)", "26.94 (22.73)", "50.83 (29.09)",
+  "Perceived threat", "0--5", "1.71 (0.70)", "2.30 (1.22)", "1.64 (1.14)",
+  "Pleasantness", "-2--2", "0.08 (0.52)", "-0.52 (0.87)", "0.44 (1.04)",
+  "Negative appraisal composite", "0--10", "4.11 (1.20)", "5.46 (2.09)", "3.59 (2.19)"
+)
+
+knitr::kable(
+  mc_descriptives,
+  col.names = c("Measure", "Scale", "Baseline $M$ ($SD$)", "Pre-exam $M$ ($SD$)", "Post-exam $M$ ($SD$)"),
+  caption = "Subject-timepoint descriptive statistics for EMA manipulation-check items and composites.",
+  escape = FALSE,
+  booktabs = TRUE
+)
+```
+
+Internal consistency diagnostics supported the use of the four keyed affect items as a descriptive composite: Cronbach's alpha based on subject-by-timepoint means was .80 (mean inter-item $r$ = .50). For the two appraisal components, the two-item alpha/Spearman-Brown coefficient was .78/.78 (inter-item $r$ = .64). Because the appraisal score combines two conceptually distinct single-item facets, this coefficient is reported only as a descriptive diagnostic rather than as evidence that threat and pleasantness form a unidimensional scale.
+
+For posterior summaries, we used the same inferential logic as in the main analyses: the posterior median summarizes the central tendency, the 89% equal-tailed CrI summarizes magnitude uncertainty, and the probability of direction is treated as a continuous index of directional evidence rather than as a decision rule. The pre-exam prompt showed higher negative affect than the baseline EMA period, higher threat, and lower pleasantness. Post-exam negative affect decreased relative to the pre-exam prompt, consistent with relief after exam completion and grade feedback. This pattern supports the interpretation of the pre-exam assessment as an anticipatory-stress phase.
+
+```{r table-s-mc-contrasts}
+library(knitr)
+library(kableExtra) # <--- Pacchetto necessario
+
+mc_contrasts <- tibble::tribble(
+  ~Outcome, ~Contrast, ~Estimate, ~CrI_89, ~Direction_probability,
+  "Negative affect composite (0--400)", "PRE - BASELINE", "43.92", "[31.73, 55.99]", "Pr($\\Delta$ > 0) = 1.00",
+  "Perceived threat (0--5)", "PRE - BASELINE", "0.60", "[0.43, 0.77]", "Pr($\\Delta$ > 0) = 1.00",
+  "Pleasantness (-2--2)", "PRE - BASELINE", "-0.61", "[-0.76, -0.46]", "Pr($\\Delta$ < 0) = 1.00",
+  "Negative affect composite (0--400)", "POST - PRE", "-69.70", "[-81.81, -57.59]", "Pr($\\Delta$ < 0) = 1.00",
+  "Negative appraisal composite (0--10)", "PRE - BASELINE", "1.36", "[1.03, 1.70]", "Pr($\\Delta$ > 0) = 1.00",
+  "Negative appraisal composite (0--10)", "POST - PRE", "-1.88", "[-2.22, -1.54]", "Pr($\\Delta$ < 0) = 1.00",
+  "Negative appraisal composite (0--10)", "POST - BASELINE", "-0.52", "[-0.86, -0.18]", "Pr($\\Delta$ < 0) = 0.99"
+)
+
+knitr::kable(
+  mc_contrasts,
+  col.names = c("Outcome", "Contrast", "Posterior median", "89\\% CrI", "Directional probability"),
+  caption = "Bayesian manipulation-check contrasts. CrIs are 89\\% equal-tailed intervals and are not used as significance tests.",
+  escape = FALSE,
+  booktabs = TRUE
+) %>%
+  kable_styling(latex_options = c("scale_down", "hold_position"))
+```
+
+
+
+## Definition and psychological significance of the three principal acoustic features
+
+Table\ \ref{tab:acoustic-features} summarizes the definition, physiological basis, and psychological significance of the three principal acoustic features discussed in this literature.
+
+\begin{table}[p]
+\centering
+\caption{Principal Acoustic Features of Speech: Definitions and Psychological Significance}
+\label{tab:acoustic-features}
+\begin{threeparttable}
+\scriptsize
+\begin{tabular}{p{2.4cm} p{3.2cm} p{2.6cm} p{3.0cm}}
+\hline
+Feature & Definition & Physiological basis & Psychological significance \\
+\hline
+Fundamental frequency (F0) & Rate of vocal fold vibration (Hz); acoustic correlate of perceived pitch & 
+Cricothyroid and vocalis muscle tension regulates vocal fold stiffness and vibratory rate & 
+Most robust acoustic marker of stress: F0 increases reliably under acute stress, cognitive load, and evaluative threat via sympathetic activation \\[4pt]
+
+Normalized Noise Energy (NNE) & Ratio of inharmonic to harmonic spectral energy (dB); index of glottal noise & 
+Degree of glottal closure completeness during phonation & 
+Reflects phonatory control and vocal effort; stress may increase noise (incomplete closure under arousal) or decrease it (compensatory hyperadduction and pressed phonation) \\[4pt]
+
+Jitter\textsuperscript{a} & Cycle-to-cycle variation in F0 period (\%); measure of frequency perturbation & 
+Irregularity of successive vocal fold vibratory cycles & 
+Proposed as an index of vocal instability and reduced neuromuscular control; elevated in some emotional and clinical states \\
+\hline
+\end{tabular}
+
+\begin{tablenotes}[para,flushleft]
+\footnotesize
+\item \textit{Note.} F0 and NNE were retained as primary outcome variables in the present study. 
+\textsuperscript{a}Jitter was extracted but not included in the main analyses for the following reasons: 
+(a) the literature on jitter and psychological stress is inconsistent, with effect sizes that are small, heterogeneous in direction, and often non-significant across studies (Giddens et al., 2013); 
+(b) jitter is highly sensitive to recording conditions, signal-to-noise ratio, and extraction algorithm parameters, resulting in substantial measurement noise in field settings (Titze, 1994); and 
+(c) unlike F0 and NNE, which index theoretically distinct mechanisms (autonomic arousal vs.\ phonatory control), jitter does not map onto a clearly separable psychophysiological pathway, limiting its interpretive value in the context of personality moderation hypotheses.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+## Cross-vowel convergence
+
+### Cross-vowel convergence of F0
+
+Because the primary F0 outcome was computed as the mean of the three sustained vowels (/a/, /i/, and /u/), we conducted an additional cross-vowel convergence analysis to verify that the F0 signal was not driven by one specific vowel. The analysis included the same 119 participants used in the main F0 models, with complete F0 data for all three vowels at baseline, pre-exam, and post-exam assessments, yielding 357 voice observations.
+
+First, we examined the pairwise associations among F0 values extracted from /a/, /i/, and /u/. Across all timepoints pooled, the three vowels were strongly associated, with Spearman correlations ranging from .87 to .89. The same pattern was observed within each timepoint: correlations ranged from .84 to .89 at baseline, from .86 to .92 pre-exam, and from .88 to .90 post-exam. Thus, absolute F0 values showed high convergence across the three sustained vowels.
+
+Second, we examined whether F0 change scores were also consistent across vowels. Stress-related changes, defined as PRE − BASELINE, were moderately to strongly associated across vowels, with Spearman correlations ranging from .64 to .83. Recovery-related changes, defined as POST − PRE, showed a similar pattern, with correlations ranging from .69 to .80. Total changes from BASELINE to POST were also convergent across vowels, with correlations ranging from .63 to .77. These results indicate that the temporal F0 response was not specific to a single vowel.
+
+Third, we estimated the reliability of the cross-vowel F0 composite. The consistency reliability of the three-vowel mean was high for absolute F0 values, ICC(3,k) = .97, 95% CI [.96, .97]. Reliability remained high when computed separately by timepoint: ICC(3,k) = .97 at baseline, .95 pre-exam, and .98 post-exam. Reliability was also adequate for the change-score composites: ICC(3,k) = .83, 95% CI [.77, .88], for PRE − BASELINE changes; ICC(3,k) = .82, 95% CI [.76, .87], for POST − PRE changes; and ICC(3,k) = .87, 95% CI [.83, .91], for POST − BASELINE changes.
+
+Finally, as a sensitivity check, we fitted a mixed-effects model in which F0 was predicted by the stress and recovery contrasts, vowel, and the interactions between vowel and the two time contrasts, with random intercepts for participant and observation. Adding the vowel-by-time interactions produced little improvement in fit (likelihood-ratio χ²(4) = 7.70, p = .103), and the estimated PRE − BASELINE F0 increase was positive for all three vowels: /a/ = 3.77 Hz, /i/ = 2.73 Hz, and /u/ = 3.94 Hz.
+
+Overall, these analyses support the use of the cross-vowel F0 mean as a stable aggregate. F0 values were highly concordant across /a/, /i/, and /u/, and stress-related F0 changes showed moderate-to-strong cross-vowel convergence. The primary F0 findings therefore do not appear to be driven by a single sustained vowel.
+
+### Cross-vowel convergence of NNE
+
+Because the primary NNE outcome was computed as the mean of the three sustained vowels (/a/, /i/, and /u/), we conducted an additional cross-vowel convergence analysis to evaluate whether the NNE signal generalized across vowels or was primarily driven by a single vowel. The analysis included 141 participants with complete NNE data for all three vowels at baseline, pre-exam, and post-exam assessments, yielding 423 voice observations.
+
+First, we examined pairwise associations among NNE values extracted from /a/, /i/, and /u/. Across all timepoints pooled, cross-vowel Spearman correlations were moderate, ranging from .40 to .67. The same pattern was observed within timepoint: correlations ranged from .30 to .67 at baseline, from .46 to .69 pre-exam, and from .41 to .63 post-exam. Thus, absolute NNE values showed moderate convergence across vowels, with the strongest associations generally observed between /i/ and /u/.
+
+Second, we examined whether NNE change scores were also consistent across vowels. Stress-related changes, defined as PRE − BASELINE, showed moderate cross-vowel convergence, with pairwise Spearman correlations ranging from .30 to .47. Recovery-related changes, defined as POST − PRE, showed a similar pattern, with correlations ranging from .27 to .46. Total changes from BASELINE to POST were also moderately associated across vowels, with correlations ranging from .26 to .42. These results indicate that NNE change scores were not vowel-specific, although cross-vowel convergence was weaker than for F0.
+
+Third, we estimated the reliability of the three-vowel NNE composite. The consistency reliability of the cross-vowel mean was acceptable for absolute NNE values, ICC(3,k) = .75, 95% CI [.71, .79]. Reliability was similar when estimated separately by timepoint: ICC(3,k) = .71 at baseline, .79 pre-exam, and .74 post-exam. Reliability for change-score composites was lower but still acceptable: ICC(3,k) = .65, 95% CI [.54, .74], for PRE − BASELINE changes; ICC(3,k) = .70, 95% CI [.60, .78], for POST − PRE changes; and ICC(3,k) = .60, 95% CI [.48, .71], for POST − BASELINE changes.
+
+Finally, as a sensitivity check, we fitted a mixed-effects model in which NNE was predicted by the stress and recovery contrasts, vowel, and the interactions between vowel and the two time contrasts, with random intercepts for participant and observation. Adding the vowel-by-time interactions produced essentially no improvement in fit (likelihood-ratio χ²(4) = 4.15, p = .387), and the estimated PRE − BASELINE NNE change was negative for all three vowels, although its magnitude varied across vowels: /a/ = −1.05, /i/ = −0.18, and /u/ = −0.72.
+
+Overall, these analyses support the use of the cross-vowel NNE mean as a reasonable aggregate. NNE showed moderate cross-vowel convergence, acceptable reliability of the three-vowel composite, and little indication that the temporal NNE pattern differed by vowel. At the same time, convergence was weaker than for F0, suggesting that NNE may be more vowel-sensitive and that NNE-based findings should be interpreted with somewhat greater caution.
+
+## Voice Outcomes by Assessment Period
+
+Tables S5 and S6 report descriptive statistics for the two primary voice outcomes—fundamental frequency (F0) and normalized noise energy (NNE)—across the three assessment periods.
+
+```{r table-s4-voice}
+S4_display <- data.frame(
+  Period = c("Baseline", "Pre-exam", "Post-exam"),
+  n = c(119, 119, 119),
+  F0_M = c(191.11, 194.81, 192.63),
+  F0_SD = c(21.30, 21.36, 23.12),
+  NNE_M = c(-26.43, -27.12, -26.93),
+  NNE_SD = c(2.63, 3.25, 2.87)
+)
+
+knitr::kable(
+  S4_display,
+  col.names = c("Period", "$n$", "F0 $M$ (Hz)", "F0 $SD$", "NNE $M$ (dB)", "NNE $SD$"),
+  digits = 2,
+  caption = "Voice outcome descriptives by assessment period.",
+  escape = FALSE,
+  booktabs = TRUE
+)
+```
+
+Across periods, mean F0 increased from Baseline (191.1 Hz) to Pre-exam (194.8 Hz) and decreased slightly at Post-exam (192.6 Hz), consistent with anticipatory stress-related elevation in pitch followed by partial recovery. NNE showed more negative values (indicating reduced glottal noise) from Baseline to Pre-exam, with partial return toward Baseline in the Post-exam period.
+
+Table S6 summarizes within-person variability across the three assessment periods, reporting the distribution of participant-specific standard deviations.
+
+```{r table-s5-voice-variability}
+S5_display <- data.frame(
+  Variable = c("F0 within-person $SD$ (Hz)", "NNE within-person $SD$ (dB)"),
+  n = c(119, 119),
+  Mean_SD = c(7.44, 1.73),
+  SD_of_SDs = c(5.47, 1.11),
+  Min_SD = c(0.00, 0.00),
+  Max_SD = c(28.76, 5.58)
+)
+
+knitr::kable(
+  S5_display,
+  col.names = c("Variable", "$n$", "Mean $SD$", "$SD$ of $SD$s", "Min $SD$", "Max $SD$"),
+  digits = 2,
+  caption = "Within-person variability in voice parameters across periods.",
+  escape = FALSE,
+  booktabs = TRUE
+)
+```
+
+## EMA Personality Domain Descriptives
+
+EMA-based PID-5 domain descriptives are reported separately for between-person variability (Table S7) and within-person variability (Table S8).
+
+```{r table-s6-ema-between}
+S6_display <- data.frame(
+  Domain = c("Negative Affectivity", "Detachment", "Antagonism",
+             "Disinhibition", "Psychoticism"),
+  n = c(119, 119, 119, 119, 119),
+  M = c(4.53, 2.04, 0.87, 2.46, 1.25),
+  SD = c(1.62, 1.62, 1.17, 1.29, 1.44),
+  Min = c(0.71, 0.00, 0.00, 0.10, 0.00),
+  Max = c(8.08, 6.19, 5.29, 5.80, 5.73)
+)
+
+knitr::kable(
+  S6_display,
+  col.names = c("Domain", "$n$", "$M$", "$SD$", "Min", "Max"),
+  digits = 2,
+  caption = "EMA PID-5 descriptives: between-person variability (person means across occasions).",
+  escape = FALSE,
+  booktabs = TRUE
+)
+```
+
+```{r table-s7-ema-within}
+S7_display <- data.frame(
+  Domain = c("Negative Affectivity", "Detachment", "Antagonism",
+             "Disinhibition", "Psychoticism"),
+  n = c(119, 119, 119, 119, 119),
+  M_of_SD = c(1.32, 1.20, 0.71, 1.17, 0.93),
+  SD_of_SDs = c(0.42, 0.62, 0.65, 0.45, 0.68),
+  Min_SD = c(0.57, 0.00, 0.00, 0.30, 0.00),
+  Max_SD = c(2.42, 3.04, 2.84, 2.31, 2.93)
+)
+
+knitr::kable(
+  S7_display,
+  col.names = c("Domain", "$n$", "$M$ of $SD$", "$SD$ of $SD$s", "Min $SD$", "Max $SD$"),
+  digits = 2,
+  caption = "EMA PID-5 descriptives: within-person variability (participant $SD$s across occasions).",
+  escape = FALSE,
+  booktabs = TRUE
+)
+```
+
+Between-person descriptives indicate substantial inter-individual variability in EMA trait levels, while within-person descriptives indicate meaningful intra-individual fluctuation across repeated assessments. This pattern is consistent with the multilevel measurement model used to estimate latent trait scores and propagate measurement uncertainty into moderation effects.
+
+\newpage
+
+# Statistical Models
+
+## Main Effects of Exam-Related Stress on Vocal Parameters
+
+All analyses used hierarchical Bayesian models implemented in Stan via the rstan package, with four chains of 4,000 iterations each (2,000 warmup). Convergence was verified through R-hat statistics (all < 1.01) and trace plot inspection. We report posterior medians with the probability of direction (pd) as the primary index of evidence and 89% equal-tailed credible intervals (CrIs) as summaries of magnitude uncertainty; see *Inferential Framework and Reporting* below.
+
+### Research Question
+
+Before examining personality moderation, we first examine whether exam-related stress produces systematic changes in vocal acoustics. This model addresses the foundational question: Do vocal parameters (F0, NNE) change systematically across the three assessment phases—baseline, pre-exam (anticipatory stress), and post-exam (recovery)?
+
+### Inferential Framework and Reporting
+
+All analyses were conducted within a Bayesian estimation framework, and we report and
+interpret full posterior distributions rather than dichotomous accept/reject decisions
+about individual parameters. Our inferential aim was to characterize the *direction*,
+*relative strength*, and *uncertainty* of the estimated associations and to interpret the
+overall pattern of results across parameters. For an exploratory study with a modest
+sample, this is the scientifically informative output of the analysis, whereas a binary
+verdict on each parameter would discard most of that information and invite the very
+significance-testing logic that a Bayesian treatment is meant to supersede
+[@kruschke2018bayesian; @mcelreath2018statistical].
+
+We summarize each parameter with three complementary quantities.
+
+1. **Posterior median** — a point summary of the most probable parameter value given the
+   model and the data.
+
+2. **Probability of direction (pd)** — the posterior probability that the parameter takes
+   its more probable sign, $pd = max[P(\theta > 0), P(\theta < 0)]$ [@makowski2019indices]. The $pd$ is our primary index of evidence. It ranges from .50 (the sign is completely uncertain) to
+   1.00 (the sign is effectively certain) and has a direct verbal reading: a $pd$ of .97
+   means that, given the model and data, there is a 97% posterior probability that the
+   effect lies in the stated direction. This is a probability statement *about the
+   parameter*, which is available only in the Bayesian framework; under the frequentist
+   framework the parameter is a fixed unknown and no probability can be attached to it. We
+   treat the $pd$ as a *continuous* index of directional evidence and deliberately impose no
+   threshold above which an effect is declared "present"; we report it for every parameter
+   and interpret the gradient of values.
+
+3. **89% credible interval (equal-tailed)** — the central 89% of the posterior, reported
+   as a summary of the *magnitude uncertainty* of the estimate. This interval is **not** a
+   significance test: whether or not it includes zero carries no special inferential
+   status, and we do not interpret it that way. The 89% width (rather than 95%) is chosen
+   deliberately and follows @mcelreath2018statistical: Any interval width is arbitrary, and using a
+   value other than 95% signals that the number is a descriptive convenience rather than a
+   decision boundary, discouraging the reflexive mapping of "the 95% interval excludes
+   zero" onto "$p$ < .05." A 50% interval, or any other width, would serve the same
+   descriptive purpose; what matters is the location and spread of the posterior mass, not
+   a cutoff.
+
+Two consequences of this framework are worth making explicit. First, **we draw conclusions
+from the pattern of results across the full set of parameters, not from the status of any
+single estimate.** The claim that personality moderation of vocal stress responses is
+domain- and phase-specific rests on the *joint* configuration of directional probabilities
+across the ten F0 and ten NNE moderation parameters, not on any one interaction crossing a
+threshold. Second, **direction is better identified than magnitude.** As shown in the
+prior-sensitivity analysis (Supplement, *Prior-Sensitivity Analysis*), the sign and
+directional probability of the moderation effects are robust across prior specifications,
+whereas their point magnitudes are only weakly constrained by the present sample. We
+therefore foreground direction and directional evidence ($pd$) and treat all reported
+magnitudes — and the widths of their credible intervals — as estimates carrying
+substantial uncertainty [@gelman2014beyond].
+
+We did not use Bayes factors or region-of-practical-equivalence (ROPE) decision rules.
+Bayes factors reintroduce a thresholded, model-selection logic and are sensitive to the
+prior on the parameter under test — undesirable here, since the prior-sensitivity analysis
+shows the moderation magnitudes to be prior-dependent. A ROPE would require specifying a
+region of practical equivalence in the original vocal units (Hz, dB), for which there is no
+established basis in this novel measurement context. The probability of direction provides
+a more transparent and assumption-light summary of the evidence for our exploratory,
+directional questions.
+
+### Model Specification
+
+The model is a standard Bayesian hierarchical (multilevel) linear regression with repeated measures nested within participants. Stress effects are parameterized using two orthogonal contrasts:
+
+- **Stress contrast ($c_1$)**: Compares pre-exam to baseline, capturing anticipatory stress-induced change.
+- **Recovery contrast ($c_2$)**: Compares post-exam to pre-exam, capturing post-stressor trajectory.
+
+Let $y_n$ denote the vocal outcome for observation $n$, with participant index $s[n]$. The model specifies:
+
+$$
+y_n \sim \text{Normal}(\mu_n, \sigma_y)
+$$
+
+where the linear predictor includes both fixed and random effects:
+
+$$
+\mu_n = \alpha + u_{0,s} + (\beta_1 + u_{1,s}) \cdot c_{1n} + (\beta_2 + u_{2,s}) \cdot c_{2n}
+$$
+
+The parameters are:
+
+- $\alpha$: Grand intercept (population-average baseline vocal level).
+- $\beta_1$: Population-average stress effect (pre-exam vs. baseline).
+- $\beta_2$: Population-average recovery effect (post-exam vs. pre-exam).
+- $u_{0,s}$: Participant-specific random intercept.
+- $u_{1,s}$: Participant-specific random slope for stress.
+- $u_{2,s}$: Participant-specific random slope for recovery.
+- $\sigma_y$: Residual standard deviation.
+
+The random effects capture individual differences in baseline vocal characteristics ($u_0$), stress reactivity ($u_1$), and recovery patterns ($u_2$). A non-centered parameterization is used for computational efficiency:
+
+$$
+u_{k,s} = \tau_k \cdot z_{k,s}, \quad z_{k,s} \sim \text{Normal}(0, 1)
+$$
+
+where $\tau_k$ are the random effect standard deviations.
+
+### Prior Specification
+
+Priors were chosen to be weakly informative, incorporating domain knowledge about plausible parameter ranges while allowing the data to dominate inference (Table S9).
+
+```{r table-s8-priors-main}
+priors_main <- data.frame(
+  Parameter = c("$\\alpha$", "$\\beta_1, \\beta_2$", "$\\tau_k$", "$\\sigma_y$"),
+  Prior = c("Normal(220, 30)", "Normal(0, 10)", "Exponential(0.5)", "Exponential(0.1)"),
+  Rationale = c("Centered on typical female F0 (Hz)", 
+                "Weakly informative; allows effects up to $\\pm$20 Hz",
+                "Weakly informative for random effect SDs",
+                "Allows residual SD in plausible range")
+)
+
+knitr::kable(
+  priors_main,
+  col.names = c("Parameter", "Prior", "Rationale"),
+  caption = "Prior specifications for the main effects model.",
+  escape = FALSE,
+  booktabs = TRUE
+)
+```
+
+### Interpretation
+
+The key parameters of interest are $\beta_1$ (stress effect) and $\beta_2$ (recovery effect):
+
+- A positive $\beta_1$ indicates that F0 increases from baseline to pre-exam, consistent with heightened autonomic arousal elevating vocal pitch.
+- A negative $\beta_2$ would indicate that F0 decreases from pre-exam to post-exam, suggesting recovery toward baseline levels.
+
+The random effect standard deviations ($\tau_1$, $\tau_2$, $\tau_3$) quantify the degree of individual differences in baseline levels, stress reactivity, and recovery patterns. Large values of $\tau_2$ or $\tau_3$ would indicate substantial heterogeneity in how participants respond to stress—heterogeneity that might be explained by personality traits, motivating the moderation analyses presented in the next section.
+
+The `generated quantities` block produces posterior predictive samples for model checking and pointwise log-likelihoods for model comparison via LOO-CV.
+
+
+## Supplementary Sensitivity Analysis for Main Effects: Robust Student-t Models
+
+To assess whether the main findings were sensitive to the Gaussian residual assumption and to the influence of potentially outlying observations, we fitted robust versions of the main-effects models for both acoustic outcomes: mean fundamental frequency, F0, and normalized noise energy, NNE. The robust models retained the same fixed-effect structure as the primary models, with two planned contrasts: stress, comparing PRE with BASELINE, and recovery, comparing POST with PRE. The hierarchical structure was also retained, but the subject-level random intercepts and random slopes were modeled as correlated random effects. The residual likelihood was changed from Gaussian to Student-t with fixed degrees of freedom, $\nu$ = 4, providing heavier tails and therefore reduced sensitivity to influential observations.
+
+The robust models were fitted as sensitivity analyses rather than as entirely separate substantive models. Thus, the key question was whether the direction, magnitude, and uncertainty of the stress and recovery effects remained consistent with the original Gaussian models, and whether the robust specification improved predictive diagnostics.
+
+```stan
+// ========================================================================
+// f0_main_effects_student_t_corr.stan
+// Hierarchical Bayesian model for F0 mean
+// Main effects of stress (PRE vs BASELINE) and recovery (POST vs PRE)
+// Robust Student-t likelihood + correlated random effects
+// ========================================================================
+
+data {
+  int<lower=1> N_subj;                              
+  int<lower=1> N_obs;                              
+  array[N_obs] int<lower=1, upper=N_subj> subj_id;  
+  vector[N_obs] y;                                  
+  vector[N_obs] c1;                                
+  vector[N_obs] c2;                                 
+}
+transformed data {
+  real<lower=2> nu = 4;                             
+}
+parameters {
+  real alpha;                                       
+  real b1;                                          
+  real b2;                                          
+  // Correlated random effects, non-centered parameterization
+  matrix[3, N_subj] z_u;                            
+  vector<lower=0>[3] tau;                           
+  cholesky_factor_corr[3] L_Omega;                  
+  real<lower=0> sigma_y;                            
+}
+transformed parameters {
+  // u[s, 1] = random intercept for subject s
+  // u[s, 2] = random slope for c1 for subject s
+  // u[s, 3] = random slope for c2 for subject s
+  matrix[N_subj, 3] u;
+  u = (diag_pre_multiply(tau, L_Omega) * z_u)';
+}
+model {
+  alpha ~ normal(220, 30);  // typical F0 scale, weakly informative
+  b1 ~ normal(0, 10);       // stress effect
+  b2 ~ normal(0, 10);       // recovery effect
+  tau ~ exponential(0.5);
+  L_Omega ~ lkj_corr_cholesky(2);
+  to_vector(z_u) ~ std_normal();
+  sigma_y ~ exponential(0.1);
+  for (n in 1:N_obs) {
+    int s = subj_id[n];
+    real mu = alpha + u[s, 1]
+            + (b1 + u[s, 2]) * c1[n]
+            + (b2 + u[s, 3]) * c2[n];
+    y[n] ~ student_t(nu, mu, sigma_y);
+  }
+}
+generated quantities {
+  corr_matrix[3] Omega;
+  vector[N_obs] y_rep;
+  vector[N_obs] log_lik;
+  vector[N_subj] log_lik_subj;
+  Omega = multiply_lower_tri_self_transpose(L_Omega);
+  log_lik_subj = rep_vector(0, N_subj);
+  for (n in 1:N_obs) {
+    int s = subj_id[n];
+    real mu = alpha + u[s, 1]
+            + (b1 + u[s, 2]) * c1[n]
+            + (b2 + u[s, 3]) * c2[n];
+
+    y_rep[n] = student_t_rng(nu, mu, sigma_y);
+    log_lik[n] = student_t_lpdf(y[n] | nu, mu, sigma_y);
+    log_lik_subj[s] += student_t_lpdf(y[n] | nu, mu, sigma_y);
+  }
+}
+```
+
+```stan
+// ========================================================================
+// nne_main_effects_student_t_corr.stan
+// Hierarchical Bayesian model for Normalized Noise Energy (NNE)
+// Main effects of stress (PRE vs BASELINE) and recovery (POST vs PRE)
+// Robust Student-t likelihood + correlated random effects
+// ========================================================================
+
+data {
+  int<lower=1> N_subj;                              
+  int<lower=1> N_obs;                              
+  array[N_obs] int<lower=1, upper=N_subj> subj_id;  
+  vector[N_obs] y;                                  
+  vector[N_obs] c1;                                 
+  vector[N_obs] c2;                                
+}
+transformed data {
+  real<lower=2> nu = 4;                            
+}
+parameters {
+  real alpha;                                      
+  real b1;                                         
+  real b2;                                         
+  // Correlated random effects, non-centered parameterization
+  matrix[3, N_subj] z_u;                           
+  vector<lower=0>[3] tau;                          
+  cholesky_factor_corr[3] L_Omega;                 
+  real<lower=0> sigma_y;                           
+}
+transformed parameters {
+  // u[s, 1] = random intercept for subject s
+  // u[s, 2] = random slope for c1 for subject s
+  // u[s, 3] = random slope for c2 for subject s
+  matrix[N_subj, 3] u;
+  u = (diag_pre_multiply(tau, L_Omega) * z_u)';
+}
+model {
+  // Priors for fixed effects
+  alpha ~ normal(-28, 5);  // typical NNE values around -20 to -30 dB
+  b1 ~ normal(0, 5);       // stress effect
+  b2 ~ normal(0, 5);       // recovery effect
+  tau ~ exponential(0.2);
+  L_Omega ~ lkj_corr_cholesky(2);
+  to_vector(z_u) ~ std_normal();
+  sigma_y ~ exponential(0.2);
+  for (n in 1:N_obs) {
+    int s = subj_id[n];
+    real mu = alpha + u[s, 1]
+            + (b1 + u[s, 2]) * c1[n]
+            + (b2 + u[s, 3]) * c2[n];
+    y[n] ~ student_t(nu, mu, sigma_y);
+  }
+}
+generated quantities {
+  corr_matrix[3] Omega;
+  vector[N_obs] y_rep;
+  vector[N_obs] log_lik;
+  vector[N_subj] log_lik_subj;
+  Omega = multiply_lower_tri_self_transpose(L_Omega);
+  log_lik_subj = rep_vector(0, N_subj);
+  for (n in 1:N_obs) {
+    int s = subj_id[n];
+    real mu = alpha + u[s, 1]
+            + (b1 + u[s, 2]) * c1[n]
+            + (b2 + u[s, 3]) * c2[n];
+    y_rep[n] = student_t_rng(nu, mu, sigma_y);
+    log_lik[n] = student_t_lpdf(y[n] | nu, mu, sigma_y);
+    log_lik_subj[s] += student_t_lpdf(y[n] | nu, mu, sigma_y);
+  }
+}
+```
+
+We report posterior medians, MADs, and central 89% credible intervals, computed as the 5.5th and 94.5th posterior percentiles.
+
+### F0 model
+
+For F0, the original Gaussian model estimated a positive stress effect, with a median effect of 3.27 Hz, MAD = 1.25, and an 89% credible interval from 1.25 to 5.27 Hz. The posterior probability that the stress effect was positive was 0.995. In the robust Student-t model, the estimated stress effect was smaller, with a median of 2.30 Hz, MAD = 1.14, and an 89% credible interval from 0.47 to 4.16 Hz. The posterior probability that the stress effect was positive remained high, pd = 0.979.
+
+Thus, the robust model attenuated the estimated F0 stress effect by approximately 0.97 Hz, but the effect remained positive, with a high probability of direction (pd = 0.979).
+
+For the recovery contrast, the original Gaussian model showed essentially no clear effect, median = 0.14 Hz, MAD = 1.24, 89% CrI [-1.89, 2.11], with P(b2 > 0) = 0.542. The robust model estimated a slightly negative recovery effect, median = -0.39 Hz, MAD = 1.14, 89% CrI [-2.21, 1.41], with P(b2 > 0) = 0.368. This result remains compatible with no clear recovery effect.
+
+| Outcome |            Model | Parameter    | Median |  MAD |        89% CI | Directional probability |
+| ------- | ---------------: | ------------ | -----: | ---: | ------------: | ----------------------: |
+| F0      |         Gaussian | Stress, b1   |   3.27 | 1.25 |  [1.25, 5.27] |       P(b1 > 0) = 0.995 |
+| F0      | Robust Student-t | Stress, b1   |   2.30 | 1.14 |  [0.47, 4.16] |       P(b1 > 0) = 0.979 |
+| F0      |         Gaussian | Recovery, b2 |   0.14 | 1.24 | [-1.89, 2.11] |       P(b2 > 0) = 0.542 |
+| F0      | Robust Student-t | Recovery, b2 |  -0.39 | 1.14 | [-2.21, 1.41] |       P(b2 > 0) = 0.368 |
+
+The residual scale parameter was lower in the robust model, median $\sigma$ = 6.52, 89% CrI [5.93, 7.16]. Because this is the scale parameter of a Student-t likelihood rather than a Gaussian residual standard deviation, it should not be interpreted as directly equivalent to the Gaussian residual standard deviation.
+
+### NNE model
+
+For NNE, the original Gaussian model estimated a negative stress effect, median = -0.65 dB, MAD = 0.28, 89% CrI [-1.10, -0.21], with P(b1 < 0) = 0.990. The robust Student-t model produced a somewhat larger negative estimate, median = -0.79 dB, MAD = 0.27, 89% CrI [-1.21, -0.36], with P(b1 < 0) = 0.998.
+
+Thus, the NNE stress effect was not weakened by the robust specification. Instead, the robust model slightly strengthened the estimated negative stress-related change in NNE.
+
+For the recovery contrast, the original Gaussian model estimated a small negative effect, median = -0.22 dB, MAD = 0.28, 89% CI [-0.67, 0.23], with P(b2 > 0) = 0.219. The robust model estimated a somewhat more negative effect, median = -0.32 dB, MAD = 0.25, 89% CI [-0.73, 0.09], with P(b2 > 0) = 0.105. Although directional evidence remained modest (pd = 0.895), the robust model shifted the recovery estimate in a more negative direction.
+
+| Outcome |            Model | Parameter    | Median |  MAD |         89% CI | Directional probability |
+| ------- | ---------------: | ------------ | -----: | ---: | -------------: | ----------------------: |
+| NNE     |         Gaussian | Stress, b1   |  -0.65 | 0.28 | [-1.10, -0.21] |       P(b1 < 0) = 0.990 |
+| NNE     | Robust Student-t | Stress, b1   |  -0.79 | 0.27 | [-1.21, -0.36] |       P(b1 < 0) = 0.998 |
+| NNE     |         Gaussian | Recovery, b2 |  -0.22 | 0.28 |  [-0.67, 0.23] |       P(b2 > 0) = 0.219 |
+| NNE     | Robust Student-t | Recovery, b2 |  -0.32 | 0.25 |  [-0.73, 0.09] |       P(b2 > 0) = 0.105 |
+
+The Student-t residual scale for NNE was median σ = 1.44, 89% CrI [1.28, 1.60]. As for F0, this parameter indexes the scale of the Student-t residual distribution and is not directly comparable to the Gaussian residual standard deviation.
+
+### Predictive comparison using PSIS-LOO
+
+The robust models improved the approximate leave-one-observation-out cross-validation diagnostics. In the original Gaussian models, some observations had problematic Pareto-k values, indicating sensitivity to influential observations. In contrast, both robust Student-t models had all Pareto-k estimates below 0.7, indicating reliable PSIS-LOO estimates.
+
+For F0, the robust model had better expected log predictive density than the Gaussian model. The LOO comparison favored the robust model by 16.3 elpd units, SE = 5.9. This indicates improved expected out-of-sample predictive performance for the robust model, albeit estimated with uncertainty.
+
+For NNE, the robust model was also preferred, with an elpd improvement of 12.9 units, SE = 6.9. This difference is smaller relative to its standard error and correspondingly less certain.
+
+| Outcome | Preferred model  | elpd difference for Gaussian vs robust | SE difference | Interpretation                    |
+| ------- | ---------------- | -------------------------------------: | ------------: | --------------------------------- |
+| F0      | Robust Student-t |                                  -16.3 |           5.9 | Robust model clearly preferred    |
+| NNE     | Robust Student-t |                                  -12.9 |           6.9 | Robust model moderately preferred |
+
+Here, negative elpd differences indicate worse expected predictive accuracy for the Gaussian model relative to the robust Student-t model.
+
+### Interpretation
+
+Overall, the sensitivity analysis supports the robustness of the main inferential conclusions. The stress effect remained positive for F0 and negative for NNE under the robust Student-t specification. The F0 stress effect was attenuated but remained directionally strong and credibly positive. The NNE stress effect was slightly strengthened, with very high posterior probability for a negative effect.
+
+The recovery effects were less stable and remained uncertain in both outcomes. For F0, the recovery effect was close to zero in the Gaussian model and slightly negative in the robust model, with directional probabilities near chance in both cases. For NNE, the recovery effect became more negative in the robust model, but uncertainty remained sufficient that this effect should be interpreted cautiously.
+
+The robust models also improved predictive diagnostics. The elimination of problematic Pareto-k values suggests that the Student-t likelihood successfully reduced the influence of observations that were poorly handled by the Gaussian residual model. Because the substantive conclusions for the stress contrast were preserved while predictive diagnostics improved, the robust Student-t models provide a useful confirmation of the primary findings and may be preferred for sensitivity reporting.
+
+### Summary
+
+As a sensitivity analysis, we refitted the main-effects models using a robust Student-t residual likelihood with $\nu$ = 4 and correlated subject-level random effects. This specification was intended to assess whether the Gaussian models were sensitive to influential observations. For F0, the robust model estimated a positive stress effect, median = 2.30 Hz, MAD = 1.14, 89% CrI [0.47, 4.16], P(b1 > 0) = 0.979, compared with median = 3.27 Hz, MAD = 1.25, 89% CrI [1.25, 5.27], P(b1 > 0) = 0.995 in the Gaussian model. For NNE, the robust model estimated a negative stress effect, median = -0.79 dB, MAD = 0.27, 89% CrI [-1.21, -0.36], P(b1 < 0) = 0.998, compared with median = -0.65 dB, MAD = 0.28, 89% CrI [-1.10, -0.21], P(b1 < 0) = 0.990 in the Gaussian model. Recovery effects remained uncertain in both outcomes. PSIS-LOO comparisons favored the robust models over the Gaussian models for both F0, elpd difference = 16.3, SE = 5.9, and NNE, elpd difference = 12.9, SE = 6.9. Moreover, all Pareto-k estimates were below 0.7 in the robust models, indicating reliable LOO estimates. These results suggest that the main stress effects are robust to a heavy-tailed residual specification and that the Student-t models provide improved predictive diagnostics.
+
+## Personality Moderation of Vocal Stress Responses
+
+### Research Question
+
+The central question addressed by this model is whether the effect of exam-related stress on vocal acoustics (F0, NNE) is moderated by individual differences in personality pathology. Specifically, we ask: Do the five PID-5 domains—Negative Affectivity, Detachment, Antagonism, Disinhibition, and Psychoticism—differentially amplify or attenuate the stress-induced changes in vocal parameters during (a) anticipatory stress and (b) post-stressor recovery?
+
+### The Challenge: Personality Traits from Intensive Longitudinal Data
+
+A key methodological challenge in this study concerns how personality traits are represented in the moderation analysis. Each participant completed approximately 20 EMA assessments over 2.5 months, providing repeated measures of each PID-5 domain. A naive approach would aggregate these observations into a single person-level mean for each domain and use these means as predictors in a standard multilevel regression. However, this approach discards valuable information and fails to account for measurement error: the observed person-means are noisy estimates of the true latent traits, and treating them as known quantities underestimates uncertainty in the moderation effects.
+
+Our model addresses this problem through a *joint measurement-and-outcome model* that simultaneously estimates latent personality traits from the EMA data and their moderating influence on vocal stress responses. This integrated approach has three key advantages:
+
+1. **Measurement error correction**: Rather than using observed means as fixed predictors, the model estimates each participant's true latent trait score ($\theta_{id}$) as a parameter, with appropriate uncertainty. This uncertainty propagates into the moderation estimates, yielding appropriately calibrated credible intervals.
+
+2. **Borrowing strength across observations**: The repeated EMA measurements inform the latent trait estimates through a measurement model, allowing the model to distinguish stable trait variance from occasion-specific fluctuations.
+
+3. **Coherent uncertainty quantification**: Because the latent traits and their effects are estimated jointly, the posterior distributions for moderation parameters ($\gamma_1$, $\gamma_2$) fully reflect uncertainty about both the traits themselves and their influence on vocal outcomes.
+
+### Model Specification
+
+The model comprises two interconnected components: a *measurement model* for the EMA-based personality assessments and an *outcome model* for the vocal parameters.
+
+#### Measurement Model (EMA)
+
+Let $X_{nd}$ denote the observed score for participant $i$ on domain $d$ at EMA occasion $n$. The measurement model specifies:
+
+$$
+X_{nd} \sim \text{Normal}(\theta_{i[n],d}, \sigma_d^{\text{ema}})
+$$
+where $\theta_{id}$ is the latent true trait score for participant $i$ on domain $d$, and $\sigma_d^{\text{ema}}$ captures occasion-to-occasion variability (including both state fluctuations and measurement error). The latent traits are given standard normal priors:
+
+$$
+\theta_{id} \sim \text{Normal}(0, 1)
+$$
+
+This formulation treats each participant's approximately 20 EMA observations as repeated noisy indicators of a stable underlying trait, with the model learning both the trait estimates and the amount of occasion-level variability for each domain.
+
+#### Outcome Model (Vocal Parameters)
+
+Let $y_j$ denote the vocal outcome (F0 or NNE) for observation $j$, with participant index $i[j]$. Stress effects are parameterized using two orthogonal contrasts:
+
+- $c_1$: Stress contrast (pre-exam vs. baseline);
+- $c_2$: Recovery contrast (post-exam vs. pre-exam).
+
+The outcome model specifies:
+
+$$
+y_j \sim \text{Normal}(\mu_j, \sigma_y)
+$$
+where the linear predictor $\mu_j$ includes fixed effects, random effects, and the crucial trait × contrast interactions:
+
+$$
+\mu_j = \alpha + u_{i,1} + (\beta_1 + u_{i,2}) \cdot c_{1j} + (\beta_2 + u_{i,3}) \cdot c_{2j} + \sum_{d=1}^{5} \left[ a_d \cdot \theta_{id} + \gamma_{1d} \cdot c_{1j} \cdot \theta_{id} + \gamma_{2d} \cdot c_{2j} \cdot \theta_{id} \right]
+$$
+
+The parameters are:
+
+- $\alpha$: Grand mean (baseline vocal parameter);
+- $\beta_1$, $\beta_2$: Population-average stress and recovery effects;
+- $u_{i,1}$, $u_{i,2}$, $u_{i,3}$: Participant-specific random intercept and slopes;
+- $a_d$: Main effect of trait $d$ on baseline vocal level;
+- $\gamma_{1d}$: **Stress moderation**—how trait $d$ amplifies or attenuates the stress effect;
+- $\gamma_{2d}$: **Recovery moderation**—how trait $d$ shapes post-stressor trajectory.
+
+The moderation parameters $\gamma_{1d}$ and $\gamma_{2d}$ are the quantities of primary theoretical interest. A positive $\gamma_{1d}$ indicates that higher levels of trait $d$ are associated with larger stress-induced changes in the vocal parameter.
+
+#### Random Effects Structure
+
+Participant-level random effects are specified using a non-centered parameterization for computational efficiency:
+
+$$
+u_{i,k} = z_{i,k} \cdot \tau_k, \quad z_{i,k} \sim \text{Normal}(0, 1)
+$$
+where $\tau_k$ are the random effect standard deviations. This structure allows for individual differences in baseline levels ($u_{i,1}$), stress reactivity ($u_{i,2}$), and recovery ($u_{i,3}$) beyond what is explained by the PID-5 traits.
+
+### Prior Specification
+
+Priors were chosen to be weakly informative, incorporating domain knowledge about plausible parameter ranges while allowing the data to dominate inference (Table S10).
+
+```{r table-s9-priors-moderation}
+priors_mod <- data.frame(
+  Parameter = c("$\\alpha$", "$\\beta_1, \\beta_2$", "$a_d$", "$\\gamma_{1d}, \\gamma_{2d}$", 
+                "$\\tau_k$", "$\\sigma_y$", "$\\sigma_d^{\\text{ema}}$"),
+  Prior = c("Normal(220, 30)", "Normal(0, 10)", "Normal(0, 5)", "Normal(0, 3)",
+            "Exponential(0.5)", "Exponential(0.1)", "Exponential(1)"),
+  Rationale = c("Centered on typical female F0 (Hz)", 
+                "Allows stress effects up to $\\pm$20 Hz",
+                "Modest trait effects on baseline",
+                "Regularization toward zero",
+                "Weakly informative for SDs",
+                "Allows residual SD up to $\\sim$10 Hz",
+                "Weakly informative for EMA variability")
+)
+
+knitr::kable(
+  priors_mod,
+  col.names = c("Parameter", "Prior", "Rationale"),
+  caption = "Prior specifications for the moderation model.",
+  escape = FALSE,
+  booktabs = TRUE
+)
+```
+
+The priors on the moderation parameters ($\gamma_{1d}$, $\gamma_{2d}$) provide modest regularization, shrinking estimates toward zero in the absence of strong evidence. This helps guard against overfitting given the 10 moderation parameters (5 domains × 2 contrasts) being estimated.
+
+### Stan Implementation
+
+The model was implemented in Stan. The complete code is available in the online repository accompanying this article.
+
+### Interpretation of Key Parameters
+
+The model yields posterior distributions for 10 moderation parameters of primary interest:
+
+- $\gamma_{1,\text{NegAff}}, \ldots, \gamma_{1,\text{Psych}}$: How each PID-5 domain moderates stress-induced vocal change (stress contrast × trait).
+- $\gamma_{2,\text{NegAff}}, \ldots, \gamma_{2,\text{Psych}}$: How each domain moderates recovery-phase vocal change (recovery contrast × trait).
+
+These parameters are expressed in the original units of the vocal outcome (Hz for F0, dB for NNE) per standard deviation of the latent trait. For example, $\gamma_{1,\text{NegAff}} = 3.0$ would indicate that a one-SD increase in latent Negative Affectivity is associated with an additional 3 Hz increase in F0 during the stress phase, beyond the population-average stress effect.
+
+### Posterior Predictive Checks
+
+The `generated quantities` block produces posterior predictive samples ($y_{\text{rep}}$) for model checking. These were used to verify that the model adequately captured the distributional properties of the observed vocal data, including means, variances, and the pattern of individual differences across assessment phases.
+
+\newpage
+
+## Prior-Sensitivity Analysis
+
+The probability of direction is, in principle, sensitive to the prior placed on the
+parameter under test, and the moderation magnitudes are only weakly constrained by the
+present sample. To make this dependence explicit, we refitted the moderation models under
+three prior standard deviations on the interaction coefficients ($\gamma$): half the
+default (1.5), the default (3.0), and double the default (6.0). We focus on the three
+effects with the strongest directional evidence in the primary analysis: Negative
+Affectivity $\times$ stress and Antagonism $\times$ recovery on F0, and
+Psychoticism $\times$ recovery on NNE.
+
+```{r table-prior-sensitivity}
+ps_file <- here::here(
+  "results", "prior_sensitivity", "tables", "prior_sensitivity_summary.csv"
+)
+
+if (file.exists(ps_file)) {
+  ps <- readr::read_csv(ps_file, show_col_types = FALSE)
+
+  ps_tab <- ps |>
+    dplyr::arrange(label, prior_sd_gamma) |>
+    dplyr::transmute(
+      Effect     = label,
+      prior_sd   = prior_sd_gamma,
+      Default    = ifelse(is_default, "default", ""),
+      Median     = sprintf("%.2f", median),
+      cri89      = sprintf("[%.2f, %.2f]", lo, hi),
+      pd         = sub("^0", "", sprintf("%.2f", PD))
+    )
+
+  knitr::kable(
+    ps_tab,
+    col.names = c(
+      "Effect",
+      "Prior SD",
+      "Default",
+      "Median",
+      "89\\% CrI",
+      "pd"
+    ),
+    escape = FALSE,
+    booktabs = TRUE,
+    caption = "Prior-sensitivity analysis. Posterior median, 89\\% credible interval, and probability of direction ($pd$) for the three headline moderation effects under three prior standard deviations on the interaction coefficients (half, default, and double the default)."
+  ) |>
+    kableExtra::kable_styling(
+      latex_options = c("HOLD_position"),
+      font_size = 9
+    )
+
+} else {
+  cat("_Prior-sensitivity table not found; run the prior-sensitivity script to generate it._")
+}
+```
+
+Two regularities emerge. First, the *direction* of all three effects is robust: the
+probability of direction remains high under every prior, with an overall minimum of about
+.92 (Antagonism $\times$ recovery under the tightest prior). Second, the *magnitudes* are
+prior-dependent, and markedly so for the F0 effects. The Negative Affectivity $\times$
+stress median moves from roughly 1.8 Hz under the tightest prior to about 4.4 Hz under the
+widest — an approximately 2.5-fold range — and its 89% interval includes zero under the
+tightest prior even though its $pd$ stays near .94. The NNE effect (Psychoticism $\times$
+recovery) is considerably more stable in magnitude (median $\approx$ 0.80–0.90 dB across
+priors, $pd \approx$ .95). All models converged cleanly ($\hat{R} \approx$ 1.00, no
+divergent transitions). This is the empirical basis for the reporting strategy adopted
+throughout: we foreground direction and the probability of direction, and treat the
+reported magnitudes — and the widths of their credible intervals — as estimates carrying
+substantial, partly prior-dependent uncertainty.
+
+\newpage
+
+# Connected-Speech Spectral Features: Mel-Frequency Cepstral Coefficient (MFCC) Analysis
+
+**Rationale and feature extraction.** In addition to the sustained vowels analyzed in the main text, participants produced a standardized connected-speech sample at each of the three sessions. To assess whether exam-related stress affects the voice beyond the controlled vowel task, we analyzed mel-frequency cepstral coefficients (MFCCs), which summarize the short-term spectral envelope of the signal and are widely used to characterize connected speech. MFCCs index global spectral shape (vocal-tract configuration, timbre) rather than the specific phonatory mechanisms captured by F0 and NNE, and therefore provide a complementary, holistic probe of stress-related vocal change.
+
+[PLACEHOLDER: MFCC extraction details — connected-speech material used (e.g., the standardized sentence *"Io amo le aiuole della mamma"* and/or the counting task); software and version; sampling rate; frame length and hop size; pre-emphasis and windowing; number of coefficients (13); and the summary statistics computed per coefficient.] For each coefficient we used the per-session mean across analysis frames as the primary representation; this is the canonical MFCC summary and was specified a priori. Higher-order distributional statistics (standard deviation, skewness, kurtosis, interquartile range, percentiles) were extracted but were not modeled, because they are noisier and lack a clear interpretive mapping — paralleling the rationale for restricting the sustained-vowel analyses to F0 and NNE.
+
+[PLACEHOLDER: Sample for this analysis — [N_MFCC] participants contributed usable connected-speech recordings at all three sessions ([N_OBS] = [N_MFCC] $\times$ 3 observations). Reconcile this count with the main analytic sample ($N$ = 119) and with the recruited sample, and state the reason for any difference (e.g., connected-speech recordings excluded for file quality or background noise).]
+
+**Model specification.** The 13 coefficient means were standardized ($z$-scored across all observations) so that effects are expressed in SD units and the priors operate on a common scale. The outcome vector was modeled with a multivariate normal likelihood,
+
+$$\mathbf{y}_n \sim \text{MultiNormal}(\boldsymbol{\mu}_n, \boldsymbol{\Sigma}), \qquad \boldsymbol{\mu}_n = \boldsymbol{\alpha} + \mathbf{u}_{s[n]} + \boldsymbol{\beta}_1\, c1_n + \boldsymbol{\beta}_2\, c2_n,$$
+
+where $\boldsymbol{\alpha}$, $\boldsymbol{\beta}_1$, and $\boldsymbol{\beta}_2$ are 13-dimensional vectors; $c1$ (stress: pre vs. baseline) and $c2$ (recovery: post vs. pre) are the same orthogonal contrasts used for F0 and NNE; $\mathbf{u}_s$ is a participant-specific random intercept; and $\boldsymbol{\Sigma}$ is the residual covariance. We included a subject-level random intercept only. With three observations per participant and a 13-dimensional outcome, random slopes for the contrasts (39 random effects per participant) are not identifiable; the 13-dimensional random intercept absorbs stable between-person differences in the spectral profile as well as the within-person dependence across the three sessions. The random-intercept and residual covariances were parameterized via their Cholesky factors with LKJ(2) priors on the correlations, and random effects used a non-centered parameterization. Priors were weakly informative on the standardized scale: $\boldsymbol{\alpha} \sim \text{Normal}(0, 2)$; $\boldsymbol{\beta}_1, \boldsymbol{\beta}_2 \sim \text{Normal}(0, 1)$, providing mild regularization toward zero that guards against the multiplicity inherent in estimating effects for 13 coefficients; and the covariance scales $\sim \text{Exponential}(1)$. The model was estimated in Stan via cmdstanr ([PLACEHOLDER: chains $\times$ iterations]).
+
+**Convergence and fit.** All $\hat{R}$ values equaled 1.00 ($\leq$ 1.01 throughout), bulk- and tail-ESS were in the thousands for all parameters, and there were no divergent transitions or treedepth saturations. Posterior predictive checks (Figure S[Y]) indicated that the model reproduced the distributional features of the observed coefficients.
+
+**Omnibus tests.** We evaluated whether the MFCC profile shifts with each contrast using two complementary multivariate tests. (i) A one-sample Hotelling's $T^2$ on the within-person difference vectors indicated a modest stress-related profile shift ($F(13, 114) = 2.00$, $p = .027$; sign-flip permutation $p = .024$) and little evidence for a comparable recovery shift ($F(13, 114) = 1.56$, $p = .108$; permutation $p = .105$). (ii) A Bayesian posterior Wald test -- the Mahalanobis distance of the posterior-mean contrast vector from zero in the metric of its posterior covariance, referred to a $\chi^2$ distribution with 13 degrees of freedom -- showed a consistent pattern (stress: $M = 22.3$, $p = .050$; recovery: $M = 10.5$, $p = .655$). The two tests use different reference covariances (the covariance of difference scores for Hotelling's $T^2$; the model's posterior covariance, which incorporates the hierarchical structure and shrinkage, for the Wald test), which accounts for the small difference between the two stress $p$-values; taken together, they support a modest stress-related spectral shift and do not support a comparable recovery-phase shift.
+
+We deliberately did not use two otherwise-common approaches, for principled reasons. First, we did not report a Bayes-factor omnibus (e.g., bridge sampling or the Savage-Dickey density ratio): a point-null Bayes factor over a 13-dimensional coefficient vector against weakly-informative priors is dominated by the Occam factor (the Lindley-Bartlett paradox) and is strongly prior-dependent, so with modest per-coefficient effects it can favor the null for reasons of dimensionality rather than evidence; bridge-sampling estimates of the marginal likelihood are also unstable in the high-dimensional parameter space of this model. Second, we did not report PSIS-LOO model comparison: with a 13-dimensional subject-level random intercept and only three observations per participant, leave-one-observation-out cross-validation is unreliable, because removing a single observation strongly perturbs that participant's latent profile and produces heavy-tailed importance ratios ($p_{\text{loo}} \approx 1172$ on [PLACEHOLDER: N_OBS] observations, with the majority of Pareto-$\hat{k}$ diagnostics exceeding 0.7). These choices are consistent with the unified, non-dichotomous inferential framework adopted throughout: we summarize the multivariate contrasts with omnibus tests and the per-coefficient effects with posterior medians, 89% credible intervals, and the probability of direction, rather than with model-selection verdicts or interval-exclusion rules.
+
+**Per-coefficient effects.** Table S[Z] reports the stress ($\beta_1$) and recovery ($\beta_2$) effects for each coefficient (posterior median, 89% CrI, and probability of direction, pd). For the stress contrast, MFCC2 and MFCC4 showed the strongest directional certainty (pd $\geq$ .99), and MFCC3 also showed high directional certainty (pd = .97); the remaining coefficients showed weaker directional certainty (pd < .95). For the recovery contrast, the omnibus profile shift was not comparably supported; at the coefficient level, MFCC10 showed the strongest directional certainty (pd = .97), but this isolated pattern should be interpreted cautiously. This per-coefficient pattern is consistent with a modest, sparsely carried stress shift and a weaker, less coherent recovery pattern.
+
+| Coefficient | Stress $\beta_1$ | 89% CrI | pd | Recovery $\beta_2$ | 89% CrI | pd |
+|---|---|---|---|---|---|---|
+| MFCC1  | −0.02 | [−0.15, 0.11] | .60 | −0.02 | [−0.14, 0.10] | .61 |
+| MFCC2  | 0.22 | [0.07, 0.37] | .99 | 0.10 | [−0.04, 0.25] | .87 |
+| MFCC3  | 0.20 | [0.03, 0.36] | .97 | 0.01 | [−0.15, 0.18] | .55 |
+| MFCC4  | −0.25 | [−0.42, −0.09] | .99 | −0.16 | [−0.33, 0.00] | .94 |
+| MFCC5  | 0.09 | [−0.08, 0.25] | .80 | −0.01 | [−0.18, 0.16] | .53 |
+| MFCC6  | 0.16 | [−0.02, 0.34] | .92 | 0.09 | [−0.09, 0.27] | .78 |
+| MFCC7  | 0.05 | [−0.13, 0.24] | .68 | 0.08 | [−0.10, 0.27] | .76 |
+| MFCC8  | 0.05 | [−0.11, 0.22] | .70 | −0.12 | [−0.28, 0.05] | .87 |
+| MFCC9  | −0.12 | [−0.29, 0.06] | .85 | 0.00 | [−0.18, 0.18] | .50 |
+| MFCC10 | 0.10 | [−0.06, 0.26] | .84 | −0.19 | [−0.35, −0.03] | .97 |
+| MFCC11 | −0.08 | [−0.28, 0.11] | .75 | −0.09 | [−0.29, 0.10] | .77 |
+| MFCC12 | −0.13 | [−0.30, 0.03] | .90 | −0.04 | [−0.21, 0.12] | .67 |
+| MFCC13 | 0.05 | [−0.13, 0.23] | .66 | −0.04 | [−0.23, 0.14] | .65 |
+
+*Note.* Effects are in SD units of the standardized coefficient. pd = probability of direction; CrI = 89% credible interval; $\beta_1$ = stress contrast (pre vs. baseline), $\beta_2$ = recovery contrast (post vs. pre). Values are reported descriptively and should be read together with the multivariate omnibus summaries rather than as separate decision rules.
+
+**Multivariate effect size.** As a magnitude descriptor we computed the Mahalanobis length of each contrast vector in the residual metric, $D = \sqrt{\boldsymbol{\beta}' \boldsymbol{\Sigma}^{-1} \boldsymbol{\beta}}$: stress $D = 0.87$ (89% CrI [0.65, 1.09]); recovery $D = 0.70$ (89% CrI [0.50, 0.90]). Because $D$ is nonnegative, its posterior interval does not approach zero even under a null shift; $D$ should therefore be interpreted as an effect-size magnitude -- with the stress shift larger than the recovery shift -- whereas evidence for a profile shift is summarized by the omnibus tests and coefficient-level posterior summaries above. $D$ is expressed relative to the within-occasion residual covariance and is consequently larger than the difference-score-based Hotelling effect, which uses the covariance of between-session differences.
+
+**No personality moderation on connected speech.** Given the modest and diffusely distributed connected-speech main effect, we did not test PID-5 moderation of the MFCC features. Such an analysis would involve 13 coefficients $\times$ five trait domains $\times$ two contrasts; it would be substantially underpowered and would reintroduce precisely the analytic flexibility we sought to avoid, and any resulting interactions would be uninterpretable. Personality moderation was therefore restricted to the sustained-vowel outcomes (F0 and NNE), for which the stress-related changes were strongest and mechanistically interpretable.
+
+**Data and code.** All R and Stan scripts and the de-identified data for the connected-speech analysis are available at [PLACEHOLDER: OSF LINK].
+
+\newpage
+
+# Voice--Affect Coupling
+
+To test whether the vocal stress response tracked the self-reported affective response at the person level, we related the anticipatory change in F0 (pre minus baseline) to the anticipatory change in EMA negative affect (pre minus baseline) across participants ($n$ = 115). We focused on the anticipatory phase because the pre-exam voice and EMA assessments are temporally aligned, whereas the post-exam EMA prompt (evening of the exam day) and the post-exam voice recording (the following day) are not.
+
+The between-person coupling was negligible: $r$ = −0.01, 89% CrI [−0.16, 0.14], Pr($r$ > 0) = .54 (equivalently, about −0.10 Hz per SD of negative-affect change). A frequentist Pearson correlation agreed ($r$ = −0.01, $p$ = .91). The recovery-phase coupling, computed analogously from POST − PRE change scores for the subset with temporally aligned data ($n$ = 112), was also weak and directionally uncertain ($r$ = 0.05, 89% CrI [−0.10, 0.21], Pr($r$ > 0) = .70).
+
+We read these coefficients in terms of direction and the probability of direction rather than interval exclusion: a pd close to .5 together with a near-zero $r$ indicates weak or absent person-level coupling between the vocal and affective stress responses. This pattern is consistent with two non-exclusive interpretations. First, the vocal signal may index physiological activation that is only partly reflected in self-reported affect---consistent with the subjective/physiological dissociation observed in the recovery phase, where self-reported affect normalized (indeed dropped below baseline, consistent with relief) while F0 remained elevated. Second, change scores derived from only three waves are measured with limited reliability, which attenuates any underlying coupling. This analysis is therefore exploratory.
+
+Importantly, this weak person-level coupling does not bear on the group-level findings: the exam was associated with strong directional evidence for increases in both negative affect (manipulation check) and F0 (main effect, pd = .99); the two responses simply did not covary in magnitude across individuals.
+
+\newpage
+
+# Within-Person Temporal Covariation
+
+We examined whether momentary fluctuations in personality states—assessed via EMA immediately before each voice recording—covaried with concurrent F0 levels. This tests whether trait-level moderation effects have within-person analogs: do individuals show higher F0 when they report elevated negative affectivity in the moment?
+
+We compared hierarchical specifications with fixed effects (population-average slopes only) versus random slopes (allowing individual differences in within-person associations). The random slopes model had higher predictive accuracy than the fixed-effects specification ($R^2$ = 35% vs 2.5%; ELPD difference $\approx$ 40 points). By itself, however, this improvement in fit does not establish identifiable individual-level effects. With only three observations per person, the 89% credible intervals for individual slopes were very wide and almost always included zero, so the sign and magnitude of any single participant's slope are not identifiable from these data; we therefore do not interpret individual slopes one by one.
+
+This pattern reflects a limitation of the sparse design rather than a substantive null. The between-subject standard deviations of the slopes ($\sigma_\beta$) are non-negligible for several domains, suggesting some heterogeneity, but they are themselves only weakly identified, so we do not attempt to characterize which individuals have larger or smaller slopes. Denser temporal sampling would be required to resolve individual-level within-person dynamics.
+
+\newpage
+
+# Replication of Moderation Effects Across Measurement Strategies
+
+A secondary aim was to compare two strategies for measuring the same PID-5 trait constructs: a full-length, cross-sectional baseline questionnaire and a brief, repeated EMA assessment aggregated to person-level means. We frame this comparison as a test of whether the moderation effects *replicate across measurement strategies*, not as evidence that either strategy is more valid or more efficient. The corresponding estimates are reported in the main text (*Comparing EMA-Based and Baseline PID-5 Assessments*); here we add the methodological interpretation that the editorial and reviewer comments call for.
+
+**Convergence, not superiority.** For the focal effect (Negative Affectivity $\times$ stress on F0), the baseline-derived and EMA-derived moderation estimates agreed in direction and were similar in magnitude, and the two specifications were essentially indistinguishable in out-of-sample predictive accuracy (a LOO elpd difference of roughly 5 points in favour of the EMA-based model, *SE* $\approx$ 4—i.e., well within one standard error). This pattern is most naturally read as cross-method convergence: the same trait–stress relationship is recovered whether the trait is measured once at length or repeatedly in brief form.
+
+**Why the EMA intervals are narrower.** The credible intervals for the EMA-derived moderation coefficients are somewhat narrower than those for the baseline-derived coefficients. This difference is largely a near-mechanical consequence of aggregation rather than evidence of more valid measurement: averaging each person's brief assessments across many occasions averages out occasion-specific fluctuation, yielding a person-level mean with smaller sampling variance, which in turn propagates into a tighter posterior for the moderation coefficient. A reduction in interval width obtained in this way does not, by itself, indicate that the EMA measure captures the construct more accurately.
+
+**Shared-method variance and burden.** Two further cautions temper any "EMA advantage" reading. First, associations among the momentary self-reports (e.g., between state personality items and state affect) can be inflated by shared method variance, because such items share a response format, a measurement occasion, and a current-state frame; person-level aggregation attenuates but does not eliminate this. Second, the practical cost differs sharply: a single questionnaire is far less burdensome than weeks of repeated prompting, so even exact predictive parity would not establish that intensive assessment is worthwhile for routine *trait* measurement. Intensive designs are justified when the *within-person dynamics* are themselves of interest—as in the present study—rather than as a more efficient route to a static trait estimate (Wright et al., 2025). Sampling denser than the present design would allow stronger, more direct tests of these within-person processes.
+
+\newpage
+
+# MCMC Convergence Diagnostics
+
+## Estimation Procedure
+
+All Bayesian models were estimated using Hamiltonian Monte Carlo (HMC) via Stan [@carpenter2017stan], accessed through the cmdstanr package in R. For the primary F0 moderation model, we ran 4 independent chains with 2,000 warmup iterations and 6,000 sampling iterations per chain, yielding 24,000 total post-warmup draws. Sampler adaptation parameters were set conservatively to ensure reliable exploration of the posterior: `adapt_delta = 0.99` and `max_treedepth = 15`. The same estimation procedure was applied to the NNE moderation model.
+
+## Convergence Assessment
+
+Convergence was assessed using standard diagnostics recommended for HMC estimation [@vehtari2021rank]:
+
+1. **Divergent transitions**: No divergent transitions were observed in either model, indicating that the sampler explored the posterior without encountering regions of high curvature that would compromise inference.
+
+2. **Maximum treedepth**: No iterations exceeded the maximum treedepth, suggesting that the sampler did not require truncation of its trajectory length.
+
+3. **Energy Bayesian Fraction of Missing Information (E-BFMI)**: All chains showed E-BFMI values well above the recommended threshold of 0.2, indicating adequate exploration of the energy distribution.
+
+4. **$\hat{R}$ (R-hat)**: The potential scale reduction factor was computed for all parameters. For the F0 model, all $\hat{R}$ values for key parameters (fixed effects, moderation coefficients, variance components) were below 1.01, and no parameters across the full model exceeded 1.05. Table S11 reports $\hat{R}$ values for key parameters.
+
+5. **Effective Sample Size (ESS)**: Both bulk-ESS and tail-ESS were computed for all parameters. Bulk-ESS, which reflects the efficiency of sampling for posterior means and medians, exceeded 4,000 for all key parameters. Tail-ESS, which reflects sampling efficiency for posterior quantiles, exceeded 3,000 for all key parameters. These values substantially exceed the minimum recommended threshold of 400 (Vehtari et al., 2021).
+
+```{r table-s10-diagnostics}
+param_labels_s10 <- c(
+  "Intercept ($\\alpha$)",
+  "Stress effect ($\\beta_1$)",
+  "Recovery effect ($\\beta_2$)",
+  "$\\gamma_1$ Negative Affectivity",
+  "$\\gamma_1$ Detachment",
+  "$\\gamma_1$ Antagonism",
+  "$\\gamma_1$ Disinhibition",
+  "$\\gamma_1$ Psychoticism",
+  "$\\gamma_2$ Negative Affectivity",
+  "$\\gamma_2$ Detachment",
+  "$\\gamma_2$ Antagonism",
+  "$\\gamma_2$ Disinhibition",
+  "$\\gamma_2$ Psychoticism",
+  "Residual SD ($\\sigma_y$)",
+  "Random intercept SD ($\\tau_1$)",
+  "Random stress slope SD ($\\tau_2$)",
+  "Random recovery slope SD ($\\tau_3$)"
+)
+
+# Reproducible source if present; otherwise fall back to the last verified run.
+diag_file <- here::here("results", "diagnostics", "supplementary_table_diagnostics_89cri.csv")
+diag_table <- NULL
+if (file.exists(diag_file)) {
+  d <- readr::read_csv(diag_file, show_col_types = FALSE)
+  pick <- function(df, pats) {
+    for (p in pats) {
+      h <- names(df)[grepl(p, names(df), ignore.case = TRUE)]
+      if (length(h)) return(h[1])
+    }
+    NA_character_
+  }
+  cM <- pick(d, c("^Mean$"))
+  cS <- pick(d, c("^SD$"))
+  cR <- pick(d, c("^Rhat$", "R_hat", "rhat"))
+  cB <- pick(d, c("ESS_bulk", "bulk"))
+  cT <- pick(d, c("ESS_tail", "tail"))
+  if (nrow(d) == length(param_labels_s10) && !any(is.na(c(cM, cS, cR, cB, cT)))) {
+    diag_table <- data.frame(
+      Parameter = param_labels_s10,
+      Mean = d[[cM]], SD = d[[cS]], Rhat = d[[cR]],
+      ESS_bulk = d[[cB]], ESS_tail = d[[cT]]
+    )
+  }
+}
+if (is.null(diag_table)) {
+  diag_table <- data.frame(
+    Parameter = param_labels_s10,
+    Mean = c(192.95, 3.43, -0.49, 3.14, -0.36, -0.10, -0.21, -0.26,
+             -0.45, -2.02, 3.16, -0.18, -1.42, 8.85, 18.81, 1.33, 1.65),
+    SD = c(1.78, 1.33, 1.34, 1.68, 1.68, 1.61, 1.84, 1.71,
+           1.70, 1.71, 1.61, 1.87, 1.70, 0.44, 1.27, 1.14, 1.43),
+    Rhat = c(1.001, 1.000, 1.000, 1.000, 1.000, 1.000, 1.000, 1.000,
+             1.000, 1.000, 1.000, 1.000, 1.000, 1.000, 1.000, 1.000, 1.000),
+    ESS_bulk = c(4490, 38288, 38539, 39739, 37929, 38621, 37799, 38639,
+                 37632, 37665, 37825, 34125, 39361, 14363, 5855, 12845, 10546),
+    ESS_tail = c(8441, 19497, 20141, 20045, 20076, 18464, 19097, 19968,
+                 19706, 19891, 20302, 19595, 20089, 17189, 11332, 13041, 13300)
+  )
+}
+
+knitr::kable(
+  diag_table,
+  col.names = c("Parameter", "Mean", "$SD$", "$\\hat{R}$", "ESS (bulk)", "ESS (tail)"),
+  digits = c(0, 2, 2, 3, 0, 0),
+  caption = "Posterior summary and convergence diagnostics for key parameters (F0 moderation model).",
+  escape = FALSE,
+  booktabs = TRUE
+) |>
+  kableExtra::kable_styling(latex_options = "hold_position")
+```
+
+## Visual Diagnostics
+
+Trace plots for all key parameters showed excellent mixing across chains, with no visible trends or differences between chains. Representative trace plots are shown in Figure S1.
+
+```{r trace-figure, fig.cap="Trace plots for main fixed effects parameters showing good mixing across four chains.", out.width="100%"}
+trace_file <- here::here("results", "diagnostics", "trace_main_effects.png")
+if (file.exists(trace_file)) {
+  knitr::include_graphics(trace_file)
+}
+```
+
+Autocorrelation plots indicated low autocorrelation at lag 1 and negligible autocorrelation beyond lag 10 for all parameters, consistent with the high effective sample sizes reported above.
+
+## Posterior Predictive Checks
+
+Model adequacy was assessed using posterior predictive checks [@gelman2013bayesian]. Figure S2 shows the posterior predictive density overlaid on the observed F0 distribution. The model accurately captured the location, spread, and shape of the observed data.
+
+```{r ppc-figure, fig.cap="Posterior predictive check showing 100 draws from the posterior predictive distribution (light blue) overlaid on the observed F0 distribution (dark blue).", out.width="80%"}
+ppc_file <- here::here("results", "diagnostics", "ppc_density_overlay.png")
+if (file.exists(ppc_file)) {
+  knitr::include_graphics(ppc_file)
+}
+```
+
+Additional posterior predictive checks confirmed that the model adequately recovered:
+
+- The mean F0 across all observations (observed: 192.5 Hz; 95% PPC interval: [191.2, 193.8])
+- The standard deviation of F0 (observed: 22.1 Hz; 95% PPC interval: [20.8, 23.4])
+- The pattern of means across assessment periods (Baseline < Post-exam < Pre-exam)
+
+## Summary
+
+All convergence diagnostics indicated that the MCMC sampler successfully explored the posterior distribution. The absence of divergent transitions, combined with $\hat{R}$ values below 1.01 and effective sample sizes exceeding 4,000, indicates that the posterior summaries reported in the main text are numerically trustworthy. Posterior predictive checks confirmed that the model adequately captured the key features of the observed data.
+
+## NNE Model Diagnostics
+
+The same estimation and diagnostic procedures were applied to the NNE moderation model. Table S12 summarizes the convergence diagnostics for both models.
+
+```{r table-s11-diagnostics-comparison, results='asis'}
+library(kableExtra)
+
+conv_file <- here::here("results", "NNE", "diagnostics", "convergence_summary_both_models.csv")
+want_s11 <- c("Model", "Divergences", "Max_treedepth_exceeded",
+              "Rhat_max", "Rhat_above_1.01", "ESS_bulk_min", "ESS_tail_min")
+if (file.exists(conv_file)) {
+  cd <- readr::read_csv(conv_file, show_col_types = FALSE)
+  combined_diag <- if (all(want_s11 %in% names(cd))) cd[, want_s11] else cd
+} else {
+  # Fallback (kept in sync with the last verified run)
+  combined_diag <- data.frame(
+    Model = c("F0", "NNE"),
+    Divergences = c(0, 0),
+    Max_treedepth_exceeded = c(0, 0),
+    Rhat_max = c(1.0015, 1.0013),
+    Rhat_above_1.01 = c(0, 0),
+    ESS_bulk_min = c(4490, 3775),
+    ESS_tail_min = c(8441, 4659)
+  )
+}
+
+knitr::kable(
+  combined_diag,
+  col.names = c(
+    "Model",
+    "Divergences",
+    "Max Treedepth Exceeded",
+    "$\\hat{R}$ (max)",
+    "$\\hat{R} > 1.01$",
+    "ESS Bulk (min)",
+    "ESS Tail (min)"
+  ),
+  caption = "Convergence diagnostics summary for F0 and NNE moderation models.",
+  escape = FALSE,
+  booktabs = TRUE
+) %>%
+  kable_styling(
+    latex_options = c("HOLD_position", "scale_down"),
+    font_size = 9
+  )
+```
+
+The NNE model showed equally good convergence properties: no divergent transitions, no iterations exceeding maximum treedepth, all $\hat{R}$ values below 1.01, and minimum effective sample sizes well above recommended thresholds. Posterior predictive checks for the NNE model (Figure S3) confirmed adequate model fit.
+
+```{r ppc-nne-figure, fig.cap="Posterior predictive check for the NNE moderation model.", out.width="80%"}
+ppc_nne_file <- here::here("results", "diagnostics", "ppc_density_overlay_nne.png")
+if (file.exists(ppc_nne_file)) {
+  knitr::include_graphics(ppc_nne_file)
+}
+```
+
+\newpage
+
+# Posterior Predictive Assurance of Moderation Effects
+
+## Rationale
+
+Beyond estimating posterior distributions for the moderation parameters, we conducted a posterior predictive assurance analysis to quantify the probability that the *direction* of the observed moderation effect would replicate under the same study design. Rather than addressing statistical significance or interval exclusion criteria, this analysis focuses on directional replicability: given the fitted model and the uncertainty in its parameters, how likely is it that a new study with the same design would yield a moderation effect in the same direction?
+
+This approach is conceptually distinct from frequentist power analysis. Instead of assuming a fixed but unknown true effect size, posterior predictive assurance integrates over the full posterior distribution of the model parameters, thereby reflecting uncertainty about both the magnitude of the effect and the data-generating process.
+
+## Procedure
+
+Posterior predictive simulations were conducted using draws from the joint posterior distribution of the fitted moderation model. For each simulation, a new dataset was generated under the same design as the original study, including the same number of participants, the same stress and recovery contrasts, and a comparable distribution of EMA observations per participant. Latent personality traits for the new participants were drawn from their population prior distributions, consistent with the generative assumptions of the model.
+
+For each simulated dataset, the moderation effect of interest—specifically, the interaction between Negative Affectivity and the stress contrast—was re-estimated using a fast proxy model. Replication success was defined using a minimal and directionally focused criterion: the estimated moderation effect was required to be positive (> 0). This criterion captures whether the effect would replicate in direction, without imposing additional thresholds related to statistical significance or effect size magnitude. This process was repeated 1,000 times, yielding an empirical estimate of the posterior predictive probability of directional replication (assurance).
+
+## Results
+
+Across posterior predictive replications, the moderation effect was positive in 92.1% of simulated datasets. The estimated posterior predictive probability of replication success was therefore 0.92, with a 95% credible interval of [0.90, 0.94], reflecting Monte Carlo uncertainty in the simulation-based estimate.
+
+## Interpretation
+
+These results indicate a high probability that the direction of the moderation effect would replicate in a new sample drawn under the same design assumptions. In other words, given the fitted model and the uncertainty in its parameters, the interaction between Negative Affectivity and stress is expected to be positive in the large majority of replications.
+
+At the same time, this analysis does not imply precise recovery of the effect magnitude. The posterior distribution of the moderation parameter remains relatively wide, indicating substantial uncertainty about the exact size of the effect. The assurance analysis therefore supports *directional robustness* of the moderation effect, while remaining agnostic about the degree of precision with which its magnitude can be estimated.
+
+Taken together with the posterior estimates reported in the main analysis, these results suggest that the observed moderation effect is unlikely to be a chance reversal in direction, even though its quantitative strength should be interpreted with appropriate caution.
+
+\newpage
+
+# References
+
